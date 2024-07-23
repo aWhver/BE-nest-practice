@@ -4,6 +4,9 @@ import { AppService } from './app.service';
 import { CustomDecoratorModule } from './custom-decorator/custom-decorator.module';
 import { DynamicModuleModule } from './dynamic-module/dynamic-module.module';
 import { MiddlewarePracticeModule } from './middleware-practice/middleware-practice.module';
+import { InterceptorPracticeModule } from './interceptor-practice/interceptor-practice.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { GlobalInterceptor } from './interceptor-practice/interceptor';
 
 @Module({
   imports: [
@@ -11,8 +14,15 @@ import { MiddlewarePracticeModule } from './middleware-practice/middleware-pract
     // DynamicModuleModule.register({ name: 'zhao', age: 29, isGlobal: true }),
     DynamicModuleModule.forRoot({ name: 'zhao', age: 29, isGlobal: false }),
     MiddlewarePracticeModule,
+    InterceptorPracticeModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: GlobalInterceptor,
+    },
+  ],
 })
 export class AppModule {}
