@@ -31,6 +31,7 @@ export class TestInterceptor implements NestInterceptor {
 
 // 如果用 app.useGlobalInterceptor是无法进行依赖注入
 // 用全局的 APP_INTERCEPTOR是可以的
+// 路由级别的拦截器优先级高于全局
 @Injectable()
 export class GlobalInterceptor implements NestInterceptor {
   @Inject(AppService)

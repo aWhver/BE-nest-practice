@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>multer 实现文件上传</title>
+  <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+</head>
+<body>
+  <div><input id="file1" type="file" multiple></div>
+  <script>
+    const oFile = document.getElementById('file1');
+    oFile.onchange = async function(e) {
+      console.log('e.target.files', e.target.files);
+      const data = new FormData();
+      data.set('name', 'juntong');
+      data.set('age', 29);
+      data.append('file', e.target.files[0]);
+      // data.append('file', e.target.files[1]);
+      // data.append('avatar', e.target.files[0]);
+      // data.append('background', e.target.files[1]);
+      // data.append('background', e.target.files[2]);
+      const res = await axios.post('http://localhost:3102/multer-upload', data);
+    }
+  </script>
+</body>
+</html>
