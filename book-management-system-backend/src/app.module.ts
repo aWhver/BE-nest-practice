@@ -5,7 +5,7 @@ import { UserModule } from './user/user.module';
 import { DbModuleModule } from './db-module/db-module.module';
 import { BookModule } from './book/book.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { ResInterceptor } from './common/interceptor/resInterceptor';
+import { ResInterceptor } from './common/interceptor';
 
 @Module({
   imports: [UserModule, DbModuleModule, BookModule],

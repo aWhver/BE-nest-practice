@@ -26,10 +26,11 @@ export class ResInterceptor implements NestInterceptor {
       }),
       catchError((err) => {
         console.log('err', err);
+        const resp = err?.response;
         return of({
           data: '',
           code: 400,
-          message: err?.response?.message || '出错',
+          message: typeof resp === 'string' ? resp : resp?.message || '出错',
         });
       }),
     );
