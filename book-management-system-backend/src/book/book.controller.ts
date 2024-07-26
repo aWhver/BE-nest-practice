@@ -3,9 +3,11 @@ import {
   Controller,
   Delete,
   Get,
+  Optional,
   Param,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -31,8 +33,8 @@ export class BookController {
   }
 
   @Get('list')
-  bookList() {
-    return this.bookService.findAll();
+  bookList(@Optional() @Query('name') name: string) {
+    return this.bookService.findList(name);
   }
 
   @Delete('delete/:id')

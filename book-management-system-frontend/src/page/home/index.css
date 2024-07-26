@@ -1,0 +1,19 @@
+.book-management {
+  display: flex;
+  flex-direction: column;
+}
+.book-management .content {
+  padding-top: 15px;
+}
+.book-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+.book-list .book {
+  margin: 10px;
+}
+.book-list .book .operator span {
+  color: blue;
+  margin: 0 10px;
+  cursor: pointer;
+}

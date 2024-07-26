@@ -41,12 +41,13 @@ export class BookService {
     return book;
   }
 
-  findAll() {
-    return this.dbSrevice.read();
+  async findList(name?: string) {
+    const books = await this.dbSrevice.read();
+    return name ? books.filter((book) => book.name.includes(name)) : books;
   }
 
   async findOneById(id: string) {
-    const books = await this.findAll();
+    const books = await this.findList();
     const book = books.find((book: Book) => book.id === id);
     if (!book) {
       throw new BadRequestException('书籍不存在');
@@ -55,7 +56,7 @@ export class BookService {
   }
 
   async bookDelete(id: string) {
-    const books = await this.findAll();
+    const books = await this.findList();
     const newBooks = books.filter((book: Book) => book.id !== id);
     await this.dbSrevice.write(newBooks);
     return '删除成功';
