@@ -9,6 +9,7 @@ const Login = function() {
   const onFinish = function(values: LoginUser) {
     login(values.username, values.password).subscribe(res => {
       if (res.code === 200) {
+        localStorage.setItem('token', res.data);
         message.success('登录成功');
         setTimeout(() => {
           navigate('/home');

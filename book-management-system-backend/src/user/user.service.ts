@@ -4,6 +4,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { DbModuleService } from 'src/db-module/db-module.service';
 import { User } from './entities/user.entity';
 import * as crypto from 'crypto';
+import { JwtService } from '@nestjs/jwt';
 
 const md5 = function(str) {
   const hash = crypto.createHash('md5');
@@ -15,6 +16,9 @@ const md5 = function(str) {
 export class UserService {
   @Inject(DbModuleService)
   dbService: DbModuleService;
+
+  @Inject(JwtService)
+  jwtService: JwtService;
 
   async register(registerUserDto: RegisterUserDto) {
     const users = await this.dbService.read();
@@ -31,7 +35,7 @@ export class UserService {
   }
 
   async login(loginUserDto: LoginUserDto) {
-    const users = await this.dbService.read();
+    const users: User[] = await this.dbService.read();
     const user = users.find((u) => u.username === loginUserDto.username);
     if (!user) {
       throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
@@ -39,6 +43,8 @@ export class UserService {
     if (user.password !== md5(loginUserDto.password)) {
       throw new HttpException('密码不正确', HttpStatus.BAD_REQUEST);
     }
-    return user;
+    const sub = { username: user.username };
+    const token = await this.jwtService.signAsync(sub);
+    return token;
   }
 }

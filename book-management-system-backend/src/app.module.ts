@@ -4,8 +4,9 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { DbModuleModule } from './db-module/db-module.module';
 import { BookModule } from './book/book.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ResInterceptor } from './common/interceptor';
+import { AuthGuard } from './common/guard';
 
 @Module({
   imports: [UserModule, DbModuleModule, BookModule],
@@ -15,6 +16,10 @@ import { ResInterceptor } from './common/interceptor';
     {
       provide: APP_INTERCEPTOR,
       useClass: ResInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
     },
   ],
 })
