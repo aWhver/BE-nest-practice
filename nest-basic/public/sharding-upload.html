@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>multer 实现文件上传</title>
+  <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+</head>
+<body>
+  <div><input id="file1" type="file"></div>
+  <script>
+    const oFile = document.getElementById('file1');
+    // 切片大小
+    const chunkSize = 100 * 1024;
+    oFile.onchange = async function(e) {
+      console.log('e.target.files', e.target.files);
+      const file = e.target.files[0];
+      // 切片集合
+      const chunks = [];
+      let start = 0;
+      const chunkCount = Math.ceil(file.size / chunkSize);
+      Array.from({length: chunkCount}).forEach(() => {
+        const end = start + chunkSize;
+        chunks.push(file.slice(start, end));
+        start = end;
+      });
+      console.log('chunks', chunks);
+      const pros = [];
+      chunks.forEach((chunk, index) => {
+        const data = new FormData();
+        data.set('name', `${file.name}_${index}`);
+        data.append('file', chunk);
+        pros.push(axios.post('http://localhost:3102/multer-upload/sharding', data));
+      });
+
+      await Promise.all(pros);
+      axios.get('http://localhost:3102/multer-upload/merge?name=' + file.name)
+    }
+  </script>
+</body>
+</html>

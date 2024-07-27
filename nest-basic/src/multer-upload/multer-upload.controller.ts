@@ -9,6 +9,9 @@ import {
   MaxFileSizeValidator,
   FileTypeValidator,
   HttpException,
+  Param,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { MulterUploadService } from './multer-upload.service';
 import { CreateMulterUploadDto } from './dto/create-multer-upload.dto';
@@ -23,23 +26,24 @@ import {
 } from '@nestjs/platform-express';
 import { MyFileValidator } from './file.pipe';
 
-const storage = multer.diskStorage({
-  destination(req, file, callback) {
-    try {
-      fs.mkdirSync(path.join(process.cwd(), 'uploads'));
-    } catch (error) {}
-    callback(null, path.join(process.cwd(), 'uploads'));
-  },
-  filename(req, file, callback) {
-    // file.originalname = Buffer.from(file.originalname, 'latin1').toString(
-    //   'utf8',
-    // );
-    callback(null, Date.now() + file.originalname);
-  },
-});
+const storage = (dir = 'uploads') =>
+  multer.diskStorage({
+    destination(req, file, callback) {
+      try {
+        fs.mkdirSync(path.join(process.cwd(), dir));
+      } catch (error) {}
+      callback(null, path.join(process.cwd(), dir));
+    },
+    filename(req, file, callback) {
+      // file.originalname = Buffer.from(file.originalname, 'latin1').toString(
+      //   'utf8',
+      // );
+      callback(null, Date.now() + file.originalname);
+    },
+  });
 
 const muloptions = {
-  storage,
+  storage: storage(),
   // 解决中文乱码
   fileFilter(req, file, callback) {
     file.originalname = Buffer.from(file.originalname, 'latin1').toString(
@@ -117,5 +121,69 @@ export class MulterUploadController {
     console.log('files', files);
     console.log('createMulterUploadDto', createMulterUploadDto);
     return 'cu';
+  }
+
+  // 文件切片上传
+  @Post('sharding')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: storage('uploads/tempSharding'),
+      fileFilter(req, file, callback) {
+        file.originalname = Buffer.from(file.originalname, 'latin1').toString(
+          'utf8',
+        );
+        callback(null, true);
+      },
+    }),
+  )
+  shardingUpload(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('name') name: string,
+  ) {
+    console.log('file', file);
+    console.log('name', name);
+    const newName = name.match(/(.+)\_\d+$/)[1];
+    const chunksDir = `uploads/sharding/chunks_${newName}`;
+    if (!fs.existsSync(chunksDir)) {
+      fs.existsSync(chunksDir);
+    }
+    fs.cpSync(file.path, chunksDir + '/' + name);
+    fs.rmSync(file.path);
+  }
+  // 合并切片
+  @Get('merge')
+  mergeSharding(@Query('name') name: string) {
+    console.log('name', name);
+    const dir = path.join(process.cwd(), `uploads/sharding/chunks_${name}`);
+    const files = fs.readdirSync(dir).sort((a, b) => {
+      return a.localeCompare(b);
+    });
+    let start = 0;
+    let count = 0;
+    files.map((file) => {
+      // console.log('file', file);
+      const filePath = `${dir}/${file}`;
+      const stream = fs.createReadStream(filePath);
+      stream
+        .pipe(
+          fs.createWriteStream(`uploads/${name}`, {
+            start,
+          }),
+        )
+        .on('finish', () => {
+          count++;
+          if (count === files.length) {
+            fs.rm(
+              `uploads/sharding/chunks_${name}`,
+              { recursive: true },
+              () => {},
+            );
+          }
+        });
+      start += fs.statSync(filePath).size;
+    });
+    // fs.rmdirSync(dir);
+
+    return `uploads/${name}`;
   }
 }

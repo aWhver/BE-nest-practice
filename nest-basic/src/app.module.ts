@@ -8,7 +8,6 @@ import { InterceptorPracticeModule } from './interceptor-practice/interceptor-pr
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { GlobalInterceptor } from './interceptor-practice/interceptor';
 import { MulterUploadModule } from './multer-upload/multer-upload.module';
-import { User1Module } from './user1/user1.module';
 
 @Module({
   imports: [
@@ -18,7 +17,6 @@ import { User1Module } from './user1/user1.module';
     MiddlewarePracticeModule,
     InterceptorPracticeModule,
     MulterUploadModule,
-    User1Module,
   ],
   controllers: [AppController],
   providers: [
