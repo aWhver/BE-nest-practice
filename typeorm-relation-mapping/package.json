@@ -16,6 +16,7 @@
    },
    "scripts": {
       "start": "ts-node src/index.ts",
+      "start:oneToMany": "ts-node src/oneToMany.ts",
       "typeorm": "typeorm-ts-node-commonjs"
    }
 }
