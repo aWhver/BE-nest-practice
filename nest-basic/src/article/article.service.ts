@@ -17,6 +17,7 @@ export class ArticleService {
   findAll() {
     const a = new Article();
     a.title = '但是科技大厦';
+    a.tags = 'sql';
     a.content =
       '绑定手机规范化金额我刚好大部分结婚的个房间换个地方火锅的机会官方';
     this.articleRepository.save(a);
