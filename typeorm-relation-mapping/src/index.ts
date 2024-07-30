@@ -2,6 +2,7 @@ import { AppDataSource } from './data-source';
 import { IdCard } from './entity/IdCard';
 import { User } from './entity/User';
 // 一对一的关系
+// 任意层级关系的建立看 nest-basic[https://github.com/aWhver/BE-nest-practice/tree/master/nest-basic]项目的 city目录
 AppDataSource.initialize()
   .then(async () => {
     console.log('Inserting a new user into the database...');

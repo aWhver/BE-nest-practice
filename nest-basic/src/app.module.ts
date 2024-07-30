@@ -10,6 +10,7 @@ import { GlobalInterceptor } from './interceptor-practice/interceptor';
 import { MulterUploadModule } from './multer-upload/multer-upload.module';
 import { CityModule } from './city/city.module';
 import { DbModule } from 'libs/db/src';
+import { ArticleModule } from './article/article.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { DbModule } from 'libs/db/src';
     InterceptorPracticeModule,
     MulterUploadModule,
     CityModule,
+    ArticleModule,
   ],
   controllers: [AppController],
   providers: [
