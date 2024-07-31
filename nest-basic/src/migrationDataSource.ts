@@ -1,6 +1,8 @@
 import { DataSource } from 'typeorm';
 import { Article } from './article/entities/article.entity';
 import { config } from 'dotenv';
+import { Permission } from './permission/entities/permission.entity';
+import { User } from './user/entities/user.entity';
 
 config({
   path: [`.env.stage.${process.env.STAGE}`, '.env.stage.default'],
@@ -18,7 +20,7 @@ export default new DataSource({
   // typeorm 提供了 migration:create,generate,run,revert命令
   synchronize: process.env.DB_SYNC === 'true',
   migrations: ['src/migrations/**.ts'],
-  entities: [Article],
+  entities: [Article, Permission, User],
   logging: true,
   poolSize: 10,
   connectorPackage: 'mysql2',

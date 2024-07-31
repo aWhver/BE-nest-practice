@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ACL 权限控制</title>
+    <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div class="contaier">
+      <div><label>用户名</label><input id="username" /></div>
+      <div><label>密码</label><input id="password" /></div>
+      <div><label>权限码</label><input id="permissionCode" />
+      <p>权限码注册时候用，给该用户配置权限，输入：1,2,34,5这样的</p></div>
+      <button id="register">注册</button>
+      <button id="login">登录</button>
+    </div>
+    <script>
+      // function parseUrl(url) {
+      //   return 'http:localhost'
+      // }
+      register.onclick = function() {
+        const data = {
+          username: username.value,
+          password: password.value,
+        };
+        console.log('data', data);
+        axios.post(`/user/register?permissionCode=${permissionCode.value}`, data);
+      }
+      login.onclick = function() {
+        const data = {
+          username: username.value,
+          password: password.value,
+        };
+        axios.post(`/user/login`, data).then(res => {
+          console.log('res', res);
+        });
+      }
+    </script>
+  </body>
+</html>

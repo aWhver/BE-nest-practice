@@ -11,6 +11,8 @@ import { MulterUploadModule } from './multer-upload/multer-upload.module';
 import { CityModule } from './city/city.module';
 import { DbModule } from 'libs/db/src';
 import { ArticleModule } from './article/article.module';
+import { UserModule } from './user/user.module';
+import { PermissionModule } from './permission/permission.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { ArticleModule } from './article/article.module';
     MulterUploadModule,
     CityModule,
     ArticleModule,
+    UserModule,
+    PermissionModule,
   ],
   controllers: [AppController],
   providers: [
