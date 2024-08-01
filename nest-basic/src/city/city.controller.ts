@@ -6,12 +6,10 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { CityService } from './city.service';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
-import { AuthGuard } from '../common/guard';
 
 @Controller('city')
 export class CityController {
@@ -23,7 +21,6 @@ export class CityController {
   }
 
   @Get()
-  @UseGuards(AuthGuard)
   findAll() {
     return this.cityService.findAll();
   }

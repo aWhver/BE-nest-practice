@@ -16,7 +16,7 @@ async function bootstrap() {
       resave: false, // session不变的话不重新生成 cookie
       saveUninitialized: false, // 未登录时不生产一个 session
       cookie: {
-        maxAge: 10000,
+        maxAge: 1000000,
       },
     }),
   );

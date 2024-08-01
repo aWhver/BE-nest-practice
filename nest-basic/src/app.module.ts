@@ -13,6 +13,7 @@ import { DbModule } from 'libs/db/src';
 import { ArticleModule } from './article/article.module';
 import { UserModule } from './user/user.module';
 import { PermissionModule } from './permission/permission.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { PermissionModule } from './permission/permission.module';
     ArticleModule,
     UserModule,
     PermissionModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [

@@ -32,15 +32,16 @@ export class UserService {
     const newuser = new User();
     newuser.username = registerUserDto.username;
     newuser.password = md5(registerUserDto.password);
-    const allCodes = await this.permissionService.findAll();
+    const existedPermissions = await this.permissionService.findByCodes(codes);
+    console.log('existedPermissions', existedPermissions);
     const permissions = codes.map((code) => {
-      const permission = new Permission();
-      const c = allCodes.find((p) => p.permissionCode === Number(code));
+      const c = existedPermissions.find((p) => p.permissionCode === code);
       if (c) {
         return c;
       }
-      permission.permissionCode = Number(code);
-      permission.name = `随意的描述${(Math.random() * 100).toFixed()}`;
+      const permission = new Permission();
+      permission.permissionCode = code;
+      permission.name = `权限名${(Math.random() * 100).toFixed()}`;
       return permission;
     });
     newuser.permissions = permissions;
@@ -59,5 +60,14 @@ export class UserService {
       throw new HttpException('密码不正确', HttpStatus.BAD_REQUEST);
     }
     return user;
+  }
+
+  async findByUsername(username: string) {
+    return this.userRepository.findOne({
+      where: {
+        username,
+      },
+      relations: ['permissions'],
+    });
   }
 }

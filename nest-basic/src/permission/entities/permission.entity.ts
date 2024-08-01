@@ -20,7 +20,7 @@ export class Permission {
   @Column()
   @IsNotEmpty()
   @Length(1, 10)
-  permissionCode: number;
+  permissionCode: string;
 
   @CreateDateColumn()
   createDate: Date;

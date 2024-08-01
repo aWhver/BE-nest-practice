@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePermissionDto } from './dto/create-permission.dto';
-import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Permission } from './entities/permission.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 @Injectable()
 export class PermissionService {
@@ -19,15 +18,27 @@ export class PermissionService {
     // return `This action returns all permission`;
   }
 
-  async findOne(code: number) {
+  async findOne(code: string) {
     const permission = await this.permissionRepository.findOneBy({
       permissionCode: code,
     });
     return permission;
   }
 
-  update(id: number, updatePermissionDto: UpdatePermissionDto) {
-    return `This action updates a #${id} permission`;
+  async findByCodes(codes: string[]) {
+    // const permissions = await this.permissionRepository.query(
+    //   `SELECT * FROM permission where permissionCode in (${codes.join(',')})`,
+    // );
+    // const permissions = await this.permissionRepository.find({
+    //   where: {
+    //     permissionCode: In(codes),
+    //   },
+    // });
+    const permissions = await this.permissionRepository.findBy({
+      permissionCode: In(codes),
+    });
+
+    return permissions;
   }
 
   remove(id: number) {
