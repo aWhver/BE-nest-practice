@@ -28,11 +28,12 @@ import { ResponseInterceptor } from './common/interceptor';
     MulterUploadModule,
     CityModule,
     ArticleModule,
-    UserModule,
+    // 这几个模块需要起 redis服务或者 docker redis容器,练习其他的时候先注释掉
+    /* UserModule,
     PermissionModule,
     RedisModule,
     RabcUserModule,
-    RoleModule,
+    RoleModule, */
   ],
   controllers: [AppController],
   providers: [

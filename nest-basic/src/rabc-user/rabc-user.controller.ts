@@ -19,7 +19,7 @@ async function generateToken(jwtService: JwtService, user: RabcUser) {
       username: user.username,
       id: user.id,
     },
-    { expiresIn: '1m' },
+    { expiresIn: '30m' },
   );
 
   const refresh_token = await jwtService.signAsync(
