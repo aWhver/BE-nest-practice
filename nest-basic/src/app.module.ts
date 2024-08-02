@@ -6,7 +6,6 @@ import { DynamicModuleModule } from './dynamic-module/dynamic-module.module';
 import { MiddlewarePracticeModule } from './middleware-practice/middleware-practice.module';
 import { InterceptorPracticeModule } from './interceptor-practice/interceptor-practice.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { GlobalInterceptor } from './interceptor-practice/interceptor';
 import { MulterUploadModule } from './multer-upload/multer-upload.module';
 import { CityModule } from './city/city.module';
 import { DbModule } from 'libs/db/src';
@@ -14,6 +13,9 @@ import { ArticleModule } from './article/article.module';
 import { UserModule } from './user/user.module';
 import { PermissionModule } from './permission/permission.module';
 import { RedisModule } from './redis/redis.module';
+import { RabcUserModule } from './rabc-user/rabc-user.module';
+import { RoleModule } from './role/role.module';
+import { ResponseInterceptor } from './common/interceptor';
 
 @Module({
   imports: [
@@ -29,13 +31,15 @@ import { RedisModule } from './redis/redis.module';
     UserModule,
     PermissionModule,
     RedisModule,
+    RabcUserModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
     {
       provide: APP_INTERCEPTOR,
-      useClass: GlobalInterceptor,
+      useClass: ResponseInterceptor,
     },
   ],
 })

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RABC 权限控制</title>
+    <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <h1>注册登录</h1>
+    <div class="contaier">
+      <div><label>用户名</label><input id="username" /></div>
+      <div><label>密码</label><input id="password" /></div>
+      <button id="register">注册</button>
+      <button id="login">登录</button>
+    </div>
+    <script>
+      // function parseUrl(url) {
+      //   return 'http:localhost'
+      // }
+      let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InpoYW9qdCIsImlkIjoxLCJpYXQiOjE3MjI1NjQ4MzksImV4cCI6MTcyMjYwMDgzOX0.epV4Erq-94JvvMZ1aHOAKAYF9EkxVMiX8VuGPtQyg88';
+      register.onclick = function() {
+        const data = {
+          username: username.value,
+          password: password.value,
+        };
+        console.log('data', data);
+        axios.post(`/rabcUser/register?permissionCode=${permissionCode.value}`, data);
+      }
+      login.onclick = function() {
+        const data = {
+          username: username.value,
+          password: password.value,
+        };
+        axios.post(`/rabcUser/login`, data).then(res => {
+          console.log('res', res);
+          token = res.data.data;
+        });
+      }
+    </script>
+
+    <!---创建角色--->
+    <h1>创建角色</h1>
+    <div class="create-role-container">
+      <div>
+        <label for="role">角色名</label>
+        <input type="text" id="role" >
+      </div>
+      <div>
+        <label for="permissionCode">权限码</label>
+        <input type="text" id="permissionCode">
+        <p>给该角色配置权限，输入：1,2,34,5这样的</p></div>
+      </div>
+      <button id="createRole">创建角色</button>
+    </div>
+    <script>
+      createRole.onclick = function() {
+        axios.post('/role/create', {
+          name: role.value,
+          permissionCodes: permissionCode.value.split(',')
+        });
+      }
+    </script>
+
+    <!---分配角色--->
+    <h1>给用户分配角色</h1>
+    <div class="assign-role">
+      <div>
+        <label for="users">用户</label>
+        <select name="users" id="users">
+      </div>
+      </select>
+      <div>
+        <label for="roles">角色</label>
+        <select name="roles" multiple id="roles"></select>
+      </div>
+      <button id="assignRoleBtn">分配角色</button>
+    </div>
+    <script>
+        ~(function() {
+          axios.get('/rabcUser').then(res => {
+            console.log('res', res);
+            const data = res.data.data || [];
+            const oFragment = document.createDocumentFragment();
+            data.forEach(item => {
+              const oOption = document.createElement('option');
+              oOption.value = item.id;
+              oOption.textContent = item.username;
+              oFragment.appendChild(oOption);
+            });
+            users.appendChild(oFragment);
+          });
+          axios.get('/role').then(res => {
+            console.log('res', res);
+            const data = res.data.data || [];
+            const oFragment = document.createDocumentFragment();
+            data.forEach(item => {
+              const oOption = document.createElement('option');
+              oOption.value = item.id;
+              oOption.textContent = item.name;
+              oFragment.appendChild(oOption);
+            });
+            roles.appendChild(oFragment);
+          });
+          assignRoleBtn.onclick = function () {
+            const options = roles.getElementsByTagName('option');
+            const selecteds = [];
+            for (let i = 0; i < options.length; i++) {
+              if (options[i].selected) {
+                selecteds.push(Number(options[i].value));
+              }
+            }
+            console.log('selecteds', selecteds);
+            axios.post('/rabcUser/assignRole', {
+              userId: Number(users.value),
+              roles: selecteds,
+            })
+          }
+        })();
+    </script>
+
+    <!-- 测试角色权限接口 -->
+     <h1>测试角色权限接口</h1>
+     <p>需先登录</p>
+     <div class="role-permission">
+      <div>权限码1,2,3,14</div>
+      <button id="permissionOne">测试接口rolePermissionOne
+      </button>
+
+      <div>权限码15</div>
+      <button id="permissionTwo">测试接口rolePermissionTwo
+      </button>
+     </div>
+     <script>
+      permissionOne.onclick = function() {
+        console.log('token', token);
+        axios.get('/role/rolepermissionOne', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }).then(res => {
+          alert('权限通过：' + res.data.data);
+        }).catch(err => {
+          console.log('err', err);
+          alert('需要权限码1,2,3,14')
+        })
+      }
+      permissionTwo.onclick = function() {
+        axios.get('/role/rolepermissionTwo', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }).then(res => {
+          alert('权限通过：' + res.data.data);
+        }).catch(err => {
+          console.log('err', err);
+          alert('需要权限码15')
+        })
+      }
+     </script>
+  </body>
+</html>

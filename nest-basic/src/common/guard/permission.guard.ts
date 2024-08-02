@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
-import { Observable } from 'rxjs';
 import { UserService } from 'src/user/user.service';
 import { API_PERMISSION } from '../const';
 import { RedisService } from 'src/redis/redis.service';
@@ -46,7 +45,7 @@ export class PermissionGuard implements CanActivate {
     if (userPermissionCodes.length === 0) {
       const user = await this.userService.findByUsername(username);
       userPermissionCodes = user.permissions.map((p) => p.permissionCode);
-      this.redisService.listSet(key, userPermissionCodes, 100000);
+      this.redisService.listSet(key, userPermissionCodes, 3600);
     }
 
     const handlerPermissions = this.reflector.get(

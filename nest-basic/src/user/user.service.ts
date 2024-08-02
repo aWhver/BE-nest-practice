@@ -4,15 +4,9 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import * as crypto from 'crypto';
 import { Permission } from 'src/permission/entities/permission.entity';
 import { PermissionService } from 'src/permission/permission.service';
-
-const md5 = function (str) {
-  const hash = crypto.createHash('md5');
-  hash.update(str);
-  return hash.digest('hex');
-};
+import { md5 } from 'src/common/utils';
 
 @Injectable()
 export class UserService {

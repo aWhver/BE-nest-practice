@@ -13,6 +13,10 @@
 ## Functional description
 
 - 新增了 `acl` 权限。可以访问 acl.html文件。包含了`session`、`redis`的运用.涉及目录文件 `src/user`、 `src/permission`、`src/redis`、`ｐermission.guard.ts`.
+
+- 新增 `RABC`权限。可以访问 rabc.html文件。包含了`jwt`、`redis`的运用.涉及目录文件 `src/rabc-user`、 `src/role`、`src/permission`、`src/redis`、`role.guard.ts`。可以通过 html的内容注册用户，创建角色并分配权限，然后为用户分配角色，点击测试默认的权限接口。也可以用 `postman`、`apifox`模拟请求，需要先登录拿到 token。role模块下的做了权限限制接口
+
+
 **Notes:** 因为接入了 redis，想要启动项目，这里如果你没跑 redis server，先在 docker里起一个 redis的容器跑起来，不然启动不了。也可以把redis的模块的引入注释掉，然后涉及到的守卫(guard)不应用
 
 ## Installation

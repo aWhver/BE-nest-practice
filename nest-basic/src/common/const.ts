@@ -1,1 +1,3 @@
 export const API_PERMISSION = 'API_PERMISSION';
+
+export const ROLE_PERMISSION = 'ROLE_PERMISSION';

@@ -1,10 +1,18 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 
 @Global()
 @Module({
   imports: [
+    JwtModule.register({
+      global: true,
+      secret: 'tong',
+      signOptions: {
+        expiresIn: '10h',
+      },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [`.env.stage.${process.env.STAGE}`, '.env.stage.default'],

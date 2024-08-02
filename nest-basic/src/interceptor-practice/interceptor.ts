@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Observable, tap, map, timeout, catchError, throwError } from 'rxjs';
 import { AppService } from 'src/app.service';
+import { Response } from 'express';
 
 @Injectable()
 export class TestInterceptor implements NestInterceptor {
@@ -16,15 +17,23 @@ export class TestInterceptor implements NestInterceptor {
     next: CallHandler<any>,
   ): Observable<any> | Promise<Observable<any>> {
     const time = Date.now();
+    const response = context.switchToHttp().getResponse<Response>();
     return next.handle().pipe(
       tap(() => {
         console.log('time', Date.now() - time);
       }),
-      map((data: string) => ({
-        data,
-        code: 200,
-        message: '请求成功',
-      })),
+      map((data: string) => {
+        // 修改默认的成功状态码
+        if (response.statusCode === 201) {
+          response.status(200);
+          // response.sendStatus(200);
+        }
+        return {
+          data,
+          code: 200,
+          message: '请求成功',
+        };
+      }),
     );
   }
 }
