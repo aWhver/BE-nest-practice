@@ -66,4 +66,12 @@ export class RabcUserService {
       },
     });
   }
+
+  findById(userId: number) {
+    return this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+    });
+  }
 }

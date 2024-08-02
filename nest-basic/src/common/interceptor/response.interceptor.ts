@@ -34,6 +34,7 @@ export class ResponseInterceptor implements NestInterceptor {
       }),
       catchError((error) => {
         this.logger.error(error);
+        response.status(error.status);
         return of({
           code: 500,
           data: error,

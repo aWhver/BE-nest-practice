@@ -3,20 +3,19 @@ import {
   Get,
   Post,
   Body,
-  Param,
   UseGuards,
   SetMetadata,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
-import { AuthGuard, PermissionGuard, RoleGuard } from 'src/common/guard';
+import { RoleGuard } from 'src/common/guard';
 import { ROLE_PERMISSION } from 'src/common/const';
 
 @Controller('role')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
-  @UseGuards(AuthGuard)
+  @UseGuards(RoleGuard)
   @Post('create')
   create(@Body() createRoleDto: CreateRoleDto) {
     return this.roleService.create(createRoleDto);

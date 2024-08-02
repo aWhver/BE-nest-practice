@@ -73,12 +73,10 @@ export class RoleGuard implements CanActivate {
       }
       return true;
     } catch (error) {
-      if (error.response.statusCode === 403) {
+      if (error?.response?.statusCode === 403) {
         throw new ForbiddenException(error.response.message);
       }
-      if (!token) {
-        throw new UnauthorizedException('登录已过期，请重新登录');
-      }
+      throw new UnauthorizedException('登录已过期，请重新登录');
     }
   }
 
