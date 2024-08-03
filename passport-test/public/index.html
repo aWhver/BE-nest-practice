@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <script>
+      axios.post('/login', {
+        username: 'juntong',
+        password: '123456',
+      }).then(res => {
+        console.log('res', res);
+        axios.get('/profile', {
+          headers: {
+            Authorization: `Bearer ${res.data.access_token}`
+          }
+        }).then(resp => {
+          console.log('resp', resp);
+        }).catch(err => {
+          console.log('err', err);
+        });
+
+
+        setTimeout(() => {
+          axios.get('/', {
+            headers: {
+              Authorization: `Bearer ${res.data.access_token}`
+            }
+          })
+        }, 3000)
+      });
+    </script>
+  </body>
+</html>
