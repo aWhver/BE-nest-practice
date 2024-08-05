@@ -1,0 +1,27 @@
+services:
+  # 每一个 service都是一个 docker容器，名字随便取
+  nest-app:
+    build:
+      context: ./
+      dockerfile: ./multiStage.Dockerfile
+    # depends_on 依赖于哪些容器，可以保证先执行依赖在执行自身，保持顺序
+    depends_on:
+      - mysql-container
+      - redis-test
+    ports:
+      - '3200:3100'
+  mysql-container:
+    image: mysql
+    ports:
+      - '3306:3306'
+    volumes:
+      - /Users/zhaojuntong/Desktop/dockertest/mysql⁠⁠:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: docker-test
+      MYSQL_ROOT_PASSWORD: admin0326
+  redis-test:
+    image: redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - /Users/zhaojuntong/Desktop/dockertest/redis:/data
