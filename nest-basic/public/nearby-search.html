@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>附近搜索</title>
+    <script type="text/javascript" src="https://api.map.baidu.com/api?v=1.0&type=webgl&ak=a8iOST5qc4zyqL2BQh2MszlZbS2Kmj8P"></script>
+    <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+    <style>
+      #container {
+        width: 100%;
+        height: 550px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h1>添加位置</h1>
+      <div>
+        <label for="">位置名称</label>
+        <input type="text" id="posName" />
+      </div>
+      <div>
+        <label for="">精度</label>
+        <input type="number" id="longitude" />
+      </div>
+      <div>
+        <label for="">纬度</label>
+        <input type="number" id="latitude" />
+      </div>
+      <button type="button" id="addPos">add position</button>
+    </div>
+    <h1>搜索数据库里附近的位置</h1>
+    <div>
+
+      <label for="">精度</label>
+      <input type="number" id="lg">
+    </div>
+    <div>
+      <label for="">纬度</label>
+      <input type="number" id="lt">
+    </div>
+    <div>
+      <label for="">半径</label>
+      <input type="number" id="radius">
+    </div>
+    <button type="button" id="nearbySearch">搜索</button>
+    <div id="container"></div>
+    <script>
+      addPos.onclick = function () {
+        axios.post('/nearbySearch/add', {
+          posName: posName.value,
+          longitude: longitude.value,
+          latitude: latitude.value,
+        });
+      };
+    </script>
+    <script>
+      window.addEventListener('load', () => {
+        var map = new BMapGL.Map("container");
+        var markers = [];
+        map.centerAndZoom(new BMapGL.Point(113.3900025486946106, 23.13000101271457254), 15);
+        search(113.3900025486946106, 23.13000101271457254, 5);
+
+        nearbySearch.onclick = function () {
+          search(lg.value, lt.value, radius.value);
+        }
+
+        function search(lg, lt, radius) {
+          axios.get('/nearbySearch/search', {
+            params: {
+              longitude: lg,
+              latitude: lt,
+              radius,
+            }
+          }).then(res => {
+            console.log('res', res);
+            map.centerAndZoom(new BMapGL.Point(lg, lt), 15);
+            const positions = res.data.data;
+            removeMarker(markers);
+            positions.forEach(pos => {
+              var point = new BMapGL.Point(pos.longitude, pos.latitude);
+              var marker = new BMapGL.Marker(point);
+              map.addOverlay(marker);
+              markers.push(marker);
+            })
+          })
+        }
+        function removeMarker(markers) {
+          markers.forEach(marker => {
+            map.removeOverlay(marker);
+          });
+          markers = [];
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -16,6 +16,7 @@ import { RedisModule } from './redis/redis.module';
 import { RabcUserModule } from './rabc-user/rabc-user.module';
 import { RoleModule } from './role/role.module';
 import { ResponseInterceptor } from './common/interceptor';
+import { NearbySearchModule } from './nearby-search/nearby-search.module';
 
 @Module({
   imports: [
@@ -29,9 +30,10 @@ import { ResponseInterceptor } from './common/interceptor';
     CityModule,
     ArticleModule,
     // 这几个模块需要起 redis服务或者 docker redis容器,练习其他的时候先注释掉
-    /* UserModule,
+    /* RedisModule,
+    NearbySearchModule,
+    UserModule,
     PermissionModule,
-    RedisModule,
     RabcUserModule,
     RoleModule, */
   ],

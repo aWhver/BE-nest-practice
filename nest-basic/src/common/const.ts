@@ -1,3 +1,5 @@
 export const API_PERMISSION = 'API_PERMISSION';
 
 export const ROLE_PERMISSION = 'ROLE_PERMISSION';
+
+export const REDIS_CLIENT = 'REDIS_CLIENT';
