@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 import { REDIS_CLIENT } from 'src/common/const';
 type GeoUnits = 'm' | 'km' | 'mi' | 'ft';
@@ -7,8 +7,15 @@ export class RedisService {
   @Inject(REDIS_CLIENT)
   private redisClient: RedisClientType;
 
-  async hset(key: string, field: string, value: any) {
+  async keys(pattern) {
+    return this.redisClient.keys(pattern);
+  }
+
+  async hset(key: string, field: string, value: any, ttl?: number) {
     await this.redisClient.hSet(key, field, value);
+    if (ttl) {
+      await this.redisClient.expire(key, ttl);
+    }
   }
   async hget(key: string, field: string) {
     return this.redisClient.hGet(key, field);

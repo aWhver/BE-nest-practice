@@ -30,4 +30,9 @@ export class Article {
   // 这里添加 tags字段，修改下表结构，重新执行 migration
   @Column()
   tags: string;
+
+  @Column({
+    default: 0,
+  })
+  viewCount: number;
 }
