@@ -19,6 +19,8 @@ import { ResponseInterceptor } from './common/interceptor';
 import { NearbySearchModule } from './nearby-search/nearby-search.module';
 import { TaskModule } from './task/task.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ShortUrlCodeModule } from './short-url-code/short-url-code.module';
+import { ShortLongMapModule } from './short-long-map/short-long-map.module';
 
 @Module({
   imports: [
@@ -31,11 +33,13 @@ import { ScheduleModule } from '@nestjs/schedule';
     InterceptorPracticeModule,
     MulterUploadModule,
     CityModule,
-    ArticleModule,
+    ShortUrlCodeModule,
+    ShortLongMapModule,
     // 这几个模块需要起 redis服务或者 docker redis容器,练习其他的时候先注释掉
-    RedisModule,
+    /* RedisModule,
+    ArticleModule,
     TaskModule,
-    /* NearbySearchModule,
+    NearbySearchModule,
     UserModule,
     PermissionModule,
     RabcUserModule,

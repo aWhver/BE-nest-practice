@@ -5,6 +5,8 @@ import { Permission } from './permission/entities/permission.entity';
 import { User } from './user/entities/user.entity';
 import { RabcUser } from './rabc-user/entities/rabc-user.entity';
 import { Role } from './role/entities/role.entity';
+import { ShortLongMap } from './short-long-map/entities/short-long-map';
+import { ShortUrlCode } from './short-url-code/entities/short-url-code.entity';
 
 config({
   path: [`.env.stage.${process.env.STAGE}`, '.env.stage.default'],
@@ -22,7 +24,15 @@ export default new DataSource({
   // typeorm 提供了 migration:create,generate,run,revert命令
   synchronize: process.env.DB_SYNC === 'true',
   migrations: ['src/migrations/**.ts'],
-  entities: [Article, Permission, User, RabcUser, Role],
+  entities: [
+    Article,
+    Permission,
+    User,
+    RabcUser,
+    Role,
+    ShortLongMap,
+    ShortUrlCode,
+  ],
   logging: true,
   poolSize: 10,
   connectorPackage: 'mysql2',

@@ -7,7 +7,7 @@ export class TaskService {
   @Inject(ArticleService)
   protected readonly articleService: ArticleService;
 
-  @Cron(CronExpression.EVERY_30_SECONDS)
+  @Cron(CronExpression.EVERY_DAY_AT_4AM)
   updateArticleViewCount() {
     this.articleService.flushRedis2Db();
   }
