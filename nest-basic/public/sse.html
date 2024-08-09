@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSE</title>
+</head>
+<body>
+  <div id="message">
+    <h1>推送给用户 juntong 的消息, sse.text文件内容的修改会推送过来</h1>
+  </div>
+  <script>
+    // EventSource 配合 sse 可以做站内信，实时日志输出，chatgpt的消息返回
+    // content-type的值为 text/event-stream
+    // sse只能推送文本数据，如果推送二进制数据需要做转换
+    const es = new EventSource('/stream/juntong?msgType=1');
+    es.onmessage = function(ev) {
+      console.log('ev', ev);
+      message.innerHTML += `<p>${ev.data.replace(/\n/g, '<br/>')}</p>`;
+    };
+  </script>
+</body>
+</html>
