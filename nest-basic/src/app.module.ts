@@ -21,6 +21,7 @@ import { TaskModule } from './task/task.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ShortUrlCodeModule } from './short-url-code/short-url-code.module';
 import { ShortLongMapModule } from './short-long-map/short-long-map.module';
+import { QrcodeLoginModule } from './qrcode-login/qrcode-login.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ShortLongMapModule } from './short-long-map/short-long-map.module';
     CityModule,
     ShortUrlCodeModule,
     ShortLongMapModule,
+    QrcodeLoginModule,
     // 这几个模块需要起 redis服务或者 docker redis容器,练习其他的时候先注释掉
     /* RedisModule,
     ArticleModule,

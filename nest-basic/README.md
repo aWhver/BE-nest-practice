@@ -23,8 +23,9 @@
 
 **Notes:** 因为接入了 redis，想要启动项目，这里如果你没跑 redis server，先在 docker里起一个 redis的容器跑起来，不然启动不了。也可以把redis的模块的引入注释掉，然后涉及到的守卫(guard)不应用
 
-- 新增 `短链设计`。设计文件目录 `src/short-url-code`、`src/short-long-map`
+- 新增 `短链设计`。涉及文件目录 `src/short-url-code`、`src/short-long-map`
 
+- 新增 `扫码登录`。涉及文件目录 `src/qrcode-login`、`scan-login/index.html`、`scan-login/confirm.html`
 ## Installation
 
 ```bash

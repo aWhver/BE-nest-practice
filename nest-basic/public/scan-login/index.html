@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>扫码页</title>
+    <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+    <style>
+      #qrcode-container {
+        position: relative;
+      }
+      #qrcode {
+        width: 220px;
+        height: 220px;
+      }
+      #refresh {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 220px;
+        height: 220px;
+        background-color: rgba(0, 0, 0, 0.5);
+        text-align: center;
+        line-height: 220px;
+        color: #fff;
+        cursor: pointer;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="qrcode-container">
+      <img id="qrcode" src="" alt="" />
+      <div id="refresh">二维码已失效，点击刷新</div>
+    </div>
+    <div id="qrcodeStatus"></div>
+    <div id="user">
+
+    </div>
+    <script>
+      function init() {
+        axios.get('/qrcode/generate').then((res) => {
+          qrcode.src = res.data.data.base64;
+          loopStatus(res.data.data.uid);
+        });
+      }
+      init();
+
+      refresh.onclick = function() {
+        this.style.display = 'none';
+        init();
+      };
+
+      function loopStatus(id) {
+        console.log('id', id);
+        const timer = setInterval(() => {
+          axios
+            .get('/qrcode/check', {
+              params: {
+                id,
+              },
+            })
+            .then((res) => {
+              const map = new Map([
+                ['noscan', ''],
+                ['wait-scan-confirm', '已扫码，等待确认'],
+                ['scan-confirm', '确认登录'],
+                ['scan-cancel', '取消登录'],
+                ['expired', '二维码已失效'],
+              ]);
+              qrcodeStatus.innerText = map.get(res.data.data.status);
+              if (res.data.data.status === 'expired') {
+                clearInterval(timer);
+                refresh.style.display = 'block';
+              }
+              if (res.data.data.status === 'scan-confirm') {
+                console.log('token', res.data.data.token);
+                user.innerText = `当前登录用户: ${res.data.data.userInfo.username}`;
+                // 跳转到home页
+                clearInterval(timer);
+              }
+            });
+        }, 2000);
+      }
+    </script>
+  </body>
+</html>
