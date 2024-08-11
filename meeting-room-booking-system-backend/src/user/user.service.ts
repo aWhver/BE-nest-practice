@@ -1,13 +1,14 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, SendCaptchaDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import * as crypto from 'crypto';
 import { Role } from 'src/role/entities/role.entity';
 import { Permission } from 'src/permission/entities/permission.entity';
 import { RedisService } from 'src/redis/redis.service';
+import { EmailService } from 'src/email/email.service';
+import { md5, generateCaptcha } from 'src/common/utils';
 
 const commonPermissions = [
   { code: 'room1', description: '万宁' },
@@ -26,12 +27,6 @@ const permissionGroups = [
   ],
 ];
 
-const md5 = function (str) {
-  const hash = crypto.createHash('md5');
-  hash.update(str);
-  return hash.digest('hex');
-};
-
 @Injectable()
 export class UserService {
   @InjectRepository(User)
@@ -40,13 +35,16 @@ export class UserService {
   @Inject(RedisService)
   private redisService: RedisService;
 
+  @Inject(EmailService)
+  private emailService: EmailService;
+
   async create(createUserDto: CreateUserDto) {
     const key = `${createUserDto.email}_register_captcha`;
     const captcha = await this.redisService.get(key);
     if (!captcha) {
       throw new BadRequestException('验证码已过期');
     }
-    if (captcha !== String(createUserDto.captcha)) {
+    if (captcha !== createUserDto.captcha) {
       throw new BadRequestException('验证码不正确');
     }
     const user = await this.findOne({ username: createUserDto.username });
@@ -96,5 +94,21 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async sendMail(sendCaptchaDto: SendCaptchaDto) {
+    const key = `${sendCaptchaDto.email}_register_captcha`;
+    const captchaInRedis = await this.redisService.get(key);
+    if (captchaInRedis) {
+      return '验证码5分钟内有效';
+    }
+    const captcha = generateCaptcha();
+    this.redisService.set(key, captcha, 5 * 60);
+    this.emailService.sendMail({
+      to: sendCaptchaDto.email,
+      subject: sendCaptchaDto.subject,
+      html: `<h2>验证码: ${captcha}</h2>`,
+    });
+    return '发送成功';
   }
 }

@@ -8,9 +8,11 @@ import { PermissionModule } from './permission/permission.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptor';
 import { RedisModule } from './redis/redis.module';
+import { EmailService } from './email/email.service';
+import { EmailModule } from './email/email.module';
 
 @Module({
-  imports: [DbModule, UserModule, RoleModule, PermissionModule, RedisModule],
+  imports: [DbModule, UserModule, RoleModule, PermissionModule, RedisModule, EmailModule],
   controllers: [AppController],
   providers: [
     AppService,
@@ -18,6 +20,7 @@ import { RedisModule } from './redis/redis.module';
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
     },
+    EmailService,
   ],
 })
 export class AppModule {}
