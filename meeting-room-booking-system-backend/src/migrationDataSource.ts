@@ -1,6 +1,9 @@
 import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
 import * as path from 'path';
+import { User } from './user/entities/user.entity';
+import { Role } from './role/entities/role.entity';
+import { Permission } from './permission/entities/permission.entity';
 
 config({
   path: path.join(__dirname, `.env.stage.${process.env.STAGE}`),
@@ -18,7 +21,7 @@ export default new DataSource({
   // typeorm 提供了 migration:create,generate,run,revert命令
   synchronize: process.env.DB_SYNC === 'true',
   migrations: ['src/migrations/**.ts'],
-  entities: [],
+  entities: [User, Role, Permission],
   logging: true,
   poolSize: 10,
   connectorPackage: 'mysql2',
