@@ -2,6 +2,7 @@ import { Controller, Get, Param, Query, Sse } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Observable } from 'rxjs';
 import { exec } from 'child_process';
+import * as os from 'os';
 
 @Controller()
 export class AppController {
@@ -27,5 +28,10 @@ export class AppController {
       //   observe.next('延时3s的消息');
       // }, 3000);
     });
+  }
+
+  @Get('cpus')
+  getCpus() {
+    return os.cpus();
   }
 }

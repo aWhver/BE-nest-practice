@@ -1,26 +1,20 @@
 import { Global, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
-
+import { ConfigService, ConfigModule } from '@nestjs/config';
+import * as path from 'path';
 @Global()
 @Module({
   imports: [
-    JwtModule.register({
-      global: true,
-      secret: 'tong',
-      signOptions: {
-        expiresIn: '10h',
-      },
-    }),
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [`.env.stage.${process.env.STAGE}`, '.env.stage.default'],
+      envFilePath: [
+        path.join(__dirname, '../../../../', `.env.stage.${process.env.STAGE}`),
+      ],
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => {
+      useFactory(configService: ConfigService) {
         return {
           type: 'mysql',
           host: configService.get('DB_HOST'),
