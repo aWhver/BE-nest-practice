@@ -7,6 +7,7 @@ import {
   Inject,
   Query,
   UnauthorizedException,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,6 +16,10 @@ import { md5 } from 'src/common/utils';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { LoginUserVo, UserVo } from './vo/login.vo';
+import { skipAuth } from 'src/common/decorator';
+import { RedisService } from 'src/redis/redis.service';
+import { getRolePermissionKey } from 'src/common/const';
+import { Request } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -26,28 +31,35 @@ export class UserController {
   @Inject(ConfigService)
   private configService: ConfigService;
 
+  @Inject(RedisService)
+  private redisService: RedisService;
+
   @Get('initAdmin')
   initAdmin() {
     return this.userService.initAdmin();
   }
 
+  @skipAuth()
   @Post('register')
   create(@Body() createUserDto: CreateUserDto) {
     console.log('createUserDto', createUserDto);
     return this.userService.create(createUserDto);
   }
 
+  @skipAuth()
   @Post('RegisterCaptcha')
   sendCaptcha(@Body('email') email: string) {
     return this.userService.sendCaptcha(email);
   }
 
+  @skipAuth()
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     // console.log('loginDto', loginDto);
     return this.getLoginUser(loginDto, false);
   }
 
+  @skipAuth()
   @Post('admin/login')
   async adminLogin(@Body() loginDto: LoginDto) {
     // console.log('loginDto', loginDto);
@@ -89,14 +101,22 @@ export class UserController {
     if (password !== md5(loginDto.password)) {
       throw new BadRequestException('密码不正确');
     }
-
+    const key = getRolePermissionKey(user.username);
+    this.redisService.hset(
+      key,
+      'role_permission',
+      JSON.stringify({
+        roles: user.roles,
+        permissions: user.permissions,
+      }),
+      24 * 60 * 60,
+    );
     const [access_token, refresh_token] = this.generateToken(user);
 
     const loginUserVo = new LoginUserVo();
     loginUserVo.userInfo = user;
     loginUserVo.access_token = access_token;
     loginUserVo.refresh_token = refresh_token;
-
     return loginUserVo;
   }
   // 生成 token

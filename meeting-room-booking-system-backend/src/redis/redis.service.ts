@@ -19,10 +19,11 @@ export class RedisService {
     }
   }
 
-  hset(key: string, field: string, value: any, ttl?: number) {
-    this.redisClient.hSet(key, field, value);
+  async hset(key: string, field: string, value: any, ttl?: number) {
+    await this.redisClient.hSet(key, field, value);
+
     if (ttl) {
-      this.redisClient.expire(key, ttl);
+      await this.redisClient.expire(key, ttl);
     }
   }
 
