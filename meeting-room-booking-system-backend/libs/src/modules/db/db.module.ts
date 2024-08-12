@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import * as path from 'path';
+import { JwtModule } from '@nestjs/jwt';
 @Global()
 @Module({
   imports: [
@@ -35,6 +36,18 @@ import * as path from 'path';
           },
         };
       },
+    }),
+    JwtModule.registerAsync({
+      global: true,
+      useFactory(configService: ConfigService) {
+        return {
+          secret: configService.get('JWT_SECRET'),
+          signOptions: {
+            expiresIn: '30m',
+          },
+        };
+      },
+      inject: [ConfigService],
     }),
   ],
 })

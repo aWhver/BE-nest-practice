@@ -3,17 +3,33 @@ import {
   Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
+  BadRequestException,
+  Inject,
+  Query,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginDto } from './dto/login.dto';
+import { md5 } from 'src/common/utils';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { LoginUserVo, UserVo } from './vo/login.vo';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Inject(JwtService)
+  private jwtService: JwtService;
+
+  @Inject(ConfigService)
+  private configService: ConfigService;
+
+  @Get('initAdmin')
+  initAdmin() {
+    return this.userService.initAdmin();
+  }
 
   @Post('register')
   create(@Body() createUserDto: CreateUserDto) {
@@ -23,9 +39,87 @@ export class UserController {
 
   @Post('RegisterCaptcha')
   sendCaptcha(@Body('email') email: string) {
-    return this.userService.sendMail({
-      email,
-      subject: '会议室预定系统注册验证码',
-    });
+    return this.userService.sendCaptcha(email);
+  }
+
+  @Post('login')
+  async login(@Body() loginDto: LoginDto) {
+    // console.log('loginDto', loginDto);
+    return this.getLoginUser(loginDto, false);
+  }
+
+  @Post('admin/login')
+  async adminLogin(@Body() loginDto: LoginDto) {
+    // console.log('loginDto', loginDto);
+    const user = await this.getLoginUser(loginDto, true);
+
+    if (!user.userInfo.isAdmin) {
+      throw new BadRequestException(
+        '该用户不是管理员账户，请使用用户登录界面进行登录',
+      );
+    }
+    return user;
+  }
+
+  @Get('refreshToken')
+  async refreshToken(@Query('token') token: string) {
+    try {
+      const data = this.jwtService.verify(token);
+      const [user] = await this.userService.findOne({
+        id: data.userId,
+      });
+      const [access_token, refresh_token] = this.generateToken(user);
+      return {
+        access_token,
+        refresh_token,
+      };
+    } catch (error) {
+      throw new UnauthorizedException('token已过期');
+    }
+  }
+
+  async getLoginUser(loginDto: LoginDto, isAdmin: boolean) {
+    const [user, password] = await this.userService.findOne(
+      {
+        username: loginDto.username,
+        isAdmin: isAdmin,
+      },
+      ['roles', 'roles.permissions'],
+    );
+    if (password !== md5(loginDto.password)) {
+      throw new BadRequestException('密码不正确');
+    }
+
+    const [access_token, refresh_token] = this.generateToken(user);
+
+    const loginUserVo = new LoginUserVo();
+    loginUserVo.userInfo = user;
+    loginUserVo.access_token = access_token;
+    loginUserVo.refresh_token = refresh_token;
+
+    return loginUserVo;
+  }
+  // 生成 token
+  generateToken(user: UserVo) {
+    const access_token = this.jwtService.sign(
+      {
+        username: user.username,
+        userId: user.id,
+      },
+      {
+        expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRE_TIME'),
+      },
+    );
+
+    const refresh_token = this.jwtService.sign(
+      {
+        userId: user.id,
+      },
+      {
+        expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRE_TIME'),
+      },
+    );
+
+    return [access_token, refresh_token];
   }
 }

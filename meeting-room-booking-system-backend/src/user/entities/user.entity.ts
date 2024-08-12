@@ -24,17 +24,22 @@ export class User {
   })
   password: string;
 
-  @Column()
+  @Column({
+    default: '',
+  })
   nickName: string;
 
   @Column()
   email: string;
 
-  @Column()
+  @Column({
+    default: '',
+  })
   headPic: string;
 
   @Column({
     length: 20,
+    nullable: true,
   })
   phoneNumber: string;
 

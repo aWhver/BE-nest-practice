@@ -1,25 +1,25 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { createTransport, Transporter } from 'nodemailer';
-
-const sender = '13714040198@163.com';
 
 @Injectable()
 export class EmailService {
   transporter: Transporter;
 
-  constructor() {
+  constructor(private configService: ConfigService) {
     this.transporter = createTransport({
-      host: 'smtp.163.com',
-      port: 25,
+      host: configService.get('NODEMAILER_HOST'),
+      port: configService.get('NODEMAILER_PORT'),
       secure: false,
       auth: {
-        user: sender,
-        pass: 'SLJZLILDAMQNGNMX', // 2024-08-11
+        user: configService.get('NODEMAILER_AUTH_USER'),
+        pass: configService.get('NODEMAILER_AUTH_PASS'), // 2024-08-11
       },
     });
   }
 
   sendMail({ to, subject, html }) {
+    const sender = this.configService.get('NODEMAILER_AUTH_USER');
     this.transporter.sendMail(
       {
         from: {
