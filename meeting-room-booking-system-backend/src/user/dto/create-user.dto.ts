@@ -15,6 +15,10 @@ export class CreateUserDto {
   })
   password: string;
 
+  /**
+   *
+   * 用来显示的
+   */
   @IsNotEmpty({
     message: '昵称不能为空',
   })

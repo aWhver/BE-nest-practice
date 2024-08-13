@@ -9,7 +9,20 @@
         "include": ".env.*",
         "watchAssets": true
       }
-    ]
+    ],
+    "plugins": [{
+      "name": "@nestjs/swagger",
+      "options": {
+        "classValidatorShim": true,
+        "introspectComments": true,
+        "dtoKeyOfComment": "description",
+        "controllerKeyOfComment": "description"
+      }
+    }],
+    "builder": {
+      "type": "swc"
+    },
+    "typeCheck": true
   },
   "generateOptions": {
     "spec": false

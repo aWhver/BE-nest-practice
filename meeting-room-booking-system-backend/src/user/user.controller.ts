@@ -25,7 +25,9 @@ import { UpdatePasswordDto, UpdateUserDto } from './dto/update-user.dto';
 import { generateParseIntPipe } from 'src/common/pipe';
 import { FindOptionsWhere, Like } from 'typeorm';
 import { User } from './entities/user.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('用户模块管理')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -87,6 +89,9 @@ export class UserController {
     return user;
   }
 
+  /**
+   * 获取用户信息
+   */
   @Get('info')
   async getUserInfo(@Request() req) {
     // console.log('req.user', req.user);
@@ -114,9 +119,9 @@ export class UserController {
       generateParseIntPipe('pageSize'),
     )
     pageSize: number,
-    @Query('nickName') nickName: string,
-    @Query('email') email: string,
-    @Query('username') username: string,
+    @Query('nickName') nickName?: string,
+    @Query('email') email?: string,
+    @Query('username') username?: string,
   ) {
     const condition: FindOptionsWhere<User> = {};
     if (nickName) {
