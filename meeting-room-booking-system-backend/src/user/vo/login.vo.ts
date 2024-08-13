@@ -1,3 +1,9 @@
+export class PermissionVo {
+  id: number;
+  code: string;
+  description: string;
+}
+
 export class UserVo {
   id: number;
   nickName: string;
@@ -9,11 +15,7 @@ export class UserVo {
   isAdmin: boolean;
   createTime: number;
   roles: string[];
-  permissions: Array<{
-    id: number;
-    code: string;
-    description: string;
-  }>;
+  permissions: Array<PermissionVo>;
 }
 
 export class LoginUserVo {

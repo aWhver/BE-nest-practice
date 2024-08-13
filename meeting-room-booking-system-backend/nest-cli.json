@@ -13,6 +13,11 @@
     "plugins": [{
       "name": "@nestjs/swagger",
       "options": {
+        "dtoFileNameSuffix": [
+          ".dto.ts",
+          ".entity.ts",
+          ".vo.ts"
+        ],
         "classValidatorShim": true,
         "introspectComments": true,
         "dtoKeyOfComment": "description",

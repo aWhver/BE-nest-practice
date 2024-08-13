@@ -26,6 +26,9 @@ import { generateParseIntPipe } from 'src/common/pipe';
 import { FindOptionsWhere, Like } from 'typeorm';
 import { User } from './entities/user.entity';
 import { ApiTags } from '@nestjs/swagger';
+import { UserListVo } from './vo/user.vo';
+import { RefreshTokenVo } from './vo/token.vo';
+import { UserListDto } from './dto/user-list.dto';
 
 @ApiTags('用户模块管理')
 @Controller('user')
@@ -119,10 +122,9 @@ export class UserController {
       generateParseIntPipe('pageSize'),
     )
     pageSize: number,
-    @Query('nickName') nickName?: string,
-    @Query('email') email?: string,
-    @Query('username') username?: string,
+    @Query() userListDto: UserListDto,
   ) {
+    const { nickName, email, username } = userListDto;
     const condition: FindOptionsWhere<User> = {};
     if (nickName) {
       condition.nickName = Like(`%${nickName}%`);
@@ -138,10 +140,10 @@ export class UserController {
       pageSize,
       condition,
     );
-    return {
-      users,
-      total,
-    };
+    const list = new UserListVo();
+    list.users = users;
+    list.total = total;
+    return list;
   }
 
   @Post('updatePassword')
@@ -236,10 +238,10 @@ export class UserController {
         id: data.userId,
       });
       const [access_token, refresh_token] = this.generateToken(user);
-      return {
-        access_token,
-        refresh_token,
-      };
+      const refreshToken = new RefreshTokenVo();
+      refreshToken.access_token = access_token;
+      refreshToken.refresh_token = refresh_token;
+      return refreshToken;
     } catch (error) {
       throw new UnauthorizedException('token已过期');
     }
