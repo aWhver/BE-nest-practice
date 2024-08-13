@@ -57,7 +57,7 @@ export class ResponseInterceptor implements NestInterceptor {
         response.status(error.status);
         return of({
           code: 500,
-          data: error,
+          data: error?.response ?? error,
           message: '请求出错了',
         });
       }),

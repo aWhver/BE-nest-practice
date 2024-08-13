@@ -2,7 +2,12 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto, SendCaptchaDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, FindOptionsRelations, Repository } from 'typeorm';
+import {
+  FindOptionsWhere,
+  FindOptionsRelations,
+  Repository,
+  In,
+} from 'typeorm';
 import { User } from './entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { Permission } from 'src/permission/entities/permission.entity';
@@ -10,6 +15,7 @@ import { RedisService } from 'src/redis/redis.service';
 import { EmailService } from 'src/email/email.service';
 import { md5, generateCaptcha } from 'src/common/utils';
 import { UserVo } from './vo/login.vo';
+import { PermissionService } from 'src/permission/permission.service';
 
 const commonPermissions = [
   { code: 'room1', description: '万宁' },
@@ -32,6 +38,9 @@ const permissionGroups = [
 export class UserService {
   @InjectRepository(User)
   private userRepository: Repository<User>;
+
+  @Inject(PermissionService)
+  private permissionService: PermissionService;
 
   @Inject(RedisService)
   private redisService: RedisService;
@@ -69,7 +78,10 @@ export class UserService {
     if (captcha !== createUserDto.captcha) {
       throw new BadRequestException('验证码不正确');
     }
-    const user = await this.findOne({ username: createUserDto.username });
+    const user = await this.findOneBy(
+      { username: createUserDto.username },
+      true,
+    );
     if (user) {
       throw new BadRequestException('用户已存在');
     }
@@ -78,23 +90,59 @@ export class UserService {
     u.password = md5(createUserDto.password);
     u.email = createUserDto.email;
     u.nickName = createUserDto.nickName;
-    u.roles = ['前端', '测试', '后端', '产品'].map((text, index) => {
+    const permissionCodes = ['前端'].map((text, index) => {
+      let codes = [];
+      codes = codes.concat(
+        permissionGroups[index].map((item) => {
+          return item.code;
+        }),
+      );
+      return codes;
+    });
+    const existedPermissions = await this.permissionService.findPermissions({
+      code: In([...new Set(permissionCodes)]),
+    });
+    u.roles = ['前端'].map((text, index) => {
       const role = new Role();
       role.name = text;
       role.permissions = permissionGroups[index].map((item) => {
         const permission = new Permission();
+        const p = existedPermissions.find((o) => item.code === o.code);
+        if (p) {
+          permission.id = p.id;
+        }
         permission.code = item.code;
         permission.description = item.description;
         return permission;
       });
       return role;
     });
-    await this.userRepository.insert(u);
+    await this.userRepository.save(u);
     return '注册成功';
   }
 
-  findAll() {
-    return `This action returns all user`;
+  // 分页
+  findUsersByPage(
+    pageNo: number,
+    pageSize: number,
+    condition?: FindOptionsWhere<User>,
+  ) {
+    const skipCount = (pageNo - 1) * pageSize;
+    return this.userRepository.findAndCount({
+      skip: skipCount,
+      take: pageSize,
+      select: [
+        'id',
+        'username',
+        'nickName',
+        'email',
+        'phoneNumber',
+        'isFrozen',
+        'headPic',
+        'createTime',
+      ],
+      where: condition,
+    });
   }
 
   async findOneBy(options: FindOptionsWhere<User>, ignoreError = false) {

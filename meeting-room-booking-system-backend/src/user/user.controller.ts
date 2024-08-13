@@ -8,6 +8,8 @@ import {
   Query,
   UnauthorizedException,
   Request,
+  ParseIntPipe,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,6 +22,9 @@ import { skipAuth } from 'src/common/decorator';
 import { RedisService } from 'src/redis/redis.service';
 import { getRolePermissionKey } from 'src/common/const';
 import { UpdatePasswordDto, UpdateUserDto } from './dto/update-user.dto';
+import { generateParseIntPipe } from 'src/common/pipe';
+import { FindOptionsWhere, Like } from 'typeorm';
+import { User } from './entities/user.entity';
 
 @Controller('user')
 export class UserController {
@@ -89,6 +94,49 @@ export class UserController {
       id: req.user.userId,
     });
     return user;
+  }
+
+  @Get('freeze')
+  async freezeUser(@Query('id', ParseIntPipe) id: number) {
+    const user = await this.userService.findOneBy({ id });
+    user.isFrozen = true;
+    await this.userService.updateUser(user);
+    return `冻结用户${user.nickName}成功`;
+  }
+
+  @Get('list')
+  async getList(
+    @Query('pageNo', new DefaultValuePipe(1), generateParseIntPipe('pageNo'))
+    pageNo: number,
+    @Query(
+      'pageSize',
+      new DefaultValuePipe(10),
+      generateParseIntPipe('pageSize'),
+    )
+    pageSize: number,
+    @Query('nickName') nickName: string,
+    @Query('email') email: string,
+    @Query('username') username: string,
+  ) {
+    const condition: FindOptionsWhere<User> = {};
+    if (nickName) {
+      condition.nickName = Like(`%${nickName}%`);
+    }
+    if (email) {
+      condition.email = Like(`%${email}%`);
+    }
+    if (username) {
+      condition.username = Like(`%${username}%`);
+    }
+    const [users, total] = await this.userService.findUsersByPage(
+      pageNo,
+      pageSize,
+      condition,
+    );
+    return {
+      users,
+      total,
+    };
   }
 
   @Post('updatePassword')
