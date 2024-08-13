@@ -28,7 +28,6 @@ export class MeetingsController {
   }
 
   @Get()
-  // @skipAuth()
   @SetMetadata(ROLE_PERMISSION, ['frontend'])
   @UseGuards(PermissionGuard)
   findAll(@Next() next, @Query('id') id) {

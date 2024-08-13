@@ -1,4 +1,4 @@
-import { IsNotEmpty, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 import Mail from 'nodemailer/lib/mailer';
 import { Readable } from 'stream';
 
@@ -23,6 +23,12 @@ export class CreateUserDto {
   @IsNotEmpty({
     message: '邮箱不能为空',
   })
+  @IsEmail(
+    {},
+    {
+      message: '不是合法的邮箱',
+    },
+  )
   email: string;
 
   @IsNotEmpty({
@@ -34,5 +40,5 @@ export class CreateUserDto {
 export class SendCaptchaDto {
   email: string;
   subject: string;
-  // html: string | Buffer | Readable | Mail.AttachmentLike;
+  html: (captcha: string) => string | Buffer | Readable | Mail.AttachmentLike;
 }

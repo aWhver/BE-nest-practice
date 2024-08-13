@@ -97,6 +97,14 @@ export class UserService {
     return `This action returns all user`;
   }
 
+  async findOneBy(options: FindOptionsWhere<User>, ignoreError = false) {
+    const user = await this.userRepository.findOneBy(options);
+    if (!user && !ignoreError) {
+      throw new BadRequestException('用户不存在');
+    }
+    return user;
+  }
+
   async findOne(options: FindOptionsWhere<User>, relations?: string[]) {
     const user = await this.userRepository.findOne({
       where: options,
@@ -110,13 +118,13 @@ export class UserService {
     userVo.id = user.id;
     userVo.email = user.email;
     userVo.headPic = user.headPic;
-    userVo.createTime = user.createTime.getMilliseconds();
+    userVo.createTime = user.createTime.getTime();
     userVo.isAdmin = user.isAdmin;
     userVo.isFrozen = user.isFrozen;
     userVo.phoneNumber = user.phoneNumber;
     userVo.username = user.username;
-    userVo.roles = user.roles.map((role) => role.name);
-    userVo.permissions = user.roles.reduce((arr, cur) => {
+    userVo.roles = (user.roles || []).map((role) => role.name);
+    userVo.permissions = (user.roles || []).reduce((arr, cur) => {
       cur.permissions.forEach((p) => {
         if (!arr.includes(p)) {
           arr.push(p);
@@ -127,29 +135,29 @@ export class UserService {
     return [userVo, user.password] as [UserVo, string];
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  updateUser(user: User) {
+    this.userRepository.save(user);
   }
 
   remove(id: number) {
     return `This action removes a #${id} user`;
   }
 
-  async sendCaptcha(email: string) {
-    const key = `${email}_register_captcha`;
+  async sendCaptcha(
+    key: string,
+    sendCaptchaDto: SendCaptchaDto,
+    ttl: number = 300,
+  ) {
     const captchaInRedis = await this.redisService.get(key);
     if (captchaInRedis) {
-      return '验证码5分钟内有效';
+      return `验证码${Math.ceil(ttl / 60)}分钟内有效`;
     }
     const captcha = generateCaptcha();
-    this.redisService.set(key, captcha, 5 * 60);
+    this.redisService.set(key, captcha, ttl);
     this.emailService.sendMail({
-      to: email,
-      subject: '会议室预定系统注册验证码',
-      html: `<div>
-        您好，欢迎使用会议室预定系统！
-        <h2>验证码: ${captcha}</h2>
-      </div>`,
+      to: sendCaptchaDto.email,
+      subject: sendCaptchaDto.subject,
+      html: sendCaptchaDto.html(captcha),
     });
     return '发送成功';
   }

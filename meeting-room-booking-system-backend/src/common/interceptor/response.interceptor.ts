@@ -52,6 +52,7 @@ export class ResponseInterceptor implements NestInterceptor {
         this.logger.log(`Response: ${JSON.stringify(data.data)}`);
       }),
       catchError((error) => {
+        console.log('error', error);
         this.logger.error(error);
         response.status(error.status);
         return of({
