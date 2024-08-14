@@ -3,16 +3,30 @@ import './index.css';
 import Captcha from '../../compnents/captcha';
 import { useCallback } from 'react';
 import { FieldType } from './types';
+import { register } from '../../api/user/registerLogin';
+import { useNavigate } from 'react-router-dom';
 
 const FormItem = Form.Item;
 
 const Register: React.FC = function() {
+  const navigate = useNavigate();
   const onFinish = useCallback((values: FieldType) => {
-    console.log('values', values);
+    console.log('value1s', values);
     if (values.password !== values.confirmPassword) {
       return message.error('密码与确认密码不一致');
     }
-  }, []);
+    const { confirmPassword, ...registerData } = values;
+    register(registerData).then(res => {
+      if (res.code === 200) {
+        message.success('注册成功');
+        setTimeout(() => {
+          navigate('/login');
+        });
+      }
+    }).catch(err => {
+      console.log('err', err);
+    });
+  }, [navigate]);
 
   return (
     <div className='register-container'>

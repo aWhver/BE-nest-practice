@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import queryString from 'query-string';
 
@@ -13,7 +14,7 @@ let requestQueue: Array<{
   resolve: (val: any) => void;
 }> = [];
 
-interface AjaxReturnType<T> {
+export interface AjaxReturnType<T> {
   code: number;
   data: T;
   message: string;
@@ -57,7 +58,12 @@ instance.interceptors.response.use(
         window.location.replace('/login');
       }
     }
-    return Promise.reject(error.response);
+
+    // console.log('error.response', error.response);
+    if (!config.ignoreError) {
+      message.error(error.response.data.data.message);
+    }
+    return Promise.reject(error.response.data);
   }
 );
 
@@ -75,39 +81,39 @@ function createAjax<T>(
   url: string,
   ajaxConfig: AxiosRequestConfig
 ): Promise<AjaxReturnType<T>> {
-  const ajaxSetting = Object.assign({}, ajaxConfig, {
+  const ajaxSetting = Object.assign({ ignoreError: false, }, ajaxConfig, {
     url,
     headers: Object.assign(
       {},
       {
         'Content-type': 'application/json',
       },
-      ajaxConfig.headers
+      ajaxConfig.headers,
     ),
   });
   return instance
-    .request<AxiosRequestConfig, AxiosResponse<T>>(ajaxSetting)
+    .request<AxiosRequestConfig, AxiosResponse<AjaxReturnType<T>>>(ajaxSetting)
     .then((res) => {
+      // console.log('res', res);
       if (res.status === 200) {
         return {
-          code: 200,
-          data: res.data,
-          message: '请求成功',
+          code: res.data.code,
+          data: res.data.data,
+          message: res.data.message,
         };
       }
       return {
         code: res.status,
-        data: res.data,
+        data: res.data.data,
         message: res.statusText,
       };
-    })
-    .catch((err) => {
+    }).catch(err => {
       console.log('err', err);
       return {
-        code: 500,
-        data: err.message || err.response,
-        message: '请求出错了',
-      };
+        code: err.code,
+        data: err.data,
+        message: err.message,
+      }
     });
 }
 
