@@ -1,4 +1,4 @@
-import { Button, Form, Input, message } from 'antd';
+import { Button, Flex, Form, Input, message } from 'antd';
 import './index.css';
 import Captcha from '../../compnents/captcha';
 import { useCallback } from 'react';
@@ -10,23 +10,25 @@ const FormItem = Form.Item;
 
 const Register: React.FC = function() {
   const navigate = useNavigate();
-  const onFinish = useCallback((values: FieldType) => {
-    console.log('value1s', values);
-    if (values.password !== values.confirmPassword) {
-      return message.error('密码与确认密码不一致');
-    }
-    const { confirmPassword, ...registerData } = values;
-    register(registerData).then(res => {
-      if (res.code === 200) {
-        message.success('注册成功');
-        setTimeout(() => {
-          navigate('/login');
-        });
+  const onFinish = useCallback(
+    (values: FieldType) => {
+      // console.log('value1s', values);
+      if (values.password !== values.confirmPassword) {
+        return message.error('密码与确认密码不一致');
       }
-    }).catch(err => {
-      console.log('err', err);
-    });
-  }, [navigate]);
+      const { confirmPassword, ...registerData } = values;
+      register(registerData)
+        .then((res) => {
+          if (res.code === 200) {
+            message.success('注册成功');
+            setTimeout(() => {
+              navigate('/login');
+            });
+          }
+        });
+    },
+    [navigate]
+  );
 
   return (
     <div className='register-container'>
@@ -122,6 +124,12 @@ const Register: React.FC = function() {
             ]}
           >
             <Captcha />
+          </FormItem>
+          <FormItem wrapperCol={{ offset: 6, span: 18 }}>
+            <Flex justify='flex-end'>
+              <span>已有账号?</span>
+              <a href='/login'>去登录</a>
+            </Flex>
           </FormItem>
           <FormItem wrapperCol={{ offset: 6, span: 18 }}>
             <Button style={{ width: '100%' }} type='primary' htmlType='submit'>

@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import queryString from 'query-string';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../const';
 
 const defaultOptions = {
   timeout: 10000,
@@ -21,7 +22,7 @@ export interface AjaxReturnType<T> {
 }
 
 instance.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token');
+  const token = localStorage.getItem(ACCESS_TOKEN);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -45,8 +46,8 @@ instance.interceptors.response.use(
       const resp = await refreshToken();
       isRefreshing = false;
       if (resp.code === 200) {
-        localStorage.setItem('access_token', resp.data.access_token);
-        localStorage.setItem('refresh_token', resp.data.refresh_token);
+        localStorage.setItem(ACCESS_TOKEN, resp.data.access_token);
+        localStorage.setItem(REFRESH_TOKEN, resp.data.refresh_token);
         requestQueue.forEach((r, index) => {
           r.resolve(instance.request(r.config));
           if (index === requestQueue.length - 1) {
@@ -72,7 +73,7 @@ function refreshToken() {
     access_token: string;
     refresh_token: string;
   }>('/user/refreshToken', {
-    token: localStorage.getItem('refresh_token'),
+    token: localStorage.getItem(REFRESH_TOKEN),
     isRefreshToken: true,
   });
 }
