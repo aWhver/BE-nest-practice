@@ -27,6 +27,8 @@ export class ResponseInterceptor implements NestInterceptor {
         context.getClass().name
       } Handler:${context.getHandler().name} invoked`,
     );
+
+    console.log('22', 22);
     const now = Date.now();
     return next.handle().pipe(
       map((data: any) => {

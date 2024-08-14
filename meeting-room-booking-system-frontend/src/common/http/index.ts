@@ -62,7 +62,8 @@ instance.interceptors.response.use(
 
     // console.log('error.response', error.response);
     if (!config.ignoreError) {
-      message.error(error.response.data.data.message);
+      // 守卫里抛出的错误不会经过拦截器包裹一层
+      message.error(error.response.data?.data?.message || error.response.data.message);
     }
     return Promise.reject(error.response.data);
   }

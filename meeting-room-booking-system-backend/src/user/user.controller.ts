@@ -154,11 +154,9 @@ export class UserController {
   }
 
   /** 更新密码 */
+  @skipAuth()
   @Post('updatePassword')
-  async updatePassword(
-    @Request() req,
-    @Body() updatePasswordDto: UpdatePasswordDto,
-  ) {
+  async updatePassword(@Body() updatePasswordDto: UpdatePasswordDto) {
     console.log('updatePasswordDto', updatePasswordDto);
     const captcha = await this.redisService.get(
       `${updatePasswordDto.email}_update_password_captcha`,
@@ -170,7 +168,7 @@ export class UserController {
       throw new BadRequestException('验证码不正确');
     }
     const user = await this.userService.findOneBy({
-      id: req.user.userId,
+      email: updatePasswordDto.email,
     });
     user.password = md5(updatePasswordDto.password);
     await this.userService.updateUser(user);
@@ -178,6 +176,7 @@ export class UserController {
   }
 
   /** 更新密码验证码 */
+  @skipAuth()
   @Post('updatePasswordCaptcha')
   async sendUpdatePasswordCaptcha(@Body('email') email: string) {
     const user = await this.userService.findOneBy({ email }, true);

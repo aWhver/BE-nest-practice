@@ -4,7 +4,7 @@ import Captcha from '../../compnents/captcha';
 import { useCallback } from 'react';
 import { FieldType } from './types';
 import { register } from '../../api/user/registerLogin';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const FormItem = Form.Item;
 
@@ -123,12 +123,12 @@ const Register: React.FC = function() {
               },
             ]}
           >
-            <Captcha />
+            <Captcha captchaUrl='/user/registerCaptcha'/>
           </FormItem>
           <FormItem wrapperCol={{ offset: 6, span: 18 }}>
             <Flex justify='flex-end'>
               <span>已有账号?</span>
-              <a href='/login'>去登录</a>
+              <Link to='/login'>去登录</Link>
             </Flex>
           </FormItem>
           <FormItem wrapperCol={{ offset: 6, span: 18 }}>

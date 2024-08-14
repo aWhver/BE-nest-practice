@@ -1,7 +1,8 @@
 import { Button, Flex, Form, Input, message } from 'antd';
 import { login } from '../../api/user/registerLogin';
 import './index.css';
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../common/const';
+import { ACCESS_TOKEN, REFRESH_TOKEN, USER_INFO } from '../../common/const';
+import { Link } from 'react-router-dom';
 
 const FormItem = Form.Item;
 
@@ -15,7 +16,7 @@ const Login: React.FC = function() {
         const data = res.data;
         localStorage.setItem(ACCESS_TOKEN, data.access_token);
         localStorage.setItem(REFRESH_TOKEN, data.refresh_token);
-        localStorage.setItem('userInfo', JSON.stringify(data.userInfo));
+        localStorage.setItem(USER_INFO, JSON.stringify(data.userInfo));
         message.success('登录成功');
       }
     });
@@ -50,8 +51,8 @@ const Login: React.FC = function() {
         </FormItem>
         <FormItem wrapperCol={{ offset: 6 }}>
           <Flex justify='space-between'>
-            <a href='/register'>去注册</a>
-            <a href='/updatePassword'>忘记密码</a>
+            <Link to='/register'>去注册</Link>
+            <Link to='/updatePassword'>忘记密码</Link>
           </Flex>
         </FormItem>
         <FormItem wrapperCol={{ offset: 6 }}>
