@@ -44,11 +44,13 @@ export class UserController {
   @Inject(RedisService)
   private redisService: RedisService;
 
+  /** 管理员账户初始化 */
   @Get('initAdmin')
   initAdmin() {
     return this.userService.initAdmin();
   }
 
+  /** 用户注册 */
   @skipAuth()
   @Post('register')
   create(@Body() createUserDto: CreateUserDto) {
@@ -56,6 +58,7 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  /** 用户注册验证码 */
   @skipAuth()
   @Post('registerCaptcha')
   sendCaptcha(@Body('email') email: string) {
@@ -71,6 +74,7 @@ export class UserController {
     });
   }
 
+  /** 用户登录 */
   @skipAuth()
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
@@ -78,6 +82,7 @@ export class UserController {
     return this.getLoginUser(loginDto, false);
   }
 
+  /** 管理员登陆 */
   @skipAuth()
   @Post('admin/login')
   async adminLogin(@Body() loginDto: LoginDto) {
@@ -104,6 +109,7 @@ export class UserController {
     return user;
   }
 
+  /** 冻结用户 */
   @Get('freeze')
   async freezeUser(@Query('id', ParseIntPipe) id: number) {
     const user = await this.userService.findOneBy({ id });
@@ -112,6 +118,7 @@ export class UserController {
     return `冻结用户${user.nickName}成功`;
   }
 
+  /** 用户列表 */
   @Get('list')
   async getList(
     @Query('pageNo', new DefaultValuePipe(1), generateParseIntPipe('pageNo'))
@@ -146,6 +153,7 @@ export class UserController {
     return list;
   }
 
+  /** 更新密码 */
   @Post('updatePassword')
   async updatePassword(
     @Request() req,
@@ -169,6 +177,7 @@ export class UserController {
     return '修改密码成功';
   }
 
+  /** 更新密码验证码 */
   @Post('updatePasswordCaptcha')
   async sendUpdatePasswordCaptcha(@Body('email') email: string) {
     const user = await this.userService.findOneBy({ email }, true);
@@ -187,6 +196,7 @@ export class UserController {
     });
   }
 
+  /** 更新用户信息 */
   @Post('update')
   async updateUserInfo(@Request() req, @Body() updateUserDto: UpdateUserDto) {
     console.log('updateUserDto', updateUserDto);
@@ -212,6 +222,7 @@ export class UserController {
     return '更新用户信息成功';
   }
 
+  /** 更新用户信息验证码 */
   @Post('updateCaptcha')
   async sendUpdateCaptcha(@Body('email') email: string) {
     const user = await this.userService.findOneBy({ email }, true);
@@ -230,6 +241,7 @@ export class UserController {
     });
   }
 
+  /** token续期 */
   @Get('refreshToken')
   async refreshToken(@Query('token') token: string) {
     try {

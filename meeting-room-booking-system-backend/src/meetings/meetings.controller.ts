@@ -17,7 +17,9 @@ import { UpdateMeetingDto } from './dto/update-meeting.dto';
 import { PermissionGuard } from 'src/common/guard';
 import { skipAuth } from 'src/common/decorator';
 import { ROLE_PERMISSION } from 'src/common/const';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('会议室管理')
 @Controller('meetings')
 export class MeetingsController {
   constructor(private readonly meetingsService: MeetingsService) {}
@@ -32,17 +34,8 @@ export class MeetingsController {
   @UseGuards(PermissionGuard)
   findAll(@Next() next, @Query('id') id) {
     console.log('id', id);
-    next();
+    // next();
     return this.meetingsService.findAll();
-  }
-
-  @skipAuth()
-  @Get()
-  ne(@Query('id') id) {
-    console.log('a', id);
-    // const a = next();
-    // console.log('a', a);
-    return 'a';
   }
 
   @Get(':id')

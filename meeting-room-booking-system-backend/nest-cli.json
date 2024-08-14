@@ -21,7 +21,7 @@
         "classValidatorShim": true,
         "introspectComments": true,
         "dtoKeyOfComment": "description",
-        "controllerKeyOfComment": "description"
+        "controllerKeyOfComment": "summary"
       }
     }],
     "builder": {
