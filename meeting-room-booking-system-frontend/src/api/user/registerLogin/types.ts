@@ -1,3 +1,5 @@
+import { UserInfo } from "../userInfo/types";
+
 export interface Register {
   username: string;
   nickName: string;
@@ -11,26 +13,10 @@ export interface Login {
   password: string;
 }
 
-export interface Permission {
-  id: number;
-  code: string;
-  description: string;
-}
+
 
 export interface LoginUser {
-  userInfo: {
-    id: number;
-    nickName: string;
-    username: string;
-    headPic: string;
-    phoneNumber: string;
-    email: string;
-    isFrozen: boolean;
-    isAdmin: boolean;
-    createTime: number;
-    roles: string[];
-    permissions: Array<Permission>;
-  }
+  userInfo: UserInfo;
   access_token: string;
   refresh_token: string;
 }

@@ -1,39 +1,48 @@
 import { Form, Input, Button, message } from 'antd';
 import Captcha from '../../compnents/captcha';
 import './index.css';
-import { USER_INFO } from '../../common/const';
-import Upload, { UploadFile } from 'antd/es/upload';
-import { updateUserinfo } from '../../api/user/userInfo';
+import { getUserInfo, updateUserinfo } from '../../api/user/userInfo';
 import { UpdateUserinfoFieldType } from './types';
+import HeadPicUpload from '../../compnents/headPic';
+import { useEffect } from 'react';
+import { useForm } from 'antd/es/form/Form';
 
 const FormItem = Form.Item;
 
 const UserInfoEdit: React.FC = function() {
+  const [form] = useForm();
   const onFinish = function(values: UpdateUserinfoFieldType) {
-    console.log('values', values);
+    // console.log('values', values);
     updateUserinfo(values).then((res) => {
       if (res.code === 200) {
         message.success('修改成功');
       }
     });
   };
-  const userinfo = JSON.parse(localStorage.getItem(USER_INFO) || '');
-  const email = userinfo.email;
-  const nickName = userinfo.nickName;
-  const headPic = userinfo.headPic;
+  useEffect(() => {
+    getUserInfo().then(res => {
+      if (res.code === 200) {
+        form.setFieldsValue({
+          headPic: res.data.headPic,
+          nickName: res.data.nickName,
+          email: res.data.email,
+        })
+      }
+    });
+  });
   return (
     <div className='userinfo-container'>
       <h2>个人信息</h2>
       <div className='userinfo-form-container'>
         <Form
+          form={form}
           autoComplete='off'
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
           onFinish={onFinish}
-          initialValues={{ email, nickName, headPic }}
         >
           <FormItem label='头像' name='headPic'>
-            <Input />
+            <HeadPicUpload />
           </FormItem>
           <FormItem
             label='昵称'
@@ -55,6 +64,10 @@ const UserInfoEdit: React.FC = function() {
                 required: true,
                 message: '邮箱不能为空',
               },
+              {
+                type: 'email',
+                message: '请输入合法的邮箱',
+              }
             ]}
           >
             <Input />
