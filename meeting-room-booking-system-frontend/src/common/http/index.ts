@@ -1,11 +1,11 @@
 import { message } from 'antd';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import queryString from 'query-string';
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '../const';
+import { ACCESS_TOKEN, REFRESH_TOKEN, SERVER } from '../const';
 
 const defaultOptions = {
   timeout: 10000,
-  baseURL: 'http://localhost:3105',
+  baseURL: SERVER,
 };
 
 const instance = axios.create(defaultOptions);

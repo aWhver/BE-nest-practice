@@ -5,6 +5,8 @@ import Register from '../pages/register';
 import Login from '../pages/login';
 import UpdatePassword from '../pages/updatePassword';
 import UserInfoEdit from '../pages/userInfoEdit';
+import AdminIndex from '../pages/adminPages/index';
+import UserList from '../pages/adminPages/users';
 
 const routes: RouteObject[] = [
   {
@@ -15,6 +17,17 @@ const routes: RouteObject[] = [
       {
         path: 'userInfo',
         element: <UserInfoEdit />,
+      },
+      {
+        path: 'admin',
+        element: <AdminIndex />,
+        children: [
+          {
+            // path: 'userList',
+            element: <UserList />,
+            index: true,
+          },
+        ],
       },
     ],
   },

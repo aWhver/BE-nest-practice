@@ -142,13 +142,16 @@ export class UserController {
     return file.path;
   }
 
-  /** 冻结用户 */
-  @Get('freeze')
-  async freezeUser(@Query('id', ParseIntPipe) id: number) {
+  /** 冻结/解冻用户 */
+  @Get('toggleFreeze')
+  async freezeUser(
+    @Query('id', ParseIntPipe) id: number,
+    @Query('isFrozen') isFrozen: string,
+  ) {
     const user = await this.userService.findOneBy({ id });
-    user.isFrozen = true;
+    user.isFrozen = isFrozen === 'true';
     await this.userService.updateUser(user);
-    return `冻结用户${user.nickName}成功`;
+    return `${isFrozen === 'true' ? '冻结' : '解冻'}用户${user.nickName}成功`;
   }
 
   /** 用户列表 */
@@ -300,7 +303,7 @@ export class UserController {
     const [user, password] = await this.userService.findOne(
       {
         username: loginDto.username,
-        isAdmin: isAdmin,
+        // isAdmin: isAdmin,
       },
       ['roles', 'roles.permissions'],
     );

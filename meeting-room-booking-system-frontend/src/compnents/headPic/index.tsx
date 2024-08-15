@@ -1,9 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Upload, UploadFile, UploadProps, message } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { ACCESS_TOKEN } from '../../common/const';
-
-const server = 'http://localhost:3105';
+import { ACCESS_TOKEN, SERVER } from '../../common/const';
 
 interface HeadPicUploadProps {
   value?: string;
@@ -36,7 +34,7 @@ const HeadPicUpload: React.FC<HeadPicUploadProps> = function(props) {
         uid: Math.random()
           .toString()
           .slice(2, 8),
-        url: `${server}/${props.value}`,
+        url: `${SERVER}/${props.value}`,
         name: '',
       },
     ] : []);
@@ -45,7 +43,7 @@ const HeadPicUpload: React.FC<HeadPicUploadProps> = function(props) {
   return (
     <Upload
       name='file'
-      action={`${server}/user/upload`}
+      action={`${SERVER}/user/upload`}
       listType='picture-circle'
       multiple={false}
       fileList={fileList}
