@@ -165,6 +165,7 @@ export class UserService {
     const userVo = new UserVo();
     userVo.id = user.id;
     userVo.email = user.email;
+    userVo.nickName = user.nickName;
     userVo.headPic = user.headPic;
     userVo.createTime = user.createTime.getTime();
     userVo.isAdmin = user.isAdmin;

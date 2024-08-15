@@ -3,3 +3,10 @@ export interface UpdatePwd {
   password: string;
   captcha: string;
 }
+
+export interface UpdateUserinfo {
+  email: string;
+  nickName: string;
+  captcha: string;
+  headPic: string;
+}

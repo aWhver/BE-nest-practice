@@ -1,0 +1,6 @@
+.home-container .header-container {
+  padding: 12px 24px;
+}
+.home-container .header-container .icon {
+  cursor: pointer;
+}

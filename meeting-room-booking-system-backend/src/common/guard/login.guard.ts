@@ -11,12 +11,15 @@ import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { SKIP_AUTH } from '../const';
 
+interface JwtUser {
+  username: string;
+  userId: number;
+  email: string;
+}
+
 declare module 'express' {
   interface Request {
-    user: {
-      username: string;
-      userId: number;
-    };
+    user: JwtUser;
   }
 }
 
@@ -45,10 +48,11 @@ export class LoginGuard implements CanActivate {
       throw new UnauthorizedException('未登录，请先登录再使用');
     }
     try {
-      const data = this.jwtService.verify(auth);
+      const data = this.jwtService.verify<JwtUser>(auth);
       request.user = {
         username: data.username,
         userId: data.userId,
+        email: data.email,
       };
     } catch (error) {
       throw new UnauthorizedException('token过期，请重新登录');

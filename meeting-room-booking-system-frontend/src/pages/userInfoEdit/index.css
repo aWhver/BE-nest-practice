@@ -1,0 +1,10 @@
+.userinfo-container {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: auto;
+}
+.userinfo-container h2 {
+  text-align: center;
+}

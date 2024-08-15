@@ -200,7 +200,7 @@ export class UserController {
   async updateUserInfo(@Request() req, @Body() updateUserDto: UpdateUserDto) {
     console.log('updateUserDto', updateUserDto);
     const captcha = await this.redisService.get(
-      `${updateUserDto.email}_update_info_captcha`,
+      `${req.user.email}_update_info_captcha`,
     );
     if (!captcha) {
       throw new UnauthorizedException('验证码已过期');
@@ -217,13 +217,17 @@ export class UserController {
     if (updateUserDto.nickName) {
       user.nickName = updateUserDto.nickName;
     }
+    if (updateUserDto.email) {
+      user.email = updateUserDto.email;
+    }
     await this.userService.updateUser(user);
     return '更新用户信息成功';
   }
 
   /** 更新用户信息验证码 */
   @Post('updateCaptcha')
-  async sendUpdateCaptcha(@Body('email') email: string) {
+  async sendUpdateCaptcha(@Request() req) {
+    const email: string = req.user.email;
     const user = await this.userService.findOneBy({ email }, true);
     if (!user) {
       throw new BadRequestException('该邮箱不存在对应的账户');
@@ -241,6 +245,7 @@ export class UserController {
   }
 
   /** token续期 */
+  @skipAuth()
   @Get('refreshToken')
   async refreshToken(@Query('token') token: string) {
     try {
@@ -293,6 +298,7 @@ export class UserController {
       {
         username: user.username,
         userId: user.id,
+        email: user.email,
       },
       {
         expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRE_TIME'),
@@ -302,6 +308,7 @@ export class UserController {
     const refresh_token = this.jwtService.sign(
       {
         userId: user.id,
+        email: user.email,
       },
       {
         expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRE_TIME'),

@@ -23,7 +23,7 @@ const Captcha: React.FC<Props> = function(props) {
     getCaptcha(props.captchaUrl, email).then((res) => {
       if (res.code === 200) {
         setCount(60);
-        message.success('验证码发送成功');
+        message.success(res.data);
       }
     });
   }, []);

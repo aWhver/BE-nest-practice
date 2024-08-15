@@ -41,7 +41,7 @@ instance.interceptors.response.use(
         requestQueue.push({ resolve, config });
       });
     }
-    if (data.status === 401 && !config.isRefreshToken) {
+    if (data.statusCode === 401 && !config.isRefreshToken) {
       isRefreshing = true;
       const resp = await refreshToken();
       isRefreshing = false;
