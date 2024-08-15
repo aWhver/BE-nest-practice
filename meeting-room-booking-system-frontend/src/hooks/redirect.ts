@@ -1,3 +1,4 @@
+import { message } from "antd";
 import { useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 
@@ -8,6 +9,7 @@ export function useRedirect() {
 
   useEffect(() => {
     if (isRedirect) {
+      message.warning('您无该页面权限！');
       navigate(-1);
     }
   }, []);

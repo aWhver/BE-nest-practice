@@ -34,6 +34,7 @@ import { JwtModule } from '@nestjs/jwt';
           extra: {
             authPlugin: 'sha256_password',
           },
+          timezone: 'Asia/Shanghai',
         };
       },
     }),

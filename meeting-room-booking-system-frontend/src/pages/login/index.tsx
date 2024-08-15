@@ -3,6 +3,7 @@ import { login } from '../../api/user/registerLogin';
 import './index.css';
 import { ACCESS_TOKEN, REFRESH_TOKEN, USER_INFO } from '../../common/const';
 import { Link } from 'react-router-dom';
+import router from '../../router';
 
 const FormItem = Form.Item;
 
@@ -18,6 +19,9 @@ const Login: React.FC = function() {
         localStorage.setItem(REFRESH_TOKEN, data.refresh_token);
         localStorage.setItem(USER_INFO, JSON.stringify(data.userInfo));
         message.success('登录成功');
+        if (res.data.userInfo.isAdmin) {
+          router.navigate('/admin/userList');
+        }
       }
     });
   }

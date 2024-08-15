@@ -11,7 +11,7 @@ import { RedisModule } from './redis/redis.module';
 import { EmailService } from './email/email.service';
 import { EmailModule } from './email/email.module';
 import { LoginGuard } from './common/guard/login.guard';
-import { MeetingsModule } from './meetings/meetings.module';
+import { MeetingRoomsModule } from './meeting-rooms/meeting-rooms.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { MeetingsModule } from './meetings/meetings.module';
     PermissionModule,
     RedisModule,
     EmailModule,
-    MeetingsModule,
+    MeetingRoomsModule,
   ],
   controllers: [AppController],
   providers: [

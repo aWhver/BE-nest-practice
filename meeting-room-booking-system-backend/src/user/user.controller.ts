@@ -86,7 +86,7 @@ export class UserController {
     return this.getLoginUser(loginDto, false);
   }
 
-  /** 管理员登陆 */
+  /** 管理员登录 */
   @skipAuth()
   @Post('admin/login')
   async adminLogin(@Body() loginDto: LoginDto) {

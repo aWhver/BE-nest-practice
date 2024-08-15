@@ -94,7 +94,7 @@ const UserList = function() {
     getUserlist(query)
       .then((res) => {
         if (res.code === 200) {
-          console.log(res.data);
+          // console.log(res.data);
           setUsers(res.data.users);
           setTotal(res.data.total);
         }

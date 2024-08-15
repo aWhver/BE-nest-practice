@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import { UserOutlined } from '@ant-design/icons';
 import { Flex } from 'antd';
 import './index.css';
@@ -9,7 +9,9 @@ const Index: React.FC = function() {
       <header className='header-container'>
         <Flex justify='space-between'>
           <h2>会议室预定系统</h2>
-          <UserOutlined className='icon' />
+          <Link to="/userInfo">
+            <UserOutlined className='icon' />
+          </Link>
         </Flex>
       </header>
       <section className='body-container'>

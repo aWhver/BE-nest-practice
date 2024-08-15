@@ -23,7 +23,7 @@ const routes: RouteObject[] = [
         element: <AdminIndex />,
         children: [
           {
-            // path: 'userList',
+            path: 'userList',
             element: <UserList />,
             index: true,
           },
