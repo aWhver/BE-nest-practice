@@ -10,6 +10,8 @@ import {
   Request,
   ParseIntPipe,
   DefaultValuePipe,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -25,10 +27,12 @@ import { UpdatePasswordDto, UpdateUserDto } from './dto/update-user.dto';
 import { generateParseIntPipe } from 'src/common/pipe';
 import { FindOptionsWhere, Like } from 'typeorm';
 import { User } from './entities/user.entity';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { UserListVo } from './vo/user.vo';
 import { RefreshTokenVo } from './vo/token.vo';
 import { UserListDto } from './dto/user-list.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { storage, fileFilter } from 'src/common/utils/multer';
 
 @ApiTags('用户模块管理')
 @Controller('user')
@@ -107,6 +111,35 @@ export class UserController {
       id: req.user.userId,
     });
     return user;
+  }
+
+  /** 用户头像上传 */
+  @Post('upload')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    type: 'form-data',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'file',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage,
+      fileFilter,
+      limits: {
+        fileSize: 3 << 20,
+      },
+    }),
+  )
+  avatarUpload(@UploadedFile() file: Express.Multer.File) {
+    // console.log('file', file);
+    return file.path;
   }
 
   /** 冻结用户 */
