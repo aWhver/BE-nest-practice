@@ -15,13 +15,11 @@ import {
 } from '../../api/meetingRoom/types';
 import { ColumnsType } from 'antd/es/table';
 import { useCallback, useEffect, useState } from 'react';
-import {
-  deleteMeetingRoom,
-  getMeetingRoomList,
-} from '../../api/meetingRoom';
+import { deleteMeetingRoom, getMeetingRoomList } from '../../api/meetingRoom';
 import { formatTime } from '../../common/utils/date';
 import { useForm } from 'antd/es/form/Form';
 import MeetingRoomModal from './meetingRoomModal';
+import { isAdmin } from '../../common/utils';
 
 const FormItem = Form.Item;
 
@@ -80,24 +78,33 @@ export const MeetingRooms = function() {
   const [isOpen, setOpen] = useState(false);
   const [meetingRoomId, setMeetingRoomId] = useState<number>();
   const [ran, setRandom] = useState(0);
+  const admin = isAdmin();
   const cols = [
     ...columns,
     {
       title: '操作',
       render: (_: string, record: MeetingRoomItem) => (
         <>
-          <Button
-            type='link'
-            onClick={() => {
-              setOpen(true);
-              setMeetingRoomId(record.id);
-            }}
-          >
-            修改
-          </Button>
-          <Button type='link' onClick={() => onDelete(record.id, record.name)}>
-            删除
-          </Button>
+          {admin && (
+            <>
+              <Button
+                type='link'
+                onClick={() => {
+                  setOpen(true);
+                  setMeetingRoomId(record.id);
+                }}
+              >
+                修改
+              </Button>
+              <Button
+                type='link'
+                onClick={() => onDelete(record.id, record.name)}
+              >
+                删除
+              </Button>
+            </>
+          )}
+          {!record.isBooked && <Button type='link'>预定</Button>}
         </>
       ),
     },

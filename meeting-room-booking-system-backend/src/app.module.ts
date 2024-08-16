@@ -12,6 +12,7 @@ import { EmailService } from './email/email.service';
 import { EmailModule } from './email/email.module';
 import { LoginGuard } from './common/guard/login.guard';
 import { MeetingRoomsModule } from './meeting-rooms/meeting-rooms.module';
+import { BookingModule } from './booking/booking.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { MeetingRoomsModule } from './meeting-rooms/meeting-rooms.module';
     RedisModule,
     EmailModule,
     MeetingRoomsModule,
+    BookingModule,
   ],
   controllers: [AppController],
   providers: [
