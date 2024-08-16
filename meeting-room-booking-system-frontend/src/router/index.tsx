@@ -5,9 +5,18 @@ import Register from '../pages/register';
 import Login from '../pages/login';
 import UpdatePassword from '../pages/updatePassword';
 import UserInfoEdit from '../pages/userInfoEdit';
-import AdminIndex from '../pages/adminPages/index';
+import MenuIndex from '../pages/menu/index';
 import UserList from '../pages/adminPages/users';
-import MeetingRooms from '../pages/adminPages/meetingRooms';
+import MeetingRooms from '../pages/meetingRooms';
+import BookHistory from '../pages/bookHistory';
+import { isAdmin } from '../common/utils';
+
+const adminRoutes = [
+  {
+    path: 'userList',
+    element: <UserList />,
+  },
+];
 
 const routes: RouteObject[] = [
   {
@@ -20,19 +29,22 @@ const routes: RouteObject[] = [
         element: <UserInfoEdit />,
       },
       {
-        path: 'admin',
-        element: <AdminIndex />,
+        path: '/',
+        element: <MenuIndex />,
         children: [
+          {
+            path: '',
+            element: <MeetingRooms />,
+          },
           {
             path: 'meetingRoomList',
             element: <MeetingRooms />,
-            index: true,
           },
           {
-            path: 'userList',
-            element: <UserList />,
+            path: 'bookHistory',
+            element: <BookHistory />,
           },
-        ],
+        ].concat(isAdmin() ? [...adminRoutes] : []),
       },
     ],
   },

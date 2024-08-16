@@ -1,6 +1,6 @@
 export const formatTime = function(
   date: Date | number,
-  format = 'y-m-d h:m:s'
+  format = 'y-m-d h:i:s'
 ) {
   let time = date;
   if (String(date).length === 13) {

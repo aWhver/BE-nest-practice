@@ -1,12 +1,12 @@
 import { Form, Input, Modal, message } from 'antd';
 import { useForm } from 'antd/es/form/Form';
-import { CreateMeetingRoomQuery } from '../../../api/meetingRoom/types';
+import { CreateMeetingRoomQuery } from '../../api/meetingRoom/types';
 import { useEffect } from 'react';
 import {
   createMeetingRoom,
   getMeetingRoomDetail,
   updateMeetingRoom,
-} from '../../../api/meetingRoom';
+} from '../../api/meetingRoom';
 
 const FormItem = Form.Item;
 

@@ -12,14 +12,14 @@ import {
 import {
   MeetingRoomItem,
   MeetingRoomListQuery,
-} from '../../../api/meetingRoom/types';
+} from '../../api/meetingRoom/types';
 import { ColumnsType } from 'antd/es/table';
 import { useCallback, useEffect, useState } from 'react';
 import {
   deleteMeetingRoom,
   getMeetingRoomList,
-} from '../../../api/meetingRoom';
-import { formatTime } from '../../../common/utils/date';
+} from '../../api/meetingRoom';
+import { formatTime } from '../../common/utils/date';
 import { useForm } from 'antd/es/form/Form';
 import MeetingRoomModal from './meetingRoomModal';
 

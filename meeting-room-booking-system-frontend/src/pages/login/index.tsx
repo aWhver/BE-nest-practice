@@ -8,27 +8,29 @@ import router from '../../router';
 const FormItem = Form.Item;
 
 const Login: React.FC = function() {
-  const onFinish = function(values: {
-    username: string;
-    password: string;
-  }) {
-    login(values).then(res => {
+  const onFinish = function(values: { username: string; password: string }) {
+    login(values).then((res) => {
       if (res.code === 200) {
         const data = res.data;
         localStorage.setItem(ACCESS_TOKEN, data.access_token);
         localStorage.setItem(REFRESH_TOKEN, data.refresh_token);
         localStorage.setItem(USER_INFO, JSON.stringify(data.userInfo));
         message.success('登录成功');
-        if (res.data.userInfo.isAdmin) {
-          router.navigate('/admin/userList');
-        }
+        setTimeout(() => {
+          router.navigate('/meetingRoomList');
+        }, 1000);
       }
     });
-  }
+  };
   return (
     <div className='login-container'>
       <h2>会议室预定系统</h2>
-      <Form onFinish={onFinish} autoComplete='off' labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
+      <Form
+        onFinish={onFinish}
+        autoComplete='off'
+        labelCol={{ span: 6 }}
+        wrapperCol={{ span: 18 }}
+      >
         <FormItem
           label='用户名'
           name='username'
