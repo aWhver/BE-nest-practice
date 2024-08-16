@@ -7,6 +7,7 @@ import UpdatePassword from '../pages/updatePassword';
 import UserInfoEdit from '../pages/userInfoEdit';
 import AdminIndex from '../pages/adminPages/index';
 import UserList from '../pages/adminPages/users';
+import MeetingRooms from '../pages/adminPages/meetingRooms';
 
 const routes: RouteObject[] = [
   {
@@ -23,9 +24,13 @@ const routes: RouteObject[] = [
         element: <AdminIndex />,
         children: [
           {
+            path: 'meetingRoomList',
+            element: <MeetingRooms />,
+            index: true,
+          },
+          {
             path: 'userList',
             element: <UserList />,
-            index: true,
           },
         ],
       },

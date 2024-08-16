@@ -28,4 +28,5 @@ export default new DataSource({
   extra: {
     authPlugin: 'sha256_password',
   },
+  timezone: 'Asia/Shanghai',
 });

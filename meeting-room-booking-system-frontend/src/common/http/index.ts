@@ -140,3 +140,35 @@ export const POST = function<T>(
     ...headers,
   });
 };
+
+export const PUT = function<T>(
+  url: string,
+  data = {},
+  params = {},
+  headers = {}
+) {
+  const search = queryString.stringify(params);
+  const char = url.indexOf('?') > -1 ? '&' : search ? '?' : '';
+  // return ;
+  return createAjax<T>(url + char + search, {
+    method: 'PUT',
+    data: JSON.stringify(data),
+    ...headers,
+  });
+};
+
+export const DELETE = function<T>(
+  url: string,
+  data = {},
+  params = {},
+  headers = {}
+) {
+  const search = queryString.stringify(params);
+  const char = url.indexOf('?') > -1 ? '&' : search ? '?' : '';
+  // return ;
+  return createAjax<T>(url + char + search, {
+    method: 'DELETE',
+    data: JSON.stringify(data),
+    ...headers,
+  });
+};

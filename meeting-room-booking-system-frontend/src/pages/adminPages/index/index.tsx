@@ -5,7 +5,7 @@ import './index.css';
 
 const items = [
   {
-    key: 'meetings',
+    key: 'meetingRoomList',
     label: '会议室管理',
   },
   {
@@ -13,6 +13,14 @@ const items = [
     label: '用户管理',
   },
 ];
+
+function getDefaultselectKey() {
+  const pathname = window.location.pathname;
+  const key = pathname.split('/').pop();
+  return key as string;
+}
+
+const key: string = getDefaultselectKey();
 
 const AdminIndex = function() {
   const userInfo = JSON.parse(localStorage.getItem(USER_INFO) || '');
@@ -26,7 +34,7 @@ const AdminIndex = function() {
     <div className='admin-index-container'>
       <Flex>
         <div className='left-menu'>
-          <Menu items={items} defaultSelectedKeys={['userList']} onClick={onMenuClick}></Menu>
+          <Menu items={items} defaultSelectedKeys={[key]} onClick={onMenuClick}></Menu>
         </div>
         <div className='content'>
           <Outlet context={{ isRedirect }} />

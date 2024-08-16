@@ -44,8 +44,9 @@ export class MeetingRoomsController {
     pageSize: number,
     @Query() meetingRoomListDto: MeetingRoomListDto,
   ) {
-    const [list, total] =
-      await this.meetingRoomsService.findMeetingRoomsByPage(meetingRoomListDto);
+    const [list, total] = await this.meetingRoomsService.findMeetingRoomsByPage(
+      { ...meetingRoomListDto, pageNo, pageSize },
+    );
     const meetingRoomListVo = new MeetingRoomListVo();
     meetingRoomListVo.total = total;
     meetingRoomListVo.meetingRooms = list.map((item) => {
