@@ -20,6 +20,7 @@ import { formatTime } from '../../common/utils/date';
 import { useForm } from 'antd/es/form/Form';
 import MeetingRoomModal from './meetingRoomModal';
 import { isAdmin } from '../../common/utils';
+import CreateBookingModal from './createBookingModal';
 
 const FormItem = Form.Item;
 
@@ -59,9 +60,9 @@ const columns: ColumnsType<MeetingRoomItem> = [
     width: 120,
     render: (_: boolean, record: MeetingRoomItem) =>
       record.isBooked ? (
-        <Badge status='error'>已被预订</Badge>
+        <Badge status='error'>有预订</Badge>
       ) : (
-        <Badge status='success'>可预定</Badge>
+        <Badge status='success'>无预订</Badge>
       ),
   },
 ];
@@ -76,7 +77,9 @@ export const MeetingRooms = function() {
     pageSize,
   });
   const [isOpen, setOpen] = useState(false);
-  const [meetingRoomId, setMeetingRoomId] = useState<number>();
+  const [meetingRoomId, setMeetingRoomId] = useState<number>(0);
+  const [isOpenBookingModal, setBookingModalOpen] = useState(false);
+  const [meetingRoomName, setMeetingRoomName] = useState('');
   const [ran, setRandom] = useState(0);
   const admin = isAdmin();
   const cols = [
@@ -104,7 +107,12 @@ export const MeetingRooms = function() {
               </Button>
             </>
           )}
-          {!record.isBooked && <Button type='link'>预定</Button>}
+          <Button
+            type='link'
+            onClick={() => onBookingMeetingRoom(record.id, record.name)}
+          >
+            预定
+          </Button>
         </>
       ),
     },
@@ -130,6 +138,13 @@ export const MeetingRooms = function() {
         });
       },
     });
+  }, []);
+
+  const onBookingMeetingRoom = useCallback((id: number, name: string) => {
+    // console.log('id, name', id, name);
+    setMeetingRoomId(id);
+    setMeetingRoomName(name);
+    setBookingModalOpen(true);
   }, []);
 
   const handleClose = useCallback((refresh: boolean) => {
@@ -193,6 +208,12 @@ export const MeetingRooms = function() {
         isOpen={isOpen}
         meetingRoomId={meetingRoomId}
         handleClose={handleClose}
+      />
+      <CreateBookingModal
+        isOpen={isOpenBookingModal}
+        meetingRoomName={meetingRoomName}
+        meetingRoomId={meetingRoomId}
+        handleClose={() => setBookingModalOpen(false)}
       />
     </div>
   );
