@@ -1,4 +1,4 @@
-import { DELETE, GET, POST, PUT } from '../../common/http';
+import { DELETE, GET, PATCH, POST } from '../../common/http';
 import {
   CreateMeetingRoomQuery,
   MeetingRoomItem,
@@ -11,7 +11,7 @@ export const createMeetingRoom = (data: CreateMeetingRoomQuery) =>
   POST<string>('/meetingRooms/create', data);
 
 export const updateMeetingRoom = (id: number, data: UpdateMeetingRoomQuery) =>
-  PUT<string>('/meetingRooms/create', data, { id });
+  PATCH<string>(`/meetingRooms/${id}`, data);
 
 export const getMeetingRoomList = (data?: MeetingRoomListQuery) =>
   GET<MeetingRoomList>('/meetingRooms/list', data);

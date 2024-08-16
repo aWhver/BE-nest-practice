@@ -157,6 +157,22 @@ export const PUT = function<T>(
   });
 };
 
+export const PATCH = function<T>(
+  url: string,
+  data = {},
+  params = {},
+  headers = {}
+) {
+  const search = queryString.stringify(params);
+  const char = url.indexOf('?') > -1 ? '&' : search ? '?' : '';
+  // return ;
+  return createAjax<T>(url + char + search, {
+    method: 'PATCH',
+    data: JSON.stringify(data),
+    ...headers,
+  });
+};
+
 export const DELETE = function<T>(
   url: string,
   data = {},

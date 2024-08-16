@@ -21,6 +21,7 @@ import {
 } from '../../../api/meetingRoom';
 import { formatTime } from '../../../common/utils/date';
 import { useForm } from 'antd/es/form/Form';
+import MeetingRoomModal from './meetingRoomModal';
 
 const FormItem = Form.Item;
 
@@ -76,15 +77,28 @@ export const MeetingRooms = function() {
     pageNo,
     pageSize,
   });
+  const [isOpen, setOpen] = useState(false);
+  const [meetingRoomId, setMeetingRoomId] = useState<number>();
   const [ran, setRandom] = useState(0);
   const cols = [
     ...columns,
     {
       title: '操作',
       render: (_: string, record: MeetingRoomItem) => (
-        <Button type='link' onClick={() => onDelete(record.id, record.name)}>
-          删除
-        </Button>
+        <>
+          <Button
+            type='link'
+            onClick={() => {
+              setOpen(true);
+              setMeetingRoomId(record.id);
+            }}
+          >
+            修改
+          </Button>
+          <Button type='link' onClick={() => onDelete(record.id, record.name)}>
+            删除
+          </Button>
+        </>
       ),
     },
   ];
@@ -98,7 +112,7 @@ export const MeetingRooms = function() {
     setPageSize(pageSize);
   }, []);
 
-  const onDelete = function(id: number, name: string) {
+  const onDelete = useCallback(function(id: number, name: string) {
     Modal.confirm({
       title: '删除会议室',
       content: `确定删除会议室${name}吗？`,
@@ -109,7 +123,13 @@ export const MeetingRooms = function() {
         });
       },
     });
-  };
+  }, []);
+
+  const handleClose = useCallback((refresh: boolean) => {
+    setOpen(false);
+    setMeetingRoomId(0); // 避免同一条数据连续打开，后续的无法请求详情数据，表单一直是默认的数据
+    refresh && setRandom(Math.random());
+  }, []);
 
   useEffect(() => {
     getMeetingRoomList(query).then((res) => {
@@ -142,12 +162,14 @@ export const MeetingRooms = function() {
             <Input />
           </FormItem>
         </Form>
-        <Row style={{ margin: "24px 0" }}>
+        <Row style={{ margin: '24px 0' }}>
           <Space>
             <Button type='primary' onClick={search}>
               搜索会议室
             </Button>
-            <Button type='primary'>创建会议室</Button>
+            <Button type='primary' onClick={() => setOpen(true)}>
+              创建会议室
+            </Button>
           </Space>
         </Row>
         <Table
@@ -160,6 +182,11 @@ export const MeetingRooms = function() {
           }}
         ></Table>
       </div>
+      <MeetingRoomModal
+        isOpen={isOpen}
+        meetingRoomId={meetingRoomId}
+        handleClose={handleClose}
+      />
     </div>
   );
 };
