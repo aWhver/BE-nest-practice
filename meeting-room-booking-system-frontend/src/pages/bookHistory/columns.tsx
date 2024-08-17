@@ -44,7 +44,7 @@ export function getColumns(
     },
     {
       title: '会议室位置',
-      dataIndex: 'meetingRoomName',
+      dataIndex: 'meetingRoomLocation',
     },
     {
       title: '会议时间',
@@ -93,23 +93,25 @@ export function getColumns(
                 </Button>
               </>
             )}
-            <Button
-              type='link'
-              onClick={() => {
-                hanlder(
-                  urgeBooking({
-                    id,
-                    meetingRoomName: record.meetingRoomName,
-                    bookingTimeRangeTxt: `${formatTime(
-                      new Date(record.startTime)
-                    )} ~ ${formatTime(new Date(record.endTime))}`,
-                  })
-                );
-              }}
-            >
-              催办
-            </Button>
-            {record.status !== Status.Cancel && (
+            {record.status === Status.Pending && (
+              <Button
+                type='link'
+                onClick={() => {
+                  hanlder(
+                    urgeBooking({
+                      id,
+                      meetingRoomName: record.meetingRoomName,
+                      bookingTimeRangeTxt: `${formatTime(
+                        new Date(record.startTime)
+                      )} ~ ${formatTime(new Date(record.endTime))}`,
+                    })
+                  );
+                }}
+              >
+                催办
+              </Button>
+            )}
+            {record.status === Status.Pending && (
               <Button
                 type='link'
                 onClick={() => {

@@ -136,4 +136,24 @@ export class BookingService {
     });
     this.redisService.set(`urge_${urgeDto.id}`, 1, 60 * 30);
   }
+
+  findOneBooking(mid: number, st: number, et: number) {
+    const _st = new Date(st);
+    const _et = new Date(et);
+    const qb = this.bookingRepository.createQueryBuilder('Booking');
+    return (
+      qb
+        // .leftJoinAndSelect('Booking.meetingRoom', 'meetingRoom')
+        .where(
+          `(Booking.startTime <= :st AND Booking.endTime >= :et) OR (Booking.startTime BETWEEN :st AND :et OR Booking.endTime BETWEEN :st AND :et) `,
+          {
+            st: _st,
+            et: _et,
+          },
+        )
+        .andWhere('Booking.meetingRoom.id = :id', { id: mid })
+        .getOne()
+    );
+    // .getSql()
+  }
 }

@@ -17,7 +17,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { BookingListDto } from './dto/booking-list.dto';
 import { generateParseIntPipe } from 'src/common/pipe';
 import { BookingItemVo, BookingListVo } from './vo/booking-list.vo';
-import { Between, Or } from 'typeorm';
+import { Between, LessThanOrEqual, MoreThanOrEqual, Or } from 'typeorm';
 import { MeetingRoomsService } from 'src/meeting-rooms/meeting-rooms.service';
 import { Status } from './entities/booking.entity';
 
@@ -42,26 +42,24 @@ export class BookingController {
       throw new BadRequestException('该会议室不存在');
     }
     // todo, 这里的查询语句有点问题
-    const booking = await this.bookingService.findOneBy({
-      where: {
-        meetingRoom: {
-          id: meetingRoom.id,
-        },
-        startTime: Between(
-          new Date(createBookingDto.startTime),
-          new Date(createBookingDto.endTime),
-        ),
-        endTime: Between(
-          new Date(createBookingDto.startTime),
-          new Date(createBookingDto.endTime),
-        ),
-      },
-    });
-    console.log('booki1ng', booking);
+    // const booking = await this.bookingService.findOneBy({
+    //   where: {
+    //     meetingRoom: {
+    //       id: meetingRoom.id,
+    //     },
+    //     startTime: LessThanOrEqual(new Date(createBookingDto.startTime)),
+    //     endTime: MoreThanOrEqual(new Date(createBookingDto.endTime)),
+    //   },
+    // });
+    const booking = await this.bookingService.findOneBooking(
+      meetingRoom.id,
+      createBookingDto.startTime,
+      createBookingDto.endTime,
+    );
+    console.log('booking', booking);
     if (booking) {
       throw new BadRequestException('该时间段已有预定');
     }
-    // return 'dd';
     return this.bookingService.create(createBookingDto, req.user.userId);
   }
 
