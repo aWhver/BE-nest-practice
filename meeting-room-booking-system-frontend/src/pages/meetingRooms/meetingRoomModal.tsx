@@ -22,24 +22,28 @@ const MeetingRoomModal: React.FC<IProps> = function(props) {
     await form.validateFields();
     if (props.meetingRoomId) {
       return updateMeetingRoom(props.meetingRoomId, form.getFieldsValue()).then(
-        () => {
-          message.success('修改会议室成功');
-          form.resetFields();
-          props.handleClose(true);
+        (res) => {
+          if (res.code === 200) {
+            message.success('修改会议室成功');
+            form.resetFields();
+            props.handleClose(true);
+          }
         }
       );
     }
-    return createMeetingRoom(form.getFieldsValue()).then(() => {
-      message.success('创建会议室成功');
-      form.resetFields();
-      props.handleClose(true);
+    return createMeetingRoom(form.getFieldsValue()).then((res) => {
+      if (res.code === 200) {
+        message.success('创建会议室成功');
+        form.resetFields();
+        props.handleClose(true);
+      }
     });
   };
 
   useEffect(() => {
     if (props.meetingRoomId) {
       getMeetingRoomDetail(props.meetingRoomId).then((res) => {
-        form.setFieldsValue({
+        res.code === 200 && form.setFieldsValue({
           name: res.data.name,
           capacity: res.data.capacity,
           location: res.data.location,

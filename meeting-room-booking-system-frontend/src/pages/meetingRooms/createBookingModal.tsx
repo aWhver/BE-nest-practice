@@ -27,10 +27,12 @@ const CreateBookingModal: React.FC<CreateBookingModalProps> = function(props) {
       note: values.note,
       startTime: values.timeRange[0].valueOf(),
       endTime: values.timeRange[1].valueOf(),
-    }).then(() => {
-      message.success('创建预定成功');
-      form.resetFields();
-      props.handleClose();
+    }).then((res) => {
+      if (res.code === 200) {
+        message.success('创建预定成功');
+        form.resetFields();
+        props.handleClose();
+      }
     });
   };
   return (
@@ -46,7 +48,7 @@ const CreateBookingModal: React.FC<CreateBookingModalProps> = function(props) {
     >
       <Form form={form} autoComplete='off' layout='vertical'>
         <FormItem label='会议室名称'>
-          <Input disabled defaultValue={props.meetingRoomName} />
+          <Input disabled value={props.meetingRoomName} />
         </FormItem>
         <FormItem
           label='会议时间'

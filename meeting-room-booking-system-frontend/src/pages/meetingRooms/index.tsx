@@ -155,7 +155,7 @@ export const MeetingRooms = function() {
 
   useEffect(() => {
     getMeetingRoomList(query).then((res) => {
-      setList(res.data.meetingRooms);
+      res.code === 200 && setList(res.data.meetingRooms);
     });
   }, [query, ran]);
 

@@ -20,7 +20,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { BookingListDto } from './dto/booking-list.dto';
 import { generateParseIntPipe } from 'src/common/pipe';
 import { BookingItemVo, BookingListVo } from './vo/booking-list.vo';
-import { LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
+import { Between, LessThanOrEqual, MoreThanOrEqual, Or } from 'typeorm';
 import { MeetingRoomsService } from 'src/meeting-rooms/meeting-rooms.service';
 import { Booking, Status } from './entities/booking.entity';
 
@@ -46,14 +46,24 @@ export class BookingController {
     }
     const booking = await this.bookingService.findOneBy({
       where: {
-        meetingRoom,
-        startTime: LessThanOrEqual(createBookingDto.startTime),
-        endTime: MoreThanOrEqual(createBookingDto.endTime),
+        meetingRoom: {
+          id: meetingRoom.id,
+        },
+        startTime: Between(
+          new Date(createBookingDto.startTime),
+          new Date(createBookingDto.endTime),
+        ),
+        endTime: Between(
+          new Date(createBookingDto.startTime),
+          new Date(createBookingDto.endTime),
+        ),
       },
     });
+    // console.log('booking9', booking);
     if (booking) {
       throw new BadRequestException('该时间段已有预定');
     }
+    // return 'dd';
     return this.bookingService.create(createBookingDto, req.user.userId);
   }
 
