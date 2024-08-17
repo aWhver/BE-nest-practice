@@ -77,11 +77,13 @@ export class BookingController {
     )
     pageSize: number,
     @Query() bookingListDto: BookingListDto,
+    @Req() req: Request,
   ) {
     const [bookings, total] = await this.bookingService.getListByPage({
       ...bookingListDto,
       pageNo,
       pageSize,
+      userId: req.user.isAdmin ? undefined : req.user.userId,
     });
     const bookingList = bookings.map((booking) => {
       const bookingItem = new BookingItemVo();

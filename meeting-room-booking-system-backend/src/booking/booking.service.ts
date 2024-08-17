@@ -47,18 +47,24 @@ export class BookingService {
     return '预定成功';
   }
 
-  getListByPage(bookingListDto: BookingListDto) {
+  getListByPage(bookingListDto: BookingListDto & { userId?: number }) {
     console.log('bookingListDto', bookingListDto);
-    const condition: Record<string, any> = {};
+    const condition: Record<string, any> = {
+      user: {},
+      meetingRoom: {},
+    };
     if (bookingListDto.bookingPerson) {
       condition.user.nickName = Like(`%${bookingListDto.bookingPerson}%`);
+    }
+    if (bookingListDto.userId) {
+      condition.user.id = bookingListDto.userId;
     }
     if (bookingListDto.meetingRoomLocation) {
       condition.meetingRoom.location = Like(
         `%${bookingListDto.meetingRoomLocation}%`,
       );
     }
-    if (bookingListDto.meetingRoomLocation) {
+    if (bookingListDto.meetingRoomName) {
       condition.meetingRoom.name = Like(`%${bookingListDto.meetingRoomName}%`);
     }
     if (bookingListDto.status) {

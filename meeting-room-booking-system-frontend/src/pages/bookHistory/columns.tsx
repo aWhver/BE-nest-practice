@@ -8,6 +8,7 @@ import {
   rejectBooking,
   urgeBooking,
 } from '../../api/booking';
+import { isAdmin } from '../../common/utils';
 
 const statusMap: Map<Status, [string, string]> = new Map([
   [Status.Pending, ['申请中', 'processing']],
@@ -31,6 +32,7 @@ const hanlder = function(
 export function getColumns(
   cb: (ran: number) => void
 ): ColumnsType<BookingItem> {
+  const admin = isAdmin();
   return [
     {
       title: '预定人',
@@ -71,22 +73,26 @@ export function getColumns(
       render(id: number, record: BookingItem) {
         return (
           <>
-            <Button
-              type='link'
-              onClick={() => {
-                hanlder(approveBooking(id), cb);
-              }}
-            >
-              同意
-            </Button>
-            <Button
-              type='link'
-              onClick={() => {
-                hanlder(rejectBooking(id), cb);
-              }}
-            >
-              驳回
-            </Button>
+            {admin && (
+              <>
+                <Button
+                  type='link'
+                  onClick={() => {
+                    hanlder(approveBooking(id), cb);
+                  }}
+                >
+                  同意
+                </Button>
+                <Button
+                  type='link'
+                  onClick={() => {
+                    hanlder(rejectBooking(id), cb);
+                  }}
+                >
+                  驳回
+                </Button>
+              </>
+            )}
             <Button
               type='link'
               onClick={() => {

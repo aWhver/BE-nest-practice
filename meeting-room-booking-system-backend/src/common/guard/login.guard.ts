@@ -15,6 +15,7 @@ interface JwtUser {
   username: string;
   userId: number;
   email: string;
+  isAdmin: boolean;
 }
 
 declare module 'express' {
@@ -53,6 +54,7 @@ export class LoginGuard implements CanActivate {
         username: data.username,
         userId: data.userId,
         email: data.email,
+        isAdmin: data.isAdmin,
       };
     } catch (error) {
       throw new UnauthorizedException('token过期，请重新登录');

@@ -310,6 +310,9 @@ export class UserController {
     if (password !== md5(loginDto.password)) {
       throw new BadRequestException('密码不正确');
     }
+    if (user.isFrozen) {
+      throw new BadRequestException('该用户已被冻结，请联系管理员解冻');
+    }
     const key = getRolePermissionKey(user.username);
     this.redisService.hset(
       key,
@@ -335,6 +338,7 @@ export class UserController {
         username: user.username,
         userId: user.id,
         email: user.email,
+        isAdmin: user.isAdmin,
       },
       {
         expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRE_TIME'),

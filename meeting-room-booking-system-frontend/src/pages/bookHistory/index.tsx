@@ -1,9 +1,10 @@
 import { Button, Col, DatePicker, Form, Input, Row, Select, Table } from 'antd';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getBookingList } from '../../api/booking';
 import { BookingItem, BookingListQuery, Status } from '../../api/booking/types';
 import { getColumns } from './columns';
 import { Dayjs } from 'dayjs';
+import { isAdmin } from '../../common/utils';
 
 const FormItem = Form.Item;
 
@@ -24,6 +25,7 @@ const BookHistory = function() {
     pageSize: 10,
   });
   const [ran, setRandom] = useState(0);
+  const admin = isAdmin();
   const columns = useMemo(() => {
     return getColumns(setRandom);
   }, []);
@@ -35,15 +37,15 @@ const BookHistory = function() {
       endTime: bookingTime[1] && bookingTime[1].valueOf(),
       pageNo: 1,
       pageSize: query.pageSize,
-    })
-  }
+    });
+  };
   const onChange = function(pageNo: number, pageSize: number) {
     setQuery({
       ...query,
       pageNo,
       pageSize,
-    })
-  }
+    });
+  };
   useEffect(() => {
     getBookingList(query).then((res) => {
       if (res.code === 200) {
@@ -73,11 +75,13 @@ const BookHistory = function() {
               <Input />
             </FormItem>
           </Col>
-          <Col span={8}>
-            <FormItem label='预定人' name='bookingPerson'>
-              <Input />
-            </FormItem>
-          </Col>
+          {admin && (
+            <Col span={8}>
+              <FormItem label='预定人' name='bookingPerson'>
+                <Input />
+              </FormItem>
+            </Col>
+          )}
         </Row>
         <Row gutter={24}>
           <Col span={12}>
@@ -90,7 +94,11 @@ const BookHistory = function() {
           </Col>
           <Col span={8}>
             <FormItem label='状态' name='status'>
-              <Select style={{ width: '100%' }} placeholder="请选择状态" allowClear>
+              <Select
+                style={{ width: '100%' }}
+                placeholder='请选择状态'
+                allowClear
+              >
                 <Select.Option value={0}>申请中</Select.Option>
                 <Select.Option value={1}>审核通过</Select.Option>
                 <Select.Option value={2}>驳回</Select.Option>
@@ -106,16 +114,20 @@ const BookHistory = function() {
           </Button>
         </FormItem>
       </Form>
-      <Table dataSource={bookingList} columns={columns} pagination={{
-        pageSize: query.pageSize,
-        current: query.pageNo,
-        onChange: onChange,
-        total,
-        showSizeChanger: true,
-        showTotal(total) {
-          return `总共${total}条数据`;
-        },
-      }}></Table>
+      <Table
+        dataSource={bookingList}
+        columns={columns}
+        pagination={{
+          pageSize: query.pageSize,
+          current: query.pageNo,
+          onChange: onChange,
+          total,
+          showSizeChanger: true,
+          showTotal(total) {
+            return `总共${total}条数据`;
+          },
+        }}
+      ></Table>
     </div>
   );
 };
