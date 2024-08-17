@@ -2,7 +2,12 @@ import { ColumnsType } from 'antd/es/table';
 import { BookingItem, Status } from '../../api/booking/types';
 import { formatTime } from '../../common/utils/date';
 import { Button, Tag, message } from 'antd';
-import { approveBooking, rejectBooking } from '../../api/booking';
+import {
+  approveBooking,
+  cancelBooking,
+  rejectBooking,
+  urgeBooking,
+} from '../../api/booking';
 
 const statusMap: Map<Status, [string, string]> = new Map([
   [Status.Pending, ['申请中', 'processing']],
@@ -11,7 +16,21 @@ const statusMap: Map<Status, [string, string]> = new Map([
   [Status.Cancel, ['取消', 'default']],
 ]);
 
-export function getColumns(cb: (ran: number) => void): ColumnsType<BookingItem> {
+const hanlder = function(
+  pro: Promise<{ code: number }>,
+  cb?: (ran: number) => void
+) {
+  pro.then((res) => {
+    if (res.code === 200) {
+      message.success('操作成功');
+      cb && cb(Math.random());
+    }
+  });
+};
+
+export function getColumns(
+  cb: (ran: number) => void
+): ColumnsType<BookingItem> {
   return [
     {
       title: '预定人',
@@ -49,18 +68,13 @@ export function getColumns(cb: (ran: number) => void): ColumnsType<BookingItem> 
     {
       title: '操作',
       dataIndex: 'id',
-      render(id: number) {
+      render(id: number, record: BookingItem) {
         return (
           <>
             <Button
               type='link'
               onClick={() => {
-                approveBooking(id).then((res) => {
-                  if (res.code === 200) {
-                    message.success('操作成功');
-                    cb(Math.random());
-                  }
-                });
+                hanlder(approveBooking(id), cb);
               }}
             >
               同意
@@ -68,16 +82,37 @@ export function getColumns(cb: (ran: number) => void): ColumnsType<BookingItem> 
             <Button
               type='link'
               onClick={() => {
-                rejectBooking(id).then((res) => {
-                  if (res.code === 200) {
-                    message.success('操作成功');
-                    cb(Math.random());
-                  }
-                });
+                hanlder(rejectBooking(id), cb);
               }}
             >
               驳回
             </Button>
+            <Button
+              type='link'
+              onClick={() => {
+                hanlder(
+                  urgeBooking({
+                    id,
+                    meetingRoomName: record.meetingRoomName,
+                    bookingTimeRangeTxt: `${formatTime(
+                      new Date(record.startTime)
+                    )} ~ ${formatTime(new Date(record.endTime))}`,
+                  })
+                );
+              }}
+            >
+              催办
+            </Button>
+            {record.status !== Status.Cancel && (
+              <Button
+                type='link'
+                onClick={() => {
+                  hanlder(cancelBooking(id), cb);
+                }}
+              >
+                取消
+              </Button>
+            )}
           </>
         );
       },

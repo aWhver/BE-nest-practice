@@ -5,3 +5,9 @@ export class CreateBookingDto {
   meetingRoomId: number;
   note?: string;
 }
+
+export class UrgeDto {
+  id: number;
+  meetingRoomName: string;
+  bookingTimeRangeTxt: string;
+}

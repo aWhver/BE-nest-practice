@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { CreateBookingDto } from './dto/create-booking.dto';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { CreateBookingDto, UrgeDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Booking, Status } from './entities/booking.entity';
 import {
   Between,
@@ -10,15 +10,27 @@ import {
   Repository,
   FindOptionsWhere,
   FindManyOptions,
+  EntityManager,
 } from 'typeorm';
 import { MeetingRoom } from 'src/meeting-rooms/entities/meeting-room.entity';
 import { User } from 'src/user/entities/user.entity';
 import { BookingListDto } from './dto/booking-list.dto';
+import { EmailService } from 'src/email/email.service';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class BookingService {
   @InjectRepository(Booking)
   private bookingRepository: Repository<Booking>;
+
+  @InjectEntityManager()
+  private entityManager: EntityManager;
+
+  @Inject(EmailService)
+  private emailService: EmailService;
+
+  @Inject(RedisService)
+  private redisService: RedisService;
 
   async create(createBookingDto: CreateBookingDto, userId: number) {
     const booking = new Booking();
@@ -92,5 +104,30 @@ export class BookingService {
 
   remove(id: number) {
     return `This action removes a #${id} booking`;
+  }
+
+  async urge(urgeDto: UrgeDto) {
+    const urgeId = await this.redisService.get(`urge_${urgeDto.id}`);
+    if (urgeId) {
+      throw new BadRequestException('半小时只能催办一次');
+    }
+    let email = await this.redisService.get('admin_email');
+    if (!email) {
+      const admin = await this.entityManager.findOne(User, {
+        select: ['email'],
+        where: {
+          isAdmin: true,
+        },
+      });
+      email = admin.email;
+      this.redisService.set('admin_email', admin.email);
+    }
+
+    await this.emailService.sendMail({
+      to: email,
+      subject: '预订催办通知',
+      html: `会议紧急，麻烦同意一下会议室：${urgeDto.meetingRoomName}在${urgeDto.bookingTimeRangeTxt}期间使用的审批`,
+    });
+    this.redisService.set(`urge_${urgeDto.id}`, 1, 60 * 30);
   }
 }

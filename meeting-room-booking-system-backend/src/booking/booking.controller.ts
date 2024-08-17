@@ -3,9 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   Req,
   Query,
   DefaultValuePipe,
@@ -13,16 +11,15 @@ import {
   Inject,
 } from '@nestjs/common';
 import { BookingService } from './booking.service';
-import { CreateBookingDto } from './dto/create-booking.dto';
-import { UpdateBookingDto } from './dto/update-booking.dto';
+import { CreateBookingDto, UrgeDto } from './dto/create-booking.dto';
 import { Request } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { BookingListDto } from './dto/booking-list.dto';
 import { generateParseIntPipe } from 'src/common/pipe';
 import { BookingItemVo, BookingListVo } from './vo/booking-list.vo';
-import { Between, LessThanOrEqual, MoreThanOrEqual, Or } from 'typeorm';
+import { Between, Or } from 'typeorm';
 import { MeetingRoomsService } from 'src/meeting-rooms/meeting-rooms.service';
-import { Booking, Status } from './entities/booking.entity';
+import { Status } from './entities/booking.entity';
 
 @ApiTags('预定管理')
 @Controller('booking')
@@ -44,6 +41,7 @@ export class BookingController {
     if (!meetingRoom) {
       throw new BadRequestException('该会议室不存在');
     }
+    // todo, 这里的查询语句有点问题
     const booking = await this.bookingService.findOneBy({
       where: {
         meetingRoom: {
@@ -59,7 +57,7 @@ export class BookingController {
         ),
       },
     });
-    // console.log('booking9', booking);
+    console.log('booki1ng', booking);
     if (booking) {
       throw new BadRequestException('该时间段已有预定');
     }
@@ -125,5 +123,12 @@ export class BookingController {
   async cancel(@Param('id') id: string) {
     await this.bookingService.updateBookingStatus(+id, Status.Cancel);
     return '取消成功';
+  }
+
+  /** 催办 */
+  @Post('urge')
+  async urge(@Body() urgeDto: UrgeDto) {
+    await this.bookingService.urge(urgeDto);
+    return '催办成功';
   }
 }

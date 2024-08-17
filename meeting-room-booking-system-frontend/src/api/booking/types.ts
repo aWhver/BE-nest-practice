@@ -23,6 +23,12 @@ export interface BookingListQuery {
   status?: Status;
 }
 
+export interface UrgeQuery {
+  id: number;
+  meetingRoomName: string;
+  bookingTimeRangeTxt: string;
+}
+
 // 返回值类型定义
 export interface BookingItem {
   id: number;
