@@ -31,9 +31,12 @@ const MeetingRoomUsageChart: React.FC<IProps> = function(props) {
         text: ''
       },
       xAxis: {
+        name: '会议室名称',
         data: data.map((item) => item.meetingRoomName),
       },
-      yAxis: {},
+      yAxis: {
+        name: '使用次数',
+      },
       series: [
         {
           name: '使用次数',

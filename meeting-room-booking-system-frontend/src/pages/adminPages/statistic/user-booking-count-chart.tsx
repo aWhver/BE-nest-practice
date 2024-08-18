@@ -30,10 +30,11 @@ const UserBookingCountChart: React.FC<IProps> = function(props) {
       title: {
         text: ''
       },
-      xAxis: {
+      legend: {
+        orient: 'vertical',
+        left: 'left',
         data: data.map((item) => item.nickName),
       },
-      yAxis: {},
       series: [
         {
           name: '预定次数',
@@ -42,6 +43,10 @@ const UserBookingCountChart: React.FC<IProps> = function(props) {
             name: item.nickName,
             value: item.bookingCount,
           })),
+          label: {
+            show: true,
+            formatter: "{a}: {c}",
+          }
         },
       ],
     });
