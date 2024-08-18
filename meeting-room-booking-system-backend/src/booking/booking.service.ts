@@ -152,7 +152,7 @@ export class BookingService {
           },
         )
         .andWhere('Booking.meetingRoom.id = :id', { id: mid })
-        .getOne()
+        .getRawOne()
     );
     // .getSql()
   }

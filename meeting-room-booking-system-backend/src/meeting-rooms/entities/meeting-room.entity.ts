@@ -1,8 +1,10 @@
 import { IsNotEmpty } from 'class-validator';
+import { Booking } from '../../booking/entities/booking.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -62,4 +64,7 @@ export class MeetingRoom {
     comment: '更新时间',
   })
   updateTime: Date;
+
+  // @OneToMany(() => Booking, (booking) => booking.meetingRoom)
+  // bookings: Booking[];
 }

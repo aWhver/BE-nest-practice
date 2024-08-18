@@ -4,6 +4,8 @@ import * as path from 'path';
 import { User } from './user/entities/user.entity';
 import { Role } from './role/entities/role.entity';
 import { Permission } from './permission/entities/permission.entity';
+import { MeetingRoom } from './meeting-rooms/entities/meeting-room.entity';
+import { Booking } from './booking/entities/booking.entity';
 
 config({
   path: path.join(__dirname, `.env.stage.${process.env.STAGE}`),
@@ -21,7 +23,7 @@ export default new DataSource({
   // typeorm 提供了 migration:create,generate,run,revert命令
   synchronize: process.env.DB_SYNC === 'true',
   migrations: ['src/migrations/**.ts'],
-  entities: [User, Role, Permission],
+  entities: [User, Role, Permission, MeetingRoom, Booking],
   logging: true,
   poolSize: 10,
   connectorPackage: 'mysql2',

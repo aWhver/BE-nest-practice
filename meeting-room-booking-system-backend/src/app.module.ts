@@ -13,6 +13,7 @@ import { EmailModule } from './email/email.module';
 import { LoginGuard } from './common/guard/login.guard';
 import { MeetingRoomsModule } from './meeting-rooms/meeting-rooms.module';
 import { BookingModule } from './booking/booking.module';
+import { StatisticModule } from './statistic/statistic.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { BookingModule } from './booking/booking.module';
     EmailModule,
     MeetingRoomsModule,
     BookingModule,
+    StatisticModule,
   ],
   controllers: [AppController],
   providers: [

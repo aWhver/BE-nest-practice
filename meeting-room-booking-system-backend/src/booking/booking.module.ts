@@ -6,7 +6,7 @@ import { Booking } from './entities/booking.entity';
 import { MeetingRoomsModule } from 'src/meeting-rooms/meeting-rooms.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Booking]), MeetingRoomsModule],
+  imports: [MeetingRoomsModule, TypeOrmModule.forFeature([Booking])],
   controllers: [BookingController],
   providers: [BookingService],
 })
