@@ -1,5 +1,7 @@
 import { BadRequestException, ParseIntPipe } from '@nestjs/common';
 
+export * from './statisticQuery';
+
 export const generateParseIntPipe = function (name: string) {
   return new ParseIntPipe({
     exceptionFactory() {

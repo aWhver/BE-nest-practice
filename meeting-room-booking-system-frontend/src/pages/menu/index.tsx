@@ -25,6 +25,10 @@ const MenuIndex = function() {
         key: 'userList',
         label: '用户管理',
       },
+      {
+        key: 'statistic',
+        label: '数据统计',
+      },
     ];
     return [
       {

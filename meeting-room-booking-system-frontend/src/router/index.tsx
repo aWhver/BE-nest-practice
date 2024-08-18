@@ -10,11 +10,16 @@ import UserList from '../pages/adminPages/users';
 import MeetingRooms from '../pages/meetingRooms';
 import BookHistory from '../pages/bookHistory';
 import { isAdmin } from '../common/utils';
+import Statistic from '../pages/adminPages/statistic';
 
 const adminRoutes = [
   {
     path: 'userList',
     element: <UserList />,
+  },
+  {
+    path: 'statistic',
+    element: <Statistic />,
   },
 ];
 

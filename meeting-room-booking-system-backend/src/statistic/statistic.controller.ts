@@ -3,6 +3,7 @@ import { StatisticService } from './statistic.service';
 import { ApiTags } from '@nestjs/swagger';
 import { UserBookingCountDto } from './dto/statistic.dto';
 import { UserBookingCountVo, MeetingRoomUsageFreqVo } from './vo/statistic.vo';
+import { StatisticQueryPipe } from 'src/common/pipe';
 
 @ApiTags('数据统计')
 @Controller('statistic')
@@ -11,7 +12,9 @@ export class StatisticController {
 
   /** 统计用户预定数 */
   @Get('userBookingCount')
-  async userBookingCount(@Query() userBookingCountDto: UserBookingCountDto) {
+  async userBookingCount(
+    @Query(StatisticQueryPipe) userBookingCountDto: UserBookingCountDto,
+  ) {
     const data = await this.statisticService.userBookingCount(
       userBookingCountDto.startTime,
       userBookingCountDto.endTime,
@@ -28,12 +31,11 @@ export class StatisticController {
   /** 会议室使用频率 */
   @Get('meetingRoomUsageFreq')
   async meetingRoomUsageFreq(
-    @Query('startTime') startTime: string,
-    @Query('endTime') endTime: string,
+    @Query(StatisticQueryPipe) userBookingCountDto: UserBookingCountDto,
   ) {
     const data = await this.statisticService.meetingRoomUsageFreq(
-      startTime,
-      endTime,
+      userBookingCountDto.startTime,
+      userBookingCountDto.endTime,
     );
     return data.map((item) => {
       const meetingRoomUsageFreqVo = new MeetingRoomUsageFreqVo();
