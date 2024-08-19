@@ -8,6 +8,8 @@ import {
   Delete,
   Query,
   DefaultValuePipe,
+  SetMetadata,
+  UseGuards,
 } from '@nestjs/common';
 import { MeetingRoomsService } from './meeting-rooms.service';
 import { CreateMeetingRoomDto } from './dto/create-meeting-room.dto';
@@ -19,6 +21,8 @@ import {
   MeetingRoomItemVo,
   MeetingRoomListVo,
 } from './vo/meeting-room-list.vo';
+import { ROLE_PERMISSION } from 'src/common/const';
+import { PermissionGuard } from 'src/common/guard';
 
 @ApiTags('会议室管理')
 @Controller('meetingRooms')
@@ -26,6 +30,8 @@ export class MeetingRoomsController {
   constructor(private readonly meetingRoomsService: MeetingRoomsService) {}
 
   /** 会议室创建 */
+  @UseGuards(PermissionGuard)
+  @SetMetadata(ROLE_PERMISSION, ['frontend', 'tester', 'backend'])
   @Post('create')
   create(@Body() createMeetingRoomDto: CreateMeetingRoomDto) {
     return this.meetingRoomsService.create(createMeetingRoomDto);

@@ -20,6 +20,7 @@ export class PermissionGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
+    console.log('request.user', request.user);
     if (!request.user) {
       return true;
     }
@@ -27,6 +28,7 @@ export class PermissionGuard implements CanActivate {
       context.getClass(),
       context.getHandler(),
     ]);
+    console.log('data', data);
     if (!data) {
       return true;
     }
@@ -40,8 +42,12 @@ export class PermissionGuard implements CanActivate {
     const hasPermission = oRolePermission.permissions.some((p) =>
       data.includes(p.code),
     );
+    console.log('hasPermission', hasPermission);
     if (!hasPermission) {
-      throw new BadRequestException('您没有该接口权限');
+      // throw new BadRequestException('您没有该接口权限');
+      throw new BadRequestException(
+        `您的角色权限为 production，没有该接口权限`,
+      );
     }
     // console.log('rolePermission', JSON.parse(rolePermission));
     return true;

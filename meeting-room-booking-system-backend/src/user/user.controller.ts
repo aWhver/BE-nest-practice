@@ -49,6 +49,7 @@ export class UserController {
   private redisService: RedisService;
 
   /** 管理员账户初始化 */
+  @skipAuth()
   @Get('initAdmin')
   initAdmin() {
     return this.userService.initAdmin();

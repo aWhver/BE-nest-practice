@@ -1,0 +1,34 @@
+services:
+  nest-app:
+    build:
+      context: ./
+      dockerfile: ./.Dockerfile
+    depends_on:
+      - mysql-container
+      - redis-container
+    ports:
+      - "3105:3105"
+    networks:
+      - common-network
+  mysql-container:
+    image: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - /Users/zhaojuntong/Desktop/dockertest/mysql:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: meeting_room_booking_system
+      MYSQL_ROOT_PASSWORD: admin0326
+    networks:
+      - common-network
+  redis-container:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - /Users/zhaojuntong/Desktop/dockertest/redis:/data
+    networks:
+      - common-network
+networks:
+  common-network:
+    driver: bridge

@@ -36,6 +36,9 @@ instance.interceptors.response.use(
   },
   async (error) => {
     const { data, config } = error.response;
+    if (config.isRefreshToken) {
+      return error.response;
+    }
     if (isRefreshing) {
       return new Promise((resolve) => {
         requestQueue.push({ resolve, config });
@@ -56,7 +59,9 @@ instance.interceptors.response.use(
         });
         return instance.request(config);
       } else {
-        window.location.replace('/login');
+        setTimeout(() => {
+          window.location.replace('/login');
+        }, 800);
       }
     }
 
@@ -75,8 +80,7 @@ function refreshToken() {
     refresh_token: string;
   }>('/user/refreshToken', {
     token: localStorage.getItem(REFRESH_TOKEN),
-    isRefreshToken: true,
-  });
+  }, { isRefreshToken: true });
 }
 
 function createAjax<T>(
@@ -96,7 +100,6 @@ function createAjax<T>(
   return instance
     .request<AxiosRequestConfig, AxiosResponse<AjaxReturnType<T>>>(ajaxSetting)
     .then((res) => {
-      // console.log('res', res);
       if (res.status === 200) {
         return {
           code: res.data.code,
@@ -119,17 +122,17 @@ function createAjax<T>(
     });
 }
 
-export const GET = function<T>(url: string, params = {}, headers = {}) {
+export const GET = function<T>(url: string, params = {}, ajaxConfig = {}) {
   const query = queryString.stringify(params);
   const char = url.indexOf('?') > -1 ? '&' : query ? '?' : '';
-  return createAjax<T>(url + char + query, { method: 'GET', ...headers });
+  return createAjax<T>(url + char + query, { method: 'GET', ...ajaxConfig });
 };
 
 export const POST = function<T>(
   url: string,
   data = {},
   params = {},
-  headers = {}
+  ajaxConfig = {}
 ) {
   const search = queryString.stringify(params);
   const char = url.indexOf('?') > -1 ? '&' : search ? '?' : '';
@@ -137,7 +140,7 @@ export const POST = function<T>(
   return createAjax<T>(url + char + search, {
     method: 'POST',
     data: JSON.stringify(data),
-    ...headers,
+    ...ajaxConfig,
   });
 };
 
@@ -145,7 +148,7 @@ export const PUT = function<T>(
   url: string,
   data = {},
   params = {},
-  headers = {}
+  ajaxConfig = {}
 ) {
   const search = queryString.stringify(params);
   const char = url.indexOf('?') > -1 ? '&' : search ? '?' : '';
@@ -153,7 +156,7 @@ export const PUT = function<T>(
   return createAjax<T>(url + char + search, {
     method: 'PUT',
     data: JSON.stringify(data),
-    ...headers,
+    ...ajaxConfig,
   });
 };
 
@@ -161,7 +164,7 @@ export const PATCH = function<T>(
   url: string,
   data = {},
   params = {},
-  headers = {}
+  ajaxConfig = {}
 ) {
   const search = queryString.stringify(params);
   const char = url.indexOf('?') > -1 ? '&' : search ? '?' : '';
@@ -169,7 +172,7 @@ export const PATCH = function<T>(
   return createAjax<T>(url + char + search, {
     method: 'PATCH',
     data: JSON.stringify(data),
-    ...headers,
+    ...ajaxConfig,
   });
 };
 
@@ -177,7 +180,7 @@ export const DELETE = function<T>(
   url: string,
   data = {},
   params = {},
-  headers = {}
+  ajaxConfig = {}
 ) {
   const search = queryString.stringify(params);
   const char = url.indexOf('?') > -1 ? '&' : search ? '?' : '';
@@ -185,6 +188,6 @@ export const DELETE = function<T>(
   return createAjax<T>(url + char + search, {
     method: 'DELETE',
     data: JSON.stringify(data),
-    ...headers,
+    ...ajaxConfig,
   });
 };

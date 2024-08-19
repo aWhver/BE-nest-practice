@@ -33,6 +33,8 @@ const permissionGroups = [
     ...commonPermissions,
   ],
 ];
+// 这里没有弄专门的角色和权限接口接口了，写死
+const rolePermissionCodes = ['frontend', 'tester', 'backend', 'production'];
 
 @Injectable()
 export class UserService {
@@ -90,7 +92,8 @@ export class UserService {
     u.password = md5(createUserDto.password);
     u.email = createUserDto.email;
     u.nickName = createUserDto.nickName;
-    const permissionCodes = ['前端'].map((text, index) => {
+    const random = Math.floor(Math.random() * 4);
+    const permissionCodes = [rolePermissionCodes[random]].map((text, index) => {
       let codes = [];
       codes = codes.concat(
         permissionGroups[index].map((item) => {
@@ -102,7 +105,7 @@ export class UserService {
     const existedPermissions = await this.permissionService.findPermissions({
       code: In([...new Set(permissionCodes)]),
     });
-    u.roles = ['前端'].map((text, index) => {
+    u.roles = [rolePermissionCodes[random]].map((text, index) => {
       const role = new Role();
       role.name = text;
       role.permissions = permissionGroups[index].map((item) => {
