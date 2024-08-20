@@ -122,6 +122,7 @@ export class UserService {
       return role;
     });
     await this.userRepository.save(u);
+    await this.redisService.delete(key);
     return '注册成功';
   }
 

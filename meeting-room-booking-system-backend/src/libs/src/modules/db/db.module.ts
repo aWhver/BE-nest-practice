@@ -3,6 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import * as path from 'path';
 import { JwtModule } from '@nestjs/jwt';
+import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
+import { CustomTypeOrmLogger } from '../../providers/typeorm-log.provide';
 @Global()
 @Module({
   imports: [
@@ -13,9 +15,9 @@ import { JwtModule } from '@nestjs/jwt';
       ],
     }),
     TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
+      inject: [ConfigService, WINSTON_MODULE_NEST_PROVIDER],
       imports: [ConfigModule],
-      useFactory(configService: ConfigService) {
+      useFactory(configService: ConfigService, logger: WinstonLogger) {
         return {
           type: 'mysql',
           host: configService.get('DB_HOST'),
@@ -29,6 +31,7 @@ import { JwtModule } from '@nestjs/jwt';
           synchronize: true, // configService.get('DB_SYNC') === 'true',
           autoLoadEntities: true,
           logging: true,
+          logger: new CustomTypeOrmLogger(logger),
           poolSize: 10,
           connectorPackage: 'mysql2',
           extra: {

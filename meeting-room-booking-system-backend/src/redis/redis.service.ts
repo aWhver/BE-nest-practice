@@ -43,4 +43,8 @@ export class RedisService {
   async listGet(key: string) {
     return this.redisClient.lRange(key, 0, -1);
   }
+
+  async delete(key: string) {
+    await this.redisClient.del(key);
+  }
 }

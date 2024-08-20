@@ -59,7 +59,6 @@ export class UserController {
   @skipAuth()
   @Post('register')
   create(@Body() createUserDto: CreateUserDto) {
-    console.log('createUserDto', createUserDto);
     return this.userService.create(createUserDto);
   }
 
@@ -194,10 +193,8 @@ export class UserController {
   @skipAuth()
   @Post('updatePassword')
   async updatePassword(@Body() updatePasswordDto: UpdatePasswordDto) {
-    console.log('updatePasswordDto', updatePasswordDto);
-    const captcha = await this.redisService.get(
-      `${updatePasswordDto.email}_update_password_captcha`,
-    );
+    const key = `${updatePasswordDto.email}_update_password_captcha`;
+    const captcha = await this.redisService.get(key);
     if (!captcha) {
       throw new UnauthorizedException('验证码已过期');
     }
@@ -209,6 +206,7 @@ export class UserController {
     });
     user.password = md5(updatePasswordDto.password);
     await this.userService.updateUser(user);
+    await this.redisService.delete(key);
     return '修改密码成功';
   }
 
@@ -235,10 +233,8 @@ export class UserController {
   /** 更新用户信息 */
   @Post('update')
   async updateUserInfo(@Request() req, @Body() updateUserDto: UpdateUserDto) {
-    console.log('updateUserDto', updateUserDto);
-    const captcha = await this.redisService.get(
-      `${req.user.email}_update_info_captcha`,
-    );
+    const key = `${req.user.email}_update_info_captcha`;
+    const captcha = await this.redisService.get(key);
     if (!captcha) {
       throw new UnauthorizedException('验证码已过期');
     }
@@ -258,6 +254,7 @@ export class UserController {
       user.email = updateUserDto.email;
     }
     await this.userService.updateUser(user);
+    await this.redisService.delete(key);
     return '更新用户信息成功';
   }
 
