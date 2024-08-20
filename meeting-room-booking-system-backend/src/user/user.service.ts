@@ -92,6 +92,7 @@ export class UserService {
     u.password = md5(createUserDto.password);
     u.email = createUserDto.email;
     u.nickName = createUserDto.nickName;
+    u.loginType = LoginType.PASSWORD;
     const random = Math.floor(Math.random() * 4);
     const permissionCodes = [rolePermissionCodes[random]].map((text, index) => {
       let codes = [];
@@ -174,10 +175,12 @@ export class UserService {
       where: options,
       relations,
     });
+    console.log('user', user);
     if (!user) {
       throw new BadRequestException('用户不存在');
     }
 
+    console.log('user', user);
     const userVo = new UserVo();
     userVo.id = user.id;
     userVo.email = user.email;

@@ -9,7 +9,7 @@ const Index: React.FC = function() {
       <header className='header-container'>
         <Flex justify='space-between'>
           <h2>会议室预定系统</h2>
-          <Link to="/userInfo">
+          <Link to='/userInfo'>
             <UserOutlined className='icon' />
           </Link>
         </Flex>

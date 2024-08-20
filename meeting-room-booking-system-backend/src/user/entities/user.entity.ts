@@ -10,8 +10,8 @@ import {
 } from 'typeorm';
 
 export enum LoginType {
-  PASSWORD = 0,
-  GITHUB = 1,
+  PASSWORD = 'PASSWORD',
+  GITHUB = 'GITHUB',
 }
 
 @Entity()

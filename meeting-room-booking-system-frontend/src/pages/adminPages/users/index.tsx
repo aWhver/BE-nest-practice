@@ -19,6 +19,9 @@ const cols = [
     dataIndex: 'headPic',
     key: 'headPic',
     render(src: string) {
+      if (src.startsWith('http')) {
+        return <Image width={100} src={src} />;
+      }
       return <Image width={100} src={`${SERVER}/${src}`} />;
     },
   },

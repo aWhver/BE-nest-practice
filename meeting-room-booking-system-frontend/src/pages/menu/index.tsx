@@ -12,7 +12,7 @@ function getDefaultselectKey() {
 }
 
 const MenuIndex = function() {
-  const userInfo = JSON.parse(localStorage.getItem(USER_INFO) || '');
+  const userInfo = JSON.parse(localStorage.getItem(USER_INFO) || '{}');
   const isRedirect = !userInfo.isAdmin;
   const navigate = useNavigate();
   const onMenuClick: MenuProps['onClick'] = function(menu) {

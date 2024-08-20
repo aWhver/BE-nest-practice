@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+// 数据库查询的时候要转成字符串
 export enum Status {
   Pending = 0,
   Approved = 1,

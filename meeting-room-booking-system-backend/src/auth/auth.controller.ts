@@ -75,7 +75,7 @@ export class AuthController {
     }
 
     const [access_token, refresh_token] = this.generateToken(userInfo);
-    res.cookie('auth-return', JSON.stringify(userInfo));
+    res.cookie('auth_return', JSON.stringify(userInfo));
     res.cookie('access_token', access_token);
     res.cookie('refresh_token', refresh_token);
     res.redirect('http://localhost:3000/meetingRoomList');
