@@ -16,6 +16,8 @@ interface JwtUser {
   userId: number;
   email: string;
   isAdmin: boolean;
+  headPic?: string;
+  nickName?: string;
 }
 
 declare module 'express' {

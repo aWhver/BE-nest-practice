@@ -9,6 +9,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+export enum LoginType {
+  PASSWORD = 0,
+  GITHUB = 1,
+}
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -68,4 +73,12 @@ export class User {
     name: 'user_roles',
   })
   roles: Role[];
+
+  @Column({
+    type: 'enum',
+    comment: '登录类型 0: 账户密码; 1: github',
+    enum: LoginType,
+    default: LoginType.PASSWORD,
+  })
+  loginType: LoginType;
 }

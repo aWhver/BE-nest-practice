@@ -26,7 +26,7 @@ import { getRolePermissionKey } from 'src/common/const';
 import { UpdatePasswordDto, UpdateUserDto } from './dto/update-user.dto';
 import { generateParseIntPipe } from 'src/common/pipe';
 import { FindOptionsWhere, Like } from 'typeorm';
-import { User } from './entities/user.entity';
+import { LoginType, User } from './entities/user.entity';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { UserListVo } from './vo/user.vo';
 import { RefreshTokenVo } from './vo/token.vo';
@@ -304,6 +304,7 @@ export class UserController {
     const [user, password] = await this.userService.findOne(
       {
         username: loginDto.username,
+        loginType: LoginType.PASSWORD,
         // isAdmin: isAdmin,
       },
       ['roles', 'roles.permissions'],

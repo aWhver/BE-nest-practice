@@ -8,7 +8,7 @@ import {
   Repository,
   In,
 } from 'typeorm';
-import { User } from './entities/user.entity';
+import { LoginType, User } from './entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { Permission } from 'src/permission/entities/permission.entity';
 import { RedisService } from 'src/redis/redis.service';
@@ -122,6 +122,19 @@ export class UserService {
     });
     await this.userRepository.save(u);
     return '注册成功';
+  }
+
+  // github首次授权注册
+  registerByGithub(nickName: string, email: string, headPic: string) {
+    const user = new User();
+    user.email = email;
+    user.nickName = nickName;
+    user.headPic = headPic;
+    user.isAdmin = false;
+    user.loginType = LoginType.GITHUB;
+    user.password = '';
+    user.username = `${email}_${Math.random().toString().slice(2, 8)}`;
+    return this.userRepository.save(user);
   }
 
   // 分页
