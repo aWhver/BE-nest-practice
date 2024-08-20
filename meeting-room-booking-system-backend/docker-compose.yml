@@ -1,4 +1,12 @@
 services:
+  # fe-app:
+  #   image: fe-meeting-room_booking_system:first
+  #   depends_on:
+  #     - nest-app
+  #   ports:
+  #     - "80:80"
+  #   networks:
+  #     - common-network
   nest-app:
     build:
       context: ./

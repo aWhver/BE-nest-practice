@@ -73,7 +73,7 @@ export function getColumns(
       render(id: number, record: BookingItem) {
         return (
           <>
-            {admin && (
+            {admin && record.status === Status.Pending && (
               <>
                 <Button
                   type='link'
@@ -83,6 +83,7 @@ export function getColumns(
                 >
                   同意
                 </Button>
+
                 <Button
                   type='link'
                   onClick={() => {

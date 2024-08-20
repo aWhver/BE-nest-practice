@@ -22,9 +22,7 @@
     "migration:create": "npx typeorm migration:create",
     "migration:generate": "ts-node ./node_modules/typeorm/cli migration:generate -d ./src/migrationDataSource.ts",
     "migration:run": "ts-node ./node_modules/typeorm/cli migration:run -d ./src/migrationDataSource.ts",
-    "migration:revert": "ts-node ./node_modules/typeorm/cli migration:revert -d ./src/migrationDataSource.ts",
-    "migration:generate:dev": "cross-env STAGE=dev npm run migration:generate",
-    "migration:run:dev": "cross-env STAGE=dev npm run migration:run"
+    "migration:revert": "ts-node ./node_modules/typeorm/cli migration:revert -d ./src/migrationDataSource.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

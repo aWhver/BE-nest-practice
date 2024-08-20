@@ -8,7 +8,7 @@ import { MeetingRoom } from './meeting-rooms/entities/meeting-room.entity';
 import { Booking } from './booking/entities/booking.entity';
 
 config({
-  path: path.join(__dirname, `.env.stage.${process.env.STAGE}`),
+  path: path.join(__dirname, `.env.migration`),
 });
 
 export default new DataSource({
@@ -21,7 +21,7 @@ export default new DataSource({
   // 生成环境不开启这个选项（true），会造成数据丢失，因为改了数据库架构，
   // 表的修改需要手动控制，需要使用 migrations来控制，
   // typeorm 提供了 migration:create,generate,run,revert命令
-  synchronize: process.env.DB_SYNC === 'true',
+  synchronize: false,
   migrations: ['src/migrations/**.ts'],
   entities: [User, Role, Permission, MeetingRoom, Booking],
   logging: true,
