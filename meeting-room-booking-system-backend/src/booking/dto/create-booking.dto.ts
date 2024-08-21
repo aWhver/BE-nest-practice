@@ -11,3 +11,7 @@ export class UrgeDto {
   meetingRoomName: string;
   bookingTimeRangeTxt: string;
 }
+
+export class ApproveDto extends UrgeDto {
+  email: string;
+}

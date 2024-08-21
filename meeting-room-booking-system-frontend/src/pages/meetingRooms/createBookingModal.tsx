@@ -2,6 +2,7 @@ import { Form, Input, Modal, DatePicker, message } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import { Dayjs } from 'dayjs';
 import { createBooking } from '../../api/booking';
+import { memo } from 'react';
 
 const FormItem = Form.Item;
 
@@ -73,4 +74,4 @@ const CreateBookingModal: React.FC<CreateBookingModalProps> = function(props) {
   );
 };
 
-export default CreateBookingModal;
+export default memo(CreateBookingModal);

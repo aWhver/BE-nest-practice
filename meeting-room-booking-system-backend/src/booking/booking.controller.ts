@@ -11,7 +11,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { BookingService } from './booking.service';
-import { CreateBookingDto, UrgeDto } from './dto/create-booking.dto';
+import { ApproveDto, CreateBookingDto, UrgeDto } from './dto/create-booking.dto';
 import { Request } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { BookingListDto } from './dto/booking-list.dto';
@@ -92,6 +92,7 @@ export class BookingController {
       bookingItem.status = booking.status;
       bookingItem.createTime = booking.createTime;
       bookingItem.userId = booking.user.id;
+      bookingItem.email = booking.user.email;
       bookingItem.bookingNickName = booking.user.nickName;
       bookingItem.meetingRoomId = booking.meetingRoom.id;
       bookingItem.meetingRoomName = booking.meetingRoom.name;
@@ -105,10 +106,9 @@ export class BookingController {
   }
 
   /** 审核通过 */
-  @Get('approve/:id')
-  async approve(@Param('id') id: string) {
-    await this.bookingService.updateBookingStatus(+id, Status.Approved);
-    return '审核通过';
+  @Post('approve')
+  async approve(@Body() approveDto: ApproveDto) {
+    return this.bookingService.approve(approveDto);
   }
 
   /** 驳回申请 */

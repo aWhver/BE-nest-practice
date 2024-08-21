@@ -1,5 +1,6 @@
 import { GET, POST } from '../../common/http';
 import {
+  ApproveQuery,
   BookingList,
   BookingListQuery,
   UrgeQuery,
@@ -12,8 +13,8 @@ export const createBooking = (data: createBookingQuery) =>
 export const getBookingList = (params?: BookingListQuery) =>
   GET<BookingList>('/booking/list', params);
 
-export const approveBooking = (id: number) =>
-  GET<string>(`/booking/approve/${id}`);
+export const approveBooking = (data: ApproveQuery) =>
+  POST<string>(`/booking/approve`, data);
 
 export const rejectBooking = (id: number) =>
   GET<string>(`/booking/reject/${id}`);

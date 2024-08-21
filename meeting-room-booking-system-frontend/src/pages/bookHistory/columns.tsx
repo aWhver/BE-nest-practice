@@ -18,12 +18,12 @@ const statusMap: Map<Status, [string, string]> = new Map([
 ]);
 
 const hanlder = function(
-  pro: Promise<{ code: number }>,
+  pro: Promise<{ code: number, data: string; }>,
   cb?: (ran: number) => void
 ) {
   pro.then((res) => {
     if (res.code === 200) {
-      message.success('操作成功');
+      message.success(res.data || '操作成功');
       cb && cb(Math.random());
     }
   });
@@ -78,7 +78,17 @@ export function getColumns(
                 <Button
                   type='link'
                   onClick={() => {
-                    hanlder(approveBooking(id), cb);
+                    hanlder(
+                      approveBooking({
+                        id,
+                        email: record.email,
+                        meetingRoomName: record.meetingRoomName,
+                        bookingTimeRangeTxt: `${formatTime(
+                          new Date(record.startTime)
+                        )} ~ ${formatTime(new Date(record.endTime))}`,
+                      }),
+                      cb
+                    );
                   }}
                 >
                   同意

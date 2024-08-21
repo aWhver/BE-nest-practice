@@ -1,7 +1,7 @@
 import { Input, Button, message } from 'antd';
 import { getCaptcha } from '../../api/user/registerLogin';
 import './captcha.css';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, memo } from 'react';
 import useFormInstance from 'antd/es/form/hooks/useFormInstance';
 
 interface Props {
@@ -53,4 +53,4 @@ const Captcha: React.FC<Props> = function(props) {
   );
 };
 
-export default Captcha;
+export default memo(Captcha);

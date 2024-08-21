@@ -1,5 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { CreateBookingDto, UrgeDto } from './dto/create-booking.dto';
+import { ApproveDto, CreateBookingDto, UrgeDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Booking, Status } from './entities/booking.entity';
@@ -110,6 +110,16 @@ export class BookingService {
 
   remove(id: number) {
     return `This action removes a #${id} booking`;
+  }
+
+  async approve(approveDto: ApproveDto) {
+    await this.updateBookingStatus(approveDto.id, Status.Approved);
+    await this.emailService.sendMail({
+      to: approveDto.email,
+      subject: '预定审核通过',
+      html: `你申请的会议室：${approveDto.meetingRoomName}在${approveDto.bookingTimeRangeTxt}期间使用的审批已通过`,
+    });
+    return '审核通过并发送信息至预定人邮箱';
   }
 
   async urge(urgeDto: UrgeDto) {

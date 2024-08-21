@@ -1,7 +1,7 @@
 import { Form, Input, Modal, message } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import { CreateMeetingRoomQuery } from '../../api/meetingRoom/types';
-import { useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import {
   createMeetingRoom,
   getMeetingRoomDetail,
@@ -134,4 +134,4 @@ const MeetingRoomModal: React.FC<IProps> = function(props) {
   );
 };
 
-export default MeetingRoomModal;
+export default memo(MeetingRoomModal);
