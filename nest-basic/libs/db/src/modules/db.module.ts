@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
+import { algorithmSvcOpt } from '../config';
 
 @Global()
 @Module({
@@ -16,6 +17,7 @@ import { JwtModule } from '@nestjs/jwt';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [`.env.stage.${process.env.STAGE}`, '.env.stage.default'],
+      load: [algorithmSvcOpt],
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
@@ -33,7 +35,7 @@ import { JwtModule } from '@nestjs/jwt';
           // typeorm 提供了 migration:create,generate,run,revert命令
           synchronize: configService.get('DB_SYNC'),
           autoLoadEntities: true,
-          logging: true,
+          // logging: true,
           poolSize: 10,
           connectorPackage: 'mysql2',
           extra: {

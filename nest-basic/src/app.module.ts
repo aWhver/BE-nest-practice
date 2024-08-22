@@ -8,7 +8,7 @@ import { InterceptorPracticeModule } from './interceptor-practice/interceptor-pr
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MulterUploadModule } from './multer-upload/multer-upload.module';
 import { CityModule } from './city/city.module';
-import { DbModule } from 'libs/db/src';
+import { DbModule, MicroServicesModule } from 'libs/db/src';
 import { ArticleModule } from './article/article.module';
 import { UserModule } from './user/user.module';
 import { PermissionModule } from './permission/permission.module';
@@ -22,6 +22,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ShortUrlCodeModule } from './short-url-code/short-url-code.module';
 import { ShortLongMapModule } from './short-long-map/short-long-map.module';
 import { QrcodeLoginModule } from './qrcode-login/qrcode-login.module';
+import { MocroServicesTestModule } from './mocro-services-test/mocro-services-test.module';
 
 @Module({
   imports: [
@@ -37,6 +38,8 @@ import { QrcodeLoginModule } from './qrcode-login/qrcode-login.module';
     ShortUrlCodeModule,
     ShortLongMapModule,
     QrcodeLoginModule,
+    MicroServicesModule,
+    MocroServicesTestModule,
     // 这几个模块需要起 redis服务或者 docker redis容器,练习其他的时候先注释掉
     /* RedisModule,
     ArticleModule,
