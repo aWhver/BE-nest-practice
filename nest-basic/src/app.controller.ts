@@ -1,8 +1,9 @@
-import { Controller, Get, Param, Query, Sse } from '@nestjs/common';
+import { Controller, Get, Inject, Param, Query, Sse } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Observable } from 'rxjs';
 import { exec } from 'child_process';
 import * as os from 'os';
+import { EtcdService } from './etcd/etcd.service';
 
 @Controller()
 export class AppController {
@@ -34,4 +35,27 @@ export class AppController {
   getCpus() {
     return os.cpus();
   }
+
+  /* @Inject(EtcdService)
+  edctService: EtcdService;
+
+  @Get('put')
+  async put(@Query('num') num: string) {
+    this.edctService.watchSerice('4', (data) => {
+      console.log('data', data);
+    });
+    await this.edctService.put('services/4', num);
+    return 'success';
+  }
+
+  @Get('get')
+  get() {
+    return this.edctService.get('services/4');
+  }
+
+  @Get('delete')
+  async delete() {
+    await this.edctService.delete('services/4');
+    return 'deleted';
+  } */
 }

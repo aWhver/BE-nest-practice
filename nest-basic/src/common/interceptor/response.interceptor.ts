@@ -30,7 +30,7 @@ export class ResponseInterceptor implements NestInterceptor {
     const now = Date.now();
     return next.handle().pipe(
       map((data: any) => {
-        if (data.statusCode === HttpStatus.FOUND) {
+        if (data?.statusCode === HttpStatus.FOUND) {
           // 这个不生效，不知道什么原因
           // response.setHeader('location', data.url);
           response.redirect(data.url);

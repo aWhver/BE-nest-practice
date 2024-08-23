@@ -23,6 +23,7 @@ import { ShortUrlCodeModule } from './short-url-code/short-url-code.module';
 import { ShortLongMapModule } from './short-long-map/short-long-map.module';
 import { QrcodeLoginModule } from './qrcode-login/qrcode-login.module';
 import { MocroServicesTestModule } from './mocro-services-test/mocro-services-test.module';
+import { EtcdModule } from './etcd/etcd.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { MocroServicesTestModule } from './mocro-services-test/mocro-services-te
     QrcodeLoginModule,
     MicroServicesModule,
     MocroServicesTestModule,
+    EtcdModule,
     // 这几个模块需要起 redis服务或者 docker redis容器,练习其他的时候先注释掉
     /* RedisModule,
     ArticleModule,
@@ -49,6 +51,14 @@ import { MocroServicesTestModule } from './mocro-services-test/mocro-services-te
     PermissionModule,
     RabcUserModule,
     RoleModule, */
+    // 该模块需要启动 edct服务
+    /* EtcdModule.forRoot({
+      hosts: 'http://localhost:2379',
+      auth: {
+        username: 'root',
+        password: '',
+      },
+    }), */
   ],
   controllers: [AppController],
   providers: [
