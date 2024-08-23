@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>minio上传</title>
+    <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <input type="file" name="file" id="file" multiple />
+    <script>
+      file.onchange = function (e) {
+        // console.log('files', e.target.files);
+        Array.from(e.target.files).forEach(async (file) => {
+          const resp = await getPresignedUrl(file.name);
+          upload(file, resp.data.data);
+        });
+      };
+
+      function getPresignedUrl(fileName) {
+        return axios.get('/multer-upload/presignedUrl', {
+          params: {
+            name: fileName,
+          },
+        });
+      }
+
+      function upload(file, url) {
+        axios
+          .put(url, file, {
+            headers: {
+              'Content-Type': file.type,
+            },
+          })
+          .then((res) => {
+            console.log('res', res);
+          });
+      }
+    </script>
+  </body>
+</html>

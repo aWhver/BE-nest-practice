@@ -36,7 +36,7 @@ export class ResponseInterceptor implements NestInterceptor {
           response.redirect(data.url);
           return;
         }
-        if (response.statusCode === HttpStatus.CREATED) {
+        if (response?.statusCode === HttpStatus.CREATED) {
           response.status(200);
         }
         return {

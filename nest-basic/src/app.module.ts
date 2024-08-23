@@ -24,6 +24,7 @@ import { ShortLongMapModule } from './short-long-map/short-long-map.module';
 import { QrcodeLoginModule } from './qrcode-login/qrcode-login.module';
 import { MocroServicesTestModule } from './mocro-services-test/mocro-services-test.module';
 import { EtcdModule } from './etcd/etcd.module';
+import { MinioModule } from './minio/minio.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { EtcdModule } from './etcd/etcd.module';
     MicroServicesModule,
     MocroServicesTestModule,
     EtcdModule,
+    MinioModule,
     // 这几个模块需要起 redis服务或者 docker redis容器,练习其他的时候先注释掉
     /* RedisModule,
     ArticleModule,

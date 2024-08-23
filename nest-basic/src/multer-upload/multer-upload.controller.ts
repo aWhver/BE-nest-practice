@@ -12,6 +12,7 @@ import {
   Param,
   Get,
   Query,
+  Inject,
 } from '@nestjs/common';
 import { MulterUploadService } from './multer-upload.service';
 import { CreateMulterUploadDto } from './dto/create-multer-upload.dto';
@@ -25,6 +26,7 @@ import {
   FilesInterceptor,
 } from '@nestjs/platform-express';
 import { MyFileValidator } from './file.pipe';
+import { MinioService } from 'src/minio/minio.service';
 
 const storage = (dir = 'uploads') =>
   multer.diskStorage({
@@ -56,6 +58,9 @@ const muloptions = {
 @Controller('multer-upload')
 export class MulterUploadController {
   constructor(private readonly multerUploadService: MulterUploadService) {}
+
+  @Inject(MinioService)
+  minioService: MinioService;
 
   @Post()
   @UseInterceptors(FileInterceptor('file', muloptions))
@@ -185,5 +190,11 @@ export class MulterUploadController {
     // fs.rmdirSync(dir);
 
     return `uploads/${name}`;
+  }
+
+  // minio直传获取签名 url
+  @Get('presignedUrl')
+  upload(@Query('name') name: string) {
+    return this.minioService.presignedPutObject('nest-basic', name);
   }
 }
