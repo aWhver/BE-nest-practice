@@ -46,4 +46,4 @@ function calcCount(char) {
 }
 
 console.log('ans', getMaxCountChar(['AAAABBCDHHH', 'ISDHFSHFDAASDIAHSD', 'EEEEEEE']));
-console.log('ans', getMaxCountChar(['F', 'GRGYUIDKHDYO', 'TTTONGGGGG']));
+console.log('ans', getMaxCountChar(['F', 'GRGYUIDKHDYO', 'GGGGGGGONGGGGG']));
