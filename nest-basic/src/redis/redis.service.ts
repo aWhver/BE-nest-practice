@@ -105,4 +105,25 @@ export class RedisService {
   async geoDist(key: string, m1: string, m2: string, unit?: GeoUnits) {
     return this.redisClient.geoDist(key, m1, m2, unit || 'km');
   }
+
+  async sAdd(key: string, value: string[]) {
+    value.length && this.redisClient.sAdd(key, value);
+  }
+
+  async sInterStore(key1: string, key2: string, key3: string) {
+    return this.redisClient.sInterStore(key1, [key2, key3]);
+  }
+
+  async sIsMember(key: string, member) {
+    this.redisClient.sIsMember(key, member);
+  }
+
+  async sMembers(key: string) {
+    return this.redisClient.sMembers(key);
+  }
+
+  async isExist(key: string) {
+    const ans = await this.redisClient.exists(key);
+    return ans > 0;
+  }
 }

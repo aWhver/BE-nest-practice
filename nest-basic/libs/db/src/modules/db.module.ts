@@ -33,7 +33,7 @@ import { algorithmSvcOpt } from '../config';
           // 生成环境不开启这个选项（true），会造成数据丢失，因为改了数据库架构，
           // 表的修改需要手动控制，需要使用 migrations来控制，
           // typeorm 提供了 migration:create,generate,run,revert命令
-          synchronize: configService.get('DB_SYNC'),
+          synchronize: configService.get('DB_SYNC') === 'true',
           autoLoadEntities: true,
           // logging: true,
           poolSize: 10,

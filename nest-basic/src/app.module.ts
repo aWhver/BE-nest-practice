@@ -25,6 +25,7 @@ import { QrcodeLoginModule } from './qrcode-login/qrcode-login.module';
 import { MocroServicesTestModule } from './mocro-services-test/mocro-services-test.module';
 import { EtcdModule } from './etcd/etcd.module';
 import { MinioModule } from './minio/minio.module';
+import { FollowUserModule } from './follow-user/follow-user.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { MinioModule } from './minio/minio.module';
     MinioModule,
     // 这几个模块需要起 redis服务或者 docker redis容器,练习其他的时候先注释掉
     /* RedisModule,
+    FollowUserModule,
     ArticleModule,
     TaskModule,
     NearbySearchModule,

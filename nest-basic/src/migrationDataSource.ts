@@ -7,6 +7,7 @@ import { RabcUser } from './rabc-user/entities/rabc-user.entity';
 import { Role } from './role/entities/role.entity';
 import { ShortLongMap } from './short-long-map/entities/short-long-map';
 import { ShortUrlCode } from './short-url-code/entities/short-url-code.entity';
+import { FollowUser } from './follow-user/entities/follow-user.entity';
 
 config({
   path: [`.env.stage.${process.env.STAGE}`, '.env.stage.default'],
@@ -32,6 +33,7 @@ export default new DataSource({
     Role,
     ShortLongMap,
     ShortUrlCode,
+    FollowUser,
   ],
   logging: true,
   poolSize: 10,
