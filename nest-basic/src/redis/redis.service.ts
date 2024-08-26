@@ -122,6 +122,58 @@ export class RedisService {
     return this.redisClient.sMembers(key);
   }
 
+  async zRanklist(key: string, start = 0, end = -1) {
+    const ranklist = [];
+    const members = await this.redisClient.zRange(key, start, end, {
+      REV: true,
+    });
+    await Promise.all(
+      members.map(async (member) => {
+        ranklist.push({
+          name: member,
+          score: await this.zScore(key, member),
+        });
+      }),
+    );
+    return ranklist;
+  }
+
+  async zAdd(key: string, members: Record<string, number>) {
+    const mems = [];
+    for (const mkey in members) {
+      mems.push({
+        score: members[mkey],
+        value: mkey,
+      });
+    }
+    await this.redisClient.zAdd(key, mems);
+  }
+
+  async zScore(key: string, member: string) {
+    return this.redisClient.zScore(key, member);
+  }
+
+  async zRank(key: string, member: string) {
+    const count = await this.redisClient.zCard(key);
+    const rank = await this.redisClient.zRank(key, member);
+    return count - rank;
+  }
+
+  async zIncr(key: string, increment: number, member: string) {
+    await this.redisClient.zIncrBy(key, increment, member);
+  }
+
+  async zUnion(key: string, keys?: string[]) {
+    if (!keys || keys.length === 0) {
+      return [];
+    }
+    if (keys.length === 1) {
+      return this.zRanklist(keys[0]);
+    }
+    await this.redisClient.zUnionStore(key, keys);
+    return this.zRanklist(key);
+  }
+
   async isExist(key: string) {
     const ans = await this.redisClient.exists(key);
     return ans > 0;
