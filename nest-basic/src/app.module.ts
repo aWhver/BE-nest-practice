@@ -27,6 +27,7 @@ import { EtcdModule } from './etcd/etcd.module';
 import { MinioModule } from './minio/minio.module';
 import { FollowUserModule } from './follow-user/follow-user.module';
 import { RankingModule } from './ranking/ranking.module';
+import { WebsocketModule } from './websocket/websocket.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { RankingModule } from './ranking/ranking.module';
     // 这几个模块需要起 redis服务或者 docker redis容器,练习其他的时候先注释掉
     RedisModule,
     RankingModule,
+    WebsocketModule,
     /* FollowUserModule,
     ArticleModule,
     TaskModule,

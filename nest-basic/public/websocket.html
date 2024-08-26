@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>websocket</title>
+    <script
+      src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+      integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <script>
+      const ws = io('http://localhost:3102');
+      ws.on('connect', () => {
+        ws.emit('createWebsocket', (res) => {
+          console.log('createWebsocketres: ', res);
+        });
+
+        ws.emit('findOneWebsocket', 1, (res) => {
+          console.log('findOneWebsocketres: ', res);
+        });
+
+        ws.emit('customemit');
+
+        ws.on('custom', res => {
+          console.log('customres: ', res);
+        })
+
+        ws.emit('asyncmessage', res => {
+          console.log('asyncmessageres: ', res);
+        })
+
+        ws.on('asyncmessage', res => {
+          console.log('dddd: ', res);
+        })
+      });
+
+      ws.on('disconnect', () => {});
+    </script>
+  </body>
+</html>
