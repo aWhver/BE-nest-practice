@@ -3,7 +3,7 @@ CREATE TABLE `user` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `username` VARCHAR(50) NOT NULL,
     `password` VARCHAR(60) NOT NULL,
-    `nickName` VARCHAR(50) NOT NULL,
+    `nickName` VARCHAR(50) NOT NULL DEFAULT '',
     `email` VARCHAR(50) NOT NULL,
     `headPic` VARCHAR(100) NOT NULL DEFAULT '',
     `createTime` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),

@@ -14,12 +14,12 @@ datasource db {
 }
 
 model user {
-  id Int @id @default(autoincrement())
-  username String @db.VarChar(50) @unique
-  password String @db.VarChar(60)
-  nickName String @db.VarChar(50)
-  email String @db.VarChar(50)
-  headPic String @db.VarChar(100) @default("")
+  id         Int      @id @default(autoincrement())
+  username   String   @unique @db.VarChar(50)
+  password   String   @db.VarChar(60)
+  nickName   String   @default("") @db.VarChar(50)
+  email      String   @db.VarChar(50)
+  headPic    String   @default("") @db.VarChar(100)
   createTime DateTime @default(now())
   updateTime DateTime @updatedAt
 }
