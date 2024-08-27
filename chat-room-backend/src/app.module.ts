@@ -1,14 +1,19 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PrismaModule, ConfigModule, RedisModule } from './global-modules';
+import {
+  PrismaModule,
+  ConfigModule,
+  RedisModule,
+  EmailModule,
+} from './global-modules';
 import { UserModule } from './user/user.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptor/response.interceptor';
 import { CustomExceptionFilter } from './common/exception/index';
 
 @Module({
-  imports: [PrismaModule, ConfigModule, RedisModule, UserModule],
+  imports: [PrismaModule, ConfigModule, RedisModule, EmailModule, UserModule],
   controllers: [AppController],
   providers: [
     AppService,

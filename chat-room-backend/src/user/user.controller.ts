@@ -6,15 +6,16 @@ import {
   Patch,
   Param,
   Delete,
-  Inject,
   BadRequestException,
+  Query,
+  Inject,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { RedisService } from 'src/global-modules/redis/redis.service';
 import { md5 } from '../common/utils';
+import { RedisService } from 'src/global-modules/redis/redis.service';
 
 @ApiTags('用户')
 @Controller('user')
@@ -22,13 +23,13 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Inject(RedisService)
-  private redisServie: RedisService;
+  private redisService: RedisService;
 
   /** 用户注册 */
   @Post('register')
   async create(@Body() createUserDto: CreateUserDto) {
     const { captcha, ...rest } = createUserDto;
-    const key = `register-user-captcha-${rest.username}`;
+    const key = `${createUserDto.email}-register-captcha`;
     await this.verifyCaptcha(key, captcha);
     const user = await this.userService.findUnique({
       username: rest.username,
@@ -37,8 +38,7 @@ export class UserController {
       throw new BadRequestException('用户已存在');
     }
     rest.password = md5(rest.password);
-    // return this.userService.create(rest);
-    return 'ok';
+    return this.userService.create(rest);
   }
 
   @Get()
@@ -56,8 +56,23 @@ export class UserController {
     return this.userService.remove(+id);
   }
 
+  /** 注册验证码 */
+  @Get('register/captcha')
+  registerCaptcha(@Query('email') email: string) {
+    return this.userService.sendCaptcha(`${email}-register-captcha`, {
+      email,
+      subject: '欢迎注册聊天室账号',
+      html: (captcha) => {
+        return `<div>
+             您好，欢迎社交聊天系统！
+        <h2>验证码: ${captcha}</h2>
+          </div>`;
+      },
+    });
+  }
+
   async verifyCaptcha(redisKey: string, captcha: string) {
-    const cache = await this.redisServie.get(redisKey);
+    const cache = await this.redisService.get(redisKey);
     if (!cache) {
       throw new BadRequestException('验证码已过期');
     }
