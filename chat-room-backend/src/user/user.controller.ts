@@ -37,7 +37,8 @@ export class UserController {
       throw new BadRequestException('用户已存在');
     }
     rest.password = md5(rest.password);
-    return this.userService.create(rest);
+    // return this.userService.create(rest);
+    return 'ok';
   }
 
   @Get()
