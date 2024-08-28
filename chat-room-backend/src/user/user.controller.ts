@@ -168,7 +168,7 @@ export class UserController {
     return true;
   }
 
-  generateToken(user: Prisma.userUncheckedCreateInput) {
+  generateToken(user: any) {
     const access_token = this.jwtService.sign(
       {
         userId: user.id,

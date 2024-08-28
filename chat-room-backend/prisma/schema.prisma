@@ -14,12 +14,39 @@ datasource db {
 }
 
 model user {
-  id         Int      @id @default(autoincrement())
-  username   String   @unique @db.VarChar(50)
-  password   String   @db.VarChar(60)
-  nickName   String   @default("") @db.VarChar(50)
-  email      String   @db.VarChar(50) @unique
-  headPic    String   @default("") @db.VarChar(100)
-  createTime DateTime @default(now())
-  updateTime DateTime @updatedAt
+  id             Int          @id @default(autoincrement())
+  username       String       @unique @db.VarChar(50)
+  password       String       @db.VarChar(60)
+  nickName       String       @default("") @db.VarChar(50)
+  email          String       @unique @db.VarChar(50)
+  headPic        String       @default("") @db.VarChar(100)
+  createTime     DateTime     @default(now())
+  updateTime     DateTime     @updatedAt
+  friends        friendship[] @relation("userToFriend")
+  inverseFriends friendship[] @relation("friendToUser")
+}
+
+model friendship {
+  user     user @relation("userToFriend", fields: [userId], references: [id])
+  userId   Int
+  friend   user @relation("friendToUser", fields: [friendId], references: [id])
+  friendId Int
+
+  @@id([userId, friendId])
+}
+
+enum FriendRequestStatus {
+  appending
+  approved
+  rejected
+}
+
+model friendRequest {
+  id         Int                 @id @default(autoincrement())
+  fromUserId Int
+  toUserId   Int
+  reason     String              @db.VarChar(200) @default("")
+  status     FriendRequestStatus @default(appending)
+  createTime DateTime            @default(now())
+  updateTime DateTime            @updatedAt
 }

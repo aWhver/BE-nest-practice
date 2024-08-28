@@ -12,9 +12,10 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptor/response.interceptor';
 import { CustomExceptionFilter } from './common/exception/index';
 import { AuthGuard } from './common/guard/index';
+import { FriendshipModule } from './friendship/friendship.module';
 
 @Module({
-  imports: [PrismaModule, ConfigModule, RedisModule, EmailModule, UserModule],
+  imports: [PrismaModule, ConfigModule, RedisModule, EmailModule, UserModule, FriendshipModule],
   controllers: [AppController],
   providers: [
     AppService,
