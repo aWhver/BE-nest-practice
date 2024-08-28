@@ -35,9 +35,10 @@ export class UserService {
     return `This action returns all user`;
   }
 
-  findUnique(where: Prisma.userWhereUniqueInput) {
+  findUnique(where: Prisma.userWhereUniqueInput, select?: Prisma.userSelect) {
     return this.prismaService.user.findUnique({
       where,
+      select,
     });
   }
 

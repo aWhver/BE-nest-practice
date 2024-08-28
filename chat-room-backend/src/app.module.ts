@@ -8,9 +8,10 @@ import {
   EmailModule,
 } from './global-modules';
 import { UserModule } from './user/user.module';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptor/response.interceptor';
 import { CustomExceptionFilter } from './common/exception/index';
+import { AuthGuard } from './common/guard/index';
 
 @Module({
   imports: [PrismaModule, ConfigModule, RedisModule, EmailModule, UserModule],
@@ -24,6 +25,10 @@ import { CustomExceptionFilter } from './common/exception/index';
     {
       provide: APP_FILTER,
       useClass: CustomExceptionFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
     },
   ],
 })

@@ -1,3 +1,5 @@
 export const REDIS_CLIENT_TOKEN = 'REDIS_CLIENT_TOKEN';
 
 export const NODE_MAILER_TOKEN = 'NODE_MAILER_TOKEN';
+
+export const SKIP_AUTH = 'SKIP_AUTH';

@@ -33,7 +33,7 @@ export class ResponseInterceptor implements NestInterceptor {
         let message = '请求成功';
         if (Object.prototype.toString.call(resp) === '[object Object]') {
           code = resp.code || 200;
-          data = resp.data;
+          data = resp.data || resp;
           message = resp.message || '请求成功';
         }
         return {

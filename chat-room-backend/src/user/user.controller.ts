@@ -13,9 +13,14 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { md5 } from '../common/utils';
 import { RedisService } from 'src/global-modules/redis/redis.service';
+import { JwtService } from '@nestjs/jwt';
+import { Prisma } from '@prisma/client';
+import { LoginUserVo } from './vo/login-user.vo';
+import { SkipAuth } from '../common/decorator/index';
 
 @ApiTags('用户')
 @Controller('user')
@@ -25,7 +30,11 @@ export class UserController {
   @Inject(RedisService)
   private redisService: RedisService;
 
+  @Inject(JwtService)
+  private jwtService: JwtService;
+
   /** 用户注册 */
+  @SkipAuth()
   @Post('register')
   async create(@Body() createUserDto: CreateUserDto) {
     const { captcha, ...rest } = createUserDto;
@@ -41,9 +50,25 @@ export class UserController {
     return this.userService.create(rest);
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
+  /** 登录 */
+  @SkipAuth()
+  @Post('login')
+  async login(@Body() loginUserDto: LoginUserDto) {
+    const user = await this.userService.findUnique({
+      username: loginUserDto.username,
+    });
+    if (!user) {
+      throw new BadRequestException('用户不存在');
+    }
+    if (user.password !== md5(loginUserDto.password)) {
+      throw new BadRequestException('密码不正确');
+    }
+    const token = this.generateToken(user);
+    delete user.password;
+    const loginUserVo = new LoginUserVo();
+    loginUserVo.user = user;
+    loginUserVo.token = token;
+    return loginUserVo;
   }
 
   @Patch(':id')
@@ -57,6 +82,7 @@ export class UserController {
   }
 
   /** 注册验证码 */
+  @SkipAuth()
   @Get('register/captcha')
   registerCaptcha(@Query('email') email: string) {
     return this.userService.sendCaptcha(`${email}-register-captcha`, {
@@ -81,5 +107,20 @@ export class UserController {
     }
 
     return true;
+  }
+
+  generateToken(user: Prisma.userUncheckedCreateInput) {
+    const access_token = this.jwtService.sign(
+      {
+        userId: user.id,
+        username: user.username,
+        email: user.email,
+      },
+      {
+        expiresIn: '7d',
+      },
+    );
+
+    return access_token;
   }
 }
