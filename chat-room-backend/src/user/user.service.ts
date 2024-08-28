@@ -31,8 +31,27 @@ export class UserService {
     // return 'This action adds a new user';
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async updateUser(data: Omit<UpdateUserDto, 'captcha'>) {
+    const { id, ...rest } = data;
+    await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: rest,
+    });
+    return '修改成功';
+  }
+
+  async updatePwd(id: number, pwd: string) {
+    await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        password: pwd,
+      },
+    });
+    return '密码修改成功';
   }
 
   findUnique(where: Prisma.userWhereUniqueInput, select?: Prisma.userSelect) {
@@ -40,10 +59,6 @@ export class UserService {
       where,
       select,
     });
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
   }
 
   remove(id: number) {
