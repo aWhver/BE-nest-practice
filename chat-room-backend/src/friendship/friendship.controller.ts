@@ -1,17 +1,9 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { FriendshipService } from './friendship.service';
 import { CreateFriendshipDto } from './dto/create-friendship.dto';
-import { Status, UpdateFriendshipDto } from './dto/update-friendship.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { UserInfo } from 'src/common/decorator';
+import { $Enums } from '@prisma/client';
 
 @ApiTags('好友')
 @Controller('friendship')
@@ -29,7 +21,7 @@ export class FriendshipController {
   async approved(@Param('id') id: string) {
     const friendRequest = await this.friendshipService.updateStatus(
       +id,
-      Status.approved,
+      $Enums.FriendRequestStatus.approved,
     );
     // console.log('friendRequest', friendRequest);
     await this.friendshipService.createFriendShip(
@@ -42,7 +34,10 @@ export class FriendshipController {
   /** 拒绝添加好友 */
   @Post('rejected/:id')
   async rejected(@Param('id') id: string) {
-    await this.friendshipService.updateStatus(+id, Status.rejected);
+    await this.friendshipService.updateStatus(
+      +id,
+      $Enums.FriendRequestStatus.rejected,
+    );
     return '已拒绝对方的添加好友申请';
   }
 

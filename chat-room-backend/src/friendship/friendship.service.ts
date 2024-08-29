@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreateFriendshipDto } from './dto/create-friendship.dto';
-import { Status } from './dto/update-friendship.dto';
 import { PrismaService } from 'src/global-modules/prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, $Enums } from '@prisma/client';
 
 @Injectable()
 export class FriendshipService {
@@ -15,7 +14,7 @@ export class FriendshipService {
     });
   }
 
-  updateStatus(id: number, status: Status) {
+  updateStatus(id: number, status: $Enums.FriendRequestStatus) {
     return this.prismaServie.friendRequest.update({
       where: {
         id,

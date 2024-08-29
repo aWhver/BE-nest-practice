@@ -13,9 +13,10 @@ import { ResponseInterceptor } from './common/interceptor/response.interceptor';
 import { CustomExceptionFilter } from './common/exception/index';
 import { AuthGuard } from './common/guard/index';
 import { FriendshipModule } from './friendship/friendship.module';
+import { ChatroomModule } from './chatroom/chatroom.module';
 
 @Module({
-  imports: [PrismaModule, ConfigModule, RedisModule, EmailModule, UserModule, FriendshipModule],
+  imports: [PrismaModule, ConfigModule, RedisModule, EmailModule, UserModule, FriendshipModule, ChatroomModule],
   controllers: [AppController],
   providers: [
     AppService,

@@ -14,16 +14,17 @@ datasource db {
 }
 
 model user {
-  id             Int          @id @default(autoincrement())
-  username       String       @unique @db.VarChar(50)
-  password       String       @db.VarChar(60)
-  nickName       String       @default("") @db.VarChar(50)
-  email          String       @unique @db.VarChar(50)
-  headPic        String       @default("") @db.VarChar(100)
-  createTime     DateTime     @default(now())
-  updateTime     DateTime     @updatedAt
-  friends        friendship[] @relation("userToFriend")
-  inverseFriends friendship[] @relation("friendToUser")
+  id             Int            @id @default(autoincrement())
+  username       String         @unique @db.VarChar(50)
+  password       String         @db.VarChar(60)
+  nickName       String         @default("") @db.VarChar(50)
+  email          String         @unique @db.VarChar(50)
+  headPic        String         @default("") @db.VarChar(100)
+  createTime     DateTime       @default(now())
+  updateTime     DateTime       @updatedAt
+  friends        friendship[]   @relation("userToFriend")
+  inverseFriends friendship[]   @relation("friendToUser")
+  chatrooms      userChatroom[]
 }
 
 model friendship {
@@ -45,8 +46,32 @@ model friendRequest {
   id         Int                 @id @default(autoincrement())
   fromUserId Int
   toUserId   Int
-  reason     String              @db.VarChar(200) @default("")
+  reason     String              @default("") @db.VarChar(200)
   status     FriendRequestStatus @default(appending)
   createTime DateTime            @default(now())
   updateTime DateTime            @updatedAt
+}
+
+enum ChatroomType {
+  single @map("0")
+  group  @map("1")
+}
+
+model chatroom {
+  id         Int            @id @default(autoincrement())
+  name       String         @db.VarChar(50)
+  type       ChatroomType   @default(single)
+  createTime DateTime       @default(now())
+  updateTime DateTime       @updatedAt
+  users      userChatroom[]
+}
+
+model userChatroom {
+  userId Int
+  user   user @relation(fields: [userId], references: [id])
+
+  chatroomId Int
+  chatroom   chatroom @relation(fields: [chatroomId], references: [id])
+
+  @@id([userId, chatroomId])
 }
