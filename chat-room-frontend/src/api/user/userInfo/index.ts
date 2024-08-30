@@ -1,9 +1,5 @@
 import { GET, POST } from '@common/http';
-import {
-  UpdatePwd,
-  UpdateUserinfo,
-  UserInfo,
-} from './types';
+import { UpdatePwd, UpdateUserinfo, UserInfo } from './types';
 
 export const updatePassword = (data: UpdatePwd) =>
   POST<string>('user/update/password', data);
@@ -13,4 +9,5 @@ export const updateUserinfo = (data: UpdateUserinfo) =>
 
 export const getUserInfo = () => GET<UserInfo>('user/info');
 
-
+export const presignedUrl = (name: string) =>
+  GET<string>('user/presignedUrl', { name });

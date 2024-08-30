@@ -6,6 +6,7 @@ import {
   ConfigModule,
   RedisModule,
   EmailModule,
+  MinioModule,
 } from './global-modules';
 import { UserModule } from './user/user.module';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -21,6 +22,7 @@ import { ChatroomModule } from './chatroom/chatroom.module';
     ConfigModule,
     RedisModule,
     EmailModule,
+    MinioModule,
     UserModule,
     FriendshipModule,
     ChatroomModule,

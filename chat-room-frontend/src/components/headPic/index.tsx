@@ -1,7 +1,8 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Upload, UploadFile, UploadProps, message } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { ACCESS_TOKEN, SERVER } from '../../common/const';
+import { presignedUrl } from '@/api/user/userInfo';
+import axios from 'axios';
 
 interface HeadPicUploadProps {
   value?: string;
@@ -11,45 +12,56 @@ interface HeadPicUploadProps {
 const HeadPicUpload: React.FC<HeadPicUploadProps> = function(props) {
   const [fileList, setFileList] = useState<UploadFile[]>();
   const onChange: UploadProps['onChange'] = function(info) {
-    const { status, response } = info.file;
-    // console.log('status', status);
+    const { status } = info.file;
     // console.log('info.fileList', info.fileList, status);
     if (status === 'done') {
-      props.onChange!(response.data);
       message.success('头像上传成功');
     } else if (status === 'error') {
       message.error('头像上传失败');
     }
   };
-  const beforeUpload: UploadProps['beforeUpload'] = function (file) {
-    // console.log('file', file);
+  const beforeUpload: UploadProps['beforeUpload'] = function(file) {
     setFileList([file]);
-  }
+  };
   const onRemove: UploadProps['onRemove'] = function() {
     props.onChange!('');
-  }
+  };
   useEffect(() => {
-    setFileList(props.value ? [
-      {
-        uid: Math.random()
-          .toString()
-          .slice(2, 8),
-        url: `${SERVER}/${props.value}`,
-        name: '',
-      },
-    ] : []);
+    setFileList(
+      props.value
+        ? [
+            {
+              uid: Math.random()
+                .toString()
+                .slice(2, 8),
+              url: props.value,
+              name: '',
+            },
+          ]
+        : []
+    );
   }, [props.value]);
-  // const _Upload
+  const action = async function(file: UploadFile) {
+    const res = await presignedUrl(file.name);
+    return res.data;
+  };
+  const customRequest: UploadProps['customRequest'] = async function(options) {
+    const resp = await axios.put(options.action, options.file, {
+      headers: {
+        'Content-Type': options.file.type,
+      },
+    });
+    options.onSuccess!(resp.data);
+    props.onChange!(`http://localhost:9000/nest-basic/${options.file.name}`);
+  };
   return (
     <Upload
       name='file'
-      action={`${SERVER}/user/upload`}
+      action={action}
       listType='picture-circle'
       multiple={false}
       fileList={fileList}
-      headers={{
-        Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}` || '',
-      }}
+      customRequest={customRequest}
       onChange={onChange}
       onRemove={onRemove}
       beforeUpload={beforeUpload}

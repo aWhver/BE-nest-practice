@@ -15,9 +15,9 @@ import { ApiTags } from '@nestjs/swagger';
 import { md5 } from '../common/utils';
 import { RedisService } from 'src/global-modules/redis/redis.service';
 import { JwtService } from '@nestjs/jwt';
-import { Prisma } from '@prisma/client';
 import { LoginUserVo } from './vo/login-user.vo';
 import { SkipAuth, UserInfo } from '../common/decorator/index';
+import { MinioService } from 'src/global-modules/minio/minio.service';
 
 @ApiTags('用户')
 @Controller('user')
@@ -29,6 +29,9 @@ export class UserController {
 
   @Inject(JwtService)
   private jwtService: JwtService;
+
+  @Inject(MinioService)
+  private minioService: MinioService;
 
   /** 用户注册 */
   @SkipAuth()
@@ -154,6 +157,12 @@ export class UserController {
           </div>`;
       },
     });
+  }
+
+  /** 获取上传的预签名 url */
+  @Get('presignedUrl')
+  uploadHeadPic(@Query('name') name: string) {
+    return this.minioService.presignedObject('nest-basic', name);
   }
 
   async verifyCaptcha(redisKey: string, captcha: string) {

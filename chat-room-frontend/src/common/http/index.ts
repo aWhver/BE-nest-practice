@@ -17,7 +17,7 @@ interface AjaxReturnType<T> {
   message: string;
 }
 
-const instance = axios.create({
+export const instance = axios.create({
   baseURL: SERVER,
   timeout: 10000,
 });

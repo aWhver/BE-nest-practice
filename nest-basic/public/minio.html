@@ -26,6 +26,7 @@
       }
 
       function upload(file, url) {
+        console.log('file', file);
         axios
           .put(url, file, {
             headers: {
