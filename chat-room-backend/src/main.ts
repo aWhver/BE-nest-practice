@@ -6,7 +6,9 @@ import metadata from './metadata';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: true,
+  });
   const configService = app.get(ConfigService);
   const config = new DocumentBuilder()
     .setTitle('聊天室接口文档')

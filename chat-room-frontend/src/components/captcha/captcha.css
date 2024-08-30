@@ -1,0 +1,8 @@
+.captcha-container {
+  display: flex;
+  flex-direction: row !important;
+}
+.captcha-container .ant-input {
+  flex: 1;
+  margin-right: 12px;
+}
