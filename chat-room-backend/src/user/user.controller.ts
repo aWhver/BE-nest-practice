@@ -105,7 +105,7 @@ export class UserController {
   async updatePassword(@Body() updatePasswordDto: UpdateUserPasswordDto) {
     const { captcha, ...rest } = updatePasswordDto;
     await this.verifyCaptcha(`${rest.email}-update-password-captcha`, captcha);
-    await this.userService.updatePwd(rest.id, md5(rest.password));
+    await this.userService.updatePwd(rest.username, md5(rest.password));
     this.redisService.del(`${rest.email}-update-password-captcha`);
     return '密码修改成功';
   }

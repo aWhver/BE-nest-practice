@@ -6,6 +6,7 @@ export interface UpdatePwd {
 }
 
 export interface UpdateUserinfo {
+  id: number;
   email: string;
   nickName: string;
   captcha: string;

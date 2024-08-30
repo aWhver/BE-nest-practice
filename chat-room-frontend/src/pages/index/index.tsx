@@ -1,5 +1,6 @@
 import { useLoginUserStore } from "@/store";
 import { useEffect } from "react";
+import { Outlet } from "react-router-dom";
 
 const Index = function() {
   const { userInfo, getUserInfo} = useLoginUserStore(state => ({
@@ -12,7 +13,9 @@ const Index = function() {
       getUserInfo();
     }
   }, []);
-  return <div>index</div>;
+  return <div>
+    <Outlet />
+  </div>;
 };
 
 export default Index;

@@ -42,10 +42,10 @@ export class UserService {
     return '修改成功';
   }
 
-  async updatePwd(id: number, pwd: string) {
+  async updatePwd(username: string, pwd: string) {
     await this.prismaService.user.update({
       where: {
-        id,
+        username,
       },
       data: {
         password: pwd,

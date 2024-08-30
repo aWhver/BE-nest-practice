@@ -48,5 +48,8 @@ export class UpdateUserPasswordDto {
   })
   captcha: string;
 
-  id: number;
+  @IsNotEmpty({
+    message: '用户名不能为空',
+  })
+  username: string;
 }

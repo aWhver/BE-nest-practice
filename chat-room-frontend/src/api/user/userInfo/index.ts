@@ -6,7 +6,7 @@ import {
 } from './types';
 
 export const updatePassword = (data: UpdatePwd) =>
-  POST<string>('user/updatePassword', data);
+  POST<string>('user/update/password', data);
 
 export const updateUserinfo = (data: UpdateUserinfo) =>
   POST<string>('user/update', data);
