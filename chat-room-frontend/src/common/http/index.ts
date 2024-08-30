@@ -32,8 +32,8 @@ instance.interceptors.request.use((config) => {
 
 instance.interceptors.response.use(
   (res) => {
-    if (res.headers.token) {
-      localStorage.setItem(ACCESS_TOKEN, res.headers.token);
+    if (typeof res.headers.get === 'function' && res.headers.get('token')) {
+      localStorage.setItem(ACCESS_TOKEN, res.headers.get('token') as string);
     }
     return res;
   },
@@ -85,7 +85,12 @@ export const GET = <T>(url: string, params = {}, ajaxConfig = {}) => {
   );
 };
 
-export const POST = <T>(url: string, data = {}, params = {}, ajaxConfig = {}) => {
+export const POST = <T>(
+  url: string,
+  data = {},
+  params = {},
+  ajaxConfig = {}
+) => {
   const search = queryString.stringify(params);
   const char = url.indexOf('?') > -1 ? '&' : search ? '?' : '';
   return createAjax<T>(

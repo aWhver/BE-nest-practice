@@ -16,7 +16,15 @@ import { FriendshipModule } from './friendship/friendship.module';
 import { ChatroomModule } from './chatroom/chatroom.module';
 
 @Module({
-  imports: [PrismaModule, ConfigModule, RedisModule, EmailModule, UserModule, FriendshipModule, ChatroomModule],
+  imports: [
+    PrismaModule,
+    ConfigModule,
+    RedisModule,
+    EmailModule,
+    UserModule,
+    FriendshipModule,
+    ChatroomModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

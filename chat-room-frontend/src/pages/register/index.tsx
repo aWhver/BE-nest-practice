@@ -33,7 +33,7 @@ const Register: React.FC = function() {
 
   return (
     <div className='register-container'>
-      <h2>会议室预定系统</h2>
+      <h2>聊天室</h2>
       <div className='register-form-container'>
         <Form
           labelCol={{ span: 6 }}

@@ -29,7 +29,7 @@ const Login: React.FC = function() {
   return (
     <Spin spinning={spinning}>
       <div className='login-container'>
-        <h2>会议室预定系统</h2>
+        <h2>聊天室</h2>
         <Form
           onFinish={onFinish}
           autoComplete='off'

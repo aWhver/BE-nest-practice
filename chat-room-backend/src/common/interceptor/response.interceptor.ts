@@ -15,7 +15,6 @@ export class ResponseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler<any>) {
     const http = context.switchToHttp();
     const res = http.getResponse<Response>();
-    const req = http.getResponse<Request>();
     this.logger.debug(
       `Request: [Class] ${context.getClass().name} [Handler] ${context.getHandler().name} invoked...`,
     );
