@@ -6,6 +6,8 @@ import Login from '@pages/login';
 import Index from '@/pages/index';
 import UpdatePassword from '@/pages/updatePassword';
 import UserInfoEdit from '@/pages/userInfoEdit';
+import Nav from '@/pages/nav';
+import Chat from '@/pages/chat';
 
 const routes: RouteObject[] = [
   {
@@ -14,14 +16,24 @@ const routes: RouteObject[] = [
     element: <Index />,
     children: [
       {
-        path: "updatePassword",
-        element: <UpdatePassword />
+        path: '/',
+        element: <Nav />,
+        children: [
+          {
+            path: '/',
+            element: <Chat />,
+          },
+        ],
       },
       {
-        path: "userInfo",
-        element: <UserInfoEdit />
-      }
-    ]
+        path: 'updatePassword',
+        element: <UpdatePassword />,
+      },
+      {
+        path: 'userInfo',
+        element: <UserInfoEdit />,
+      },
+    ],
   },
   {
     path: 'register',

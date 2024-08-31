@@ -1,0 +1,6 @@
+.chat-list .ant-list-item {
+  cursor: pointer;
+}
+.chat-list .ant-list-item.active {
+  background-color: #f3ebeb;
+}
