@@ -5,13 +5,13 @@ import { Outlet, useNavigate } from 'react-router-dom';
 
 function getDefaultselectKey() {
   const pathname = window.location.pathname;
-  const key = pathname.split('/').pop() || 'chat';
+  const key = pathname.split('/').pop() || '/';
   return key as string;
 }
 
 const items = [
   {
-    key: 'chat',
+    key: '/',
     label: '聊天',
   },
   {
@@ -46,7 +46,7 @@ const Nav = function() {
           onClick={onMenuClick}
         ></Menu>
       </Sider>
-      <Content className='content'>
+      <Content className='content' style={{ backgroundColor: '#fff' }}>
         <Outlet />
       </Content>
     </Layout>

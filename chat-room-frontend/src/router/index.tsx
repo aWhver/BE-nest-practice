@@ -8,6 +8,7 @@ import UpdatePassword from '@/pages/updatePassword';
 import UserInfoEdit from '@/pages/userInfoEdit';
 import Nav from '@/pages/nav';
 import Chat from '@/pages/chat';
+import FriendShip from '@/pages/friendship';
 
 const routes: RouteObject[] = [
   {
@@ -22,6 +23,10 @@ const routes: RouteObject[] = [
           {
             path: '/',
             element: <Chat />,
+          },
+          {
+            path: 'friendship',
+            element: <FriendShip />,
           },
         ],
       },

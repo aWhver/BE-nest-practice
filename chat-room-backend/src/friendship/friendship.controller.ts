@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { FriendshipService } from './friendship.service';
 import { CreateFriendshipDto } from './dto/create-friendship.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -59,7 +67,10 @@ export class FriendshipController {
 
   /** 获取好友列表 */
   @Get('list')
-  friendshipList(@UserInfo('userId') userId: number) {
-    return this.friendshipService.getFriendShip(userId);
+  friendshipList(
+    @UserInfo('userId') userId: number,
+    @Query('nickName') nickName?: string,
+  ) {
+    return this.friendshipService.getFriendShip(userId, nickName || '');
   }
 }

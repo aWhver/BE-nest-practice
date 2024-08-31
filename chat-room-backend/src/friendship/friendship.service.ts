@@ -72,7 +72,7 @@ export class FriendshipService {
     });
   }
 
-  async getFriendShip(userId: number) {
+  async getFriendShip(userId: number, nickName: string) {
     const friendships = await this.prismaServie.friendship.findMany({
       where: {
         OR: [
@@ -92,7 +92,7 @@ export class FriendshipService {
     });
 
     const friendIds = [...set].filter((item) => item !== userId);
-    return this.prismaServie.user.findMany({
+    const friends = await this.prismaServie.user.findMany({
       where: {
         id: {
           in: friendIds,
@@ -102,7 +102,10 @@ export class FriendshipService {
         id: true,
         nickName: true,
         email: true,
+        headPic: true,
+        username: true,
       },
     });
+    return friends.filter((friend) => friend.nickName.includes(nickName));
   }
 }
