@@ -5,3 +5,8 @@ export interface Friendship {
   headPic: string;
   username: string;
 }
+
+export interface AddFriendship {
+  toUsername: string;
+  reason?: string;
+}

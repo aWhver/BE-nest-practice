@@ -1,13 +1,13 @@
 import { getFriendship } from '@/api/friendship';
 import { Friendship } from '@/api/friendship/types';
 import { Button, Form, Image, Input, Table } from 'antd';
-import { useForm } from 'antd/es/form/Form';
 import { useEffect, useMemo, useState } from 'react';
+import AddFriendshipModal from './addFriendshipModal';
 
 const FriendShip = function() {
-  const [form] = useForm<{ nickName: string }>();
   const [nickName, setNickName] = useState<string>('');
   const [friendship, setFriendship] = useState<Friendship[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
   const columns = useMemo(() => {
     return [
       {
@@ -40,6 +40,9 @@ const FriendShip = function() {
   const onFinish = function(values: { nickName: string }) {
     setNickName(values.nickName);
   };
+  const onClose = function() {
+    setOpen(false);
+  };
   useEffect(() => {
     getFriendship(nickName).then((res) => {
       if (res.code === 200) {
@@ -49,7 +52,7 @@ const FriendShip = function() {
   }, [nickName]);
   return (
     <div style={{ padding: '12px' }}>
-      <Form form={form} autoComplete='off' layout='inline' onFinish={onFinish}>
+      <Form autoComplete='off' layout='inline' onFinish={onFinish}>
         <Form.Item name='nickName'>
           <Input placeholder='请输入昵称' />
         </Form.Item>
@@ -59,10 +62,13 @@ const FriendShip = function() {
           </Button>
         </Form.Item>
         <Form.Item>
-          <Button type='primary'>添加好友</Button>
+          <Button type='primary' onClick={() => setOpen(true)}>
+            添加好友
+          </Button>
         </Form.Item>
       </Form>
       <Table dataSource={friendship} columns={columns}></Table>
+      <AddFriendshipModal isOpen={open} onClose={onClose} />
     </div>
   );
 };

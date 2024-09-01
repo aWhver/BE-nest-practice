@@ -21,10 +21,10 @@ export class ResponseInterceptor implements NestInterceptor {
     return next.handle().pipe(
       timeout(10000),
       map((resp) => {
-        if (resp?.statusCode === HttpStatus.CREATED) {
+        if (res.statusCode === HttpStatus.CREATED) {
           res.status(HttpStatus.OK);
         }
-        if (resp?.statucCode === HttpStatus.FOUND) {
+        if (resp?.statusCode === HttpStatus.FOUND) {
           res.redirect(resp.url);
         }
         let code = 200;

@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { FriendshipService } from './friendship.service';
 import { CreateFriendshipDto } from './dto/create-friendship.dto';
@@ -20,8 +21,23 @@ export class FriendshipController {
 
   /** 添加好友 */
   @Post('add')
-  create(@Body() createFriendshipDto: CreateFriendshipDto) {
-    return this.friendshipService.create(createFriendshipDto);
+  async create(
+    @Body() createFriendshipDto: CreateFriendshipDto,
+    @UserInfo('userId') userId: number,
+  ) {
+    const { toUsername, reason } = createFriendshipDto;
+    const user = await this.friendshipService.findUserUnique(toUsername);
+    const isInverseFriendship =
+      await this.friendshipService.getFriendshipEachOhter(user.id, userId);
+    if (isInverseFriendship) {
+      throw new BadRequestException('你们已经是好友了');
+    }
+    await this.friendshipService.create({
+      fromUserId: userId,
+      toUserId: user.id,
+      reason,
+    });
+    return '发送请求成功';
   }
 
   /** 同意添加好友 */

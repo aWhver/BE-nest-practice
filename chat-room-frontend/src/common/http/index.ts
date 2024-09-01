@@ -46,7 +46,7 @@ instance.interceptors.response.use(
       }, 800);
     }
     if (!config.ignoreError) {
-      message.error(data.data.data);
+      message.error(data.data);
     }
     return Promise.reject(data);
   }

@@ -1,5 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { CreateFriendshipDto } from './dto/create-friendship.dto';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/global-modules/prisma/prisma.service';
 import { Prisma, $Enums } from '@prisma/client';
 
@@ -46,8 +45,6 @@ export class FriendshipService {
   }
 
   delete(friendId: number, userId: number) {
-    console.log('friendId', friendId);
-    console.log('userId', userId);
     return this.prismaServie.friendship.deleteMany({
       where: {
         OR: [
@@ -107,5 +104,35 @@ export class FriendshipService {
       },
     });
     return friends.filter((friend) => friend.nickName.includes(nickName));
+  }
+
+  async findUserUnique(username: string) {
+    const user = await this.prismaServie.user.findUnique({
+      where: {
+        username,
+      },
+    });
+    if (!user) {
+      throw new BadRequestException('该用户不存在');
+    }
+    return user;
+  }
+
+  // 查看是否是对方的好友
+  getFriendshipEachOhter(friendId: number, userId: number) {
+    return this.prismaServie.friendship.findFirst({
+      where: {
+        OR: [
+          {
+            friendId,
+            userId,
+          },
+          {
+            friendId: userId,
+            userId: friendId,
+          },
+        ],
+      },
+    });
   }
 }
