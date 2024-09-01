@@ -64,7 +64,14 @@ export class FriendshipService {
   getList(userId: number) {
     return this.prismaServie.friendRequest.findMany({
       where: {
-        toUserId: userId,
+        OR: [
+          {
+            toUserId: userId,
+          },
+          {
+            fromUserId: userId,
+          },
+        ],
       },
     });
   }
@@ -116,6 +123,21 @@ export class FriendshipService {
       throw new BadRequestException('该用户不存在');
     }
     return user;
+  }
+
+  findUsers(userIds: number[]) {
+    return this.prismaServie.user.findMany({
+      where: {
+        id: {
+          in: userIds,
+        },
+      },
+      select: {
+        nickName: true,
+        headPic: true,
+        id: true,
+      },
+    });
   }
 
   // 查看是否是对方的好友

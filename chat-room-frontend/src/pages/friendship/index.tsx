@@ -1,11 +1,12 @@
-import { getFriendship } from '@/api/friendship';
+import { deleteFriend, getFriendship } from '@/api/friendship';
 import { Friendship } from '@/api/friendship/types';
-import { Button, Form, Image, Input, Table } from 'antd';
+import { Button, Form, Image, Input, Modal, Table } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import AddFriendshipModal from './addFriendshipModal';
 
 const FriendShip = function() {
   const [nickName, setNickName] = useState<string>('');
+  const [num, setNum] = useState<number>(0);
   const [friendship, setFriendship] = useState<Friendship[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const columns = useMemo(() => {
@@ -30,9 +31,32 @@ const FriendShip = function() {
       },
       {
         title: '操作',
-        key: 'headPic',
-        render(_, record: any) {
-          return <Button type='link'>聊天</Button>;
+        key: 'id',
+        dataIndex: 'id',
+        render(id: number, record: any) {
+          return (
+            <>
+              <Button type='link'>聊天</Button>
+              <Button
+                type='link'
+                onClick={() => {
+                  Modal.confirm({
+                    title: '删除好友',
+                    content: '确认删除好友？',
+                    onOk() {
+                      deleteFriend(id).then((res) => {
+                        if (res.code === 200) {
+                          setNum(Math.random());
+                        }
+                      });
+                    },
+                  });
+                }}
+              >
+                删除
+              </Button>
+            </>
+          );
         },
       },
     ];
@@ -49,7 +73,7 @@ const FriendShip = function() {
         setFriendship(res.data);
       }
     });
-  }, [nickName]);
+  }, [nickName, num]);
   return (
     <div style={{ padding: '12px' }}>
       <Form autoComplete='off' layout='inline' onFinish={onFinish}>
