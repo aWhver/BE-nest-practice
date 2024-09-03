@@ -10,8 +10,12 @@ export class ChatroomController {
 
   /** 创建一对一聊天 */
   @Post('oneToOne/:id')
-  create(@Param('id') friendId: string, @UserInfo('userId') userId: number) {
-    return this.chatroomService.create(+friendId, userId);
+  async create(
+    @Param('id') friendId: string,
+    @UserInfo('userId') userId: number,
+  ) {
+    const res = await this.chatroomService.create(+friendId, userId);
+    return res.id;
   }
 
   /** 创建群聊 */

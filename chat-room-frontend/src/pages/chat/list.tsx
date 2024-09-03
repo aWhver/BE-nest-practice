@@ -1,7 +1,10 @@
 import { List } from 'antd';
 import Sider from 'antd/es/layout/Sider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './list.css';
+import { getChatroom } from '@/api/chatroom';
+import { Chatroom } from '@/api/chatroom/types';
+import { useNavigate } from 'react-router-dom';
 
 const dataSource = [
   {
@@ -22,21 +25,36 @@ const dataSource = [
 ];
 
 const ChatList = function() {
-  const [activeId, setActiveId] = useState(dataSource[0].id);
+  const [chatroomList, setChatroomList] = useState<Chatroom[]>([]);
+  const [activeId, setActiveId] = useState<number>();
+  const navigate = useNavigate();
+  useEffect(() => {
+    getChatroom().then((res) => {
+      if (res.code === 200) {
+        setChatroomList(res.data);
+        // res.data.length && setActiveId(res.data[0].id);
+      }
+    });
+  }, []);
   return (
     <Sider theme='light'>
       <List
         className='chat-list'
-        dataSource={dataSource}
+        dataSource={chatroomList}
         renderItem={(item) => {
           return (
             <List.Item
-              onClick={() => setActiveId(item.id)}
+              key={item.id}
+              onClick={() => {
+                setActiveId(item.id);
+                navigate('/chat/' + item.id, {
+                  replace: true,
+                });
+              }}
               className={activeId === item.id ? 'active' : ''}
               style={{ padding: '12px 16px' }}
             >
               <h4>{item.name}</h4>
-              {item.text}
             </List.Item>
           );
         }}

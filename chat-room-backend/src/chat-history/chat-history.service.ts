@@ -8,12 +8,12 @@ export class ChatHistoryService {
   private prismaServie: PrismaService;
 
   async getList(chatroomId: number) {
-    const messages = await this.prismaServie.chatHistory.findMany({
+    const chatHistories = await this.prismaServie.chatHistory.findMany({
       where: {
         chatroomId,
       },
     });
-    const sendUserIds = messages.map((message) => message.sendUserId);
+    const sendUserIds = chatHistories.map((message) => message.sendUserId);
     const sendUsers = await this.prismaServie.user.findMany({
       where: {
         id: { in: sendUserIds },
@@ -37,7 +37,7 @@ export class ChatHistoryService {
     });
 
     return {
-      messages,
+      chatHistories,
       sendUserObj,
     };
   }

@@ -3,12 +3,15 @@ import { Friendship } from '@/api/friendship/types';
 import { Button, Form, Image, Input, Modal, Table } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import AddFriendshipModal from './addFriendshipModal';
+import { createSingleChatroom } from '@/api/chatroom';
+import { useNavigate } from 'react-router-dom';
 
 const FriendShip = function() {
   const [nickName, setNickName] = useState<string>('');
   const [num, setNum] = useState<number>(0);
   const [friendship, setFriendship] = useState<Friendship[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const navigate = useNavigate();
   const columns = useMemo(() => {
     return [
       {
@@ -33,10 +36,10 @@ const FriendShip = function() {
         title: '操作',
         key: 'id',
         dataIndex: 'id',
-        render(id: number, record: any) {
+        render(id: number) {
           return (
             <>
-              <Button type='link'>聊天</Button>
+              <Button type='link' onClick={() => chat(id)}>聊天</Button>
               <Button
                 type='link'
                 onClick={() => {
@@ -61,6 +64,15 @@ const FriendShip = function() {
       },
     ];
   }, []);
+  const chat = function(friendId: number) {
+    createSingleChatroom(friendId).then(res => {
+      if (res.code === 200) {
+        navigate('/chat/' + res.data, {
+          replace: true,
+        });
+      }
+    });
+  }
   const onFinish = function(values: { nickName: string }) {
     setNickName(values.nickName);
   };

@@ -10,6 +10,7 @@ import Nav from '@/pages/nav';
 import Chat from '@/pages/chat';
 import FriendShip from '@/pages/friendship';
 import Notification from '@/pages/notification';
+import Chatroom from '@/pages/chatroom';
 
 const routes: RouteObject[] = [
   {
@@ -24,6 +25,12 @@ const routes: RouteObject[] = [
           {
             path: '/',
             element: <Chat />,
+            children: [
+              {
+                path: 'chat/:chatroomId',
+                element: <Chatroom />
+              }
+            ]
           },
           {
             path: 'friendship',

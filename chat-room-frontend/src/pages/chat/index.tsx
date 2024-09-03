@@ -1,55 +1,64 @@
 import Layout, { Content } from 'antd/es/layout/layout';
 import ChatList from './list';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { Input } from 'antd';
-import { Message, Reply } from './types';
+import { Outlet, useParams } from 'react-router-dom';
+import { useLoginUserStore } from '@/store';
+import { UserInfo } from '@/api/user/userInfo/types';
+import useChatroomMessageStore, { Reply } from '@/store/chatroomMessage';
+import { formatTime } from '@/common/utils';
 
 const Chat = function() {
-  const [messageList, setMessageList] = useState<Message[]>([]);
+  const { chatroomId = '0' } = useParams();
+  const addMessage = useChatroomMessageStore((state) => state.addMessage);
+  const registerSendMessageFn = useChatroomMessageStore(
+    (state) => state.registerSendMessageFn
+  );
+  const userInfo = useLoginUserStore((state) => state.userInfo) as UserInfo;
   const socketRef = useRef<Socket>();
-  const sendMessage = (value: string) => {
-    socketRef.current &&
-      socketRef.current.emit('sendMseeage', {
-        chatroomId: 1,
-        sendUserId: 1,
-        message: {
-          type: 'text',
-          content: value,
-        },
-      });
-  };
   useEffect(() => {
     const socket = (socketRef.current = io('http://localhost:3108'));
     socket.on('connect', () => {
       socket.emit('joinRoom', {
-        chatroomId: 1,
-        userId: 1,
+        chatroomId: +chatroomId,
+        userId: userInfo.id,
       });
 
       socket.on('message', (reply: Reply) => {
         if (reply.type === 'joinRoom') {
-          setMessageList((messageList) => [
-            ...messageList,
-            {
-              type: 'text',
-              content: `用户${reply.userId}加入群聊`,
-            },
-          ]);
+          addMessage({
+            type: 'text',
+            content: `用户${reply.userId}加入群聊`,
+          });
         } else {
-          setMessageList((messageList) => [...messageList, reply.message]);
+          addMessage({
+            ...reply.message,
+            sendUserId: reply.userId,
+            createTime: formatTime(new Date())
+          });
         }
       });
+      registerSendMessageFn((value: string, type: 'text') => {
+        socketRef.current &&
+          socketRef.current.emit('sendMseeage', {
+            chatroomId: +chatroomId,
+            sendUserId: userInfo.id,
+            message: {
+              type,
+              content: value,
+            },
+          });
+      });
     });
-  }, []);
+    return () => {
+      socket.disconnect();
+    };
+  }, [chatroomId, userInfo.id]);
   return (
     <Layout style={{ height: '100%' }}>
       <ChatList />
       <Content>
-        <Input onBlur={(e) => sendMessage(e.target.value)} />
-        {messageList.map((message) => {
-          return <p>{message.content}</p>;
-        })}
+        <Outlet />
       </Content>
     </Layout>
   );
