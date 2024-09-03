@@ -11,6 +11,7 @@ export type Reply =
   | {
       type: 'joinRoom';
       userId: number;
+      nickName: string;
     };
 
 interface ChatroomMessageState {

@@ -5,7 +5,11 @@ import { Outlet, useNavigate } from 'react-router-dom';
 
 function getDefaultselectKey() {
   const pathname = window.location.pathname;
-  const key = pathname.split('/').pop() || '/';
+  const paths = pathname.split('/');
+  const key = paths.pop() || '/';
+  if (paths.pop() === 'chat') {
+    return '/';
+  }
   return key as string;
 }
 

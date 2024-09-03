@@ -13,6 +13,7 @@ import { PrismaService } from 'src/global-modules/prisma/prisma.service';
 interface JoinRoomPayload {
   chatroomId: number;
   userId: number;
+  nickName: string;
 }
 
 interface SendMessagePayload {
@@ -50,6 +51,7 @@ export class ChatGateway {
       this.server.to(chatroomId).emit('message', {
         type: 'joinRoom',
         userId: joinRoomPayload.userId,
+        nickName: joinRoomPayload.nickName,
       });
     }
   }

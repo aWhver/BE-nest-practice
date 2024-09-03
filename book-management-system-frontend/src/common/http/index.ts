@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import queryString from 'query-string';
 import { message } from 'antd';
@@ -59,13 +59,6 @@ function createAjax<T>(url: string, ajaxConfig: AxiosRequestConfig) {
     ),
   });
   return ajaxObserver<T>(ajaxSetting).pipe(
-    catchError((err) => {
-      return of({
-        data: err.errMsg || { code: null, message: '网络错误' },
-        code: err.errCode,
-        status: err.status,
-      });
-    }),
     map((res) => {
       const { code, message } = res.data;
       // console.log('code, message', code, message);
@@ -75,7 +68,14 @@ function createAjax<T>(url: string, ajaxConfig: AxiosRequestConfig) {
         message,
         // status: res.status
       };
-    })
+    }),
+    catchError((err) => {
+      return throwError({
+        data: err.errMsg || '网络错误',
+        code: err.status,
+        message: '请求出错了',
+      });
+    }),
   );
 }
 

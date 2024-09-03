@@ -22,13 +22,14 @@ const Chat = function() {
       socket.emit('joinRoom', {
         chatroomId: +chatroomId,
         userId: userInfo.id,
+        nickName: userInfo.nickName,
       });
 
       socket.on('message', (reply: Reply) => {
         if (reply.type === 'joinRoom') {
           addMessage({
             type: 'text',
-            content: `用户${reply.userId}加入群聊`,
+            content: `用户${reply.nickName}加入群聊`,
           });
         } else {
           addMessage({
