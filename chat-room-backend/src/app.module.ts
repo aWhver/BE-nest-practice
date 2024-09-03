@@ -15,6 +15,8 @@ import { CustomExceptionFilter } from './common/exception/index';
 import { AuthGuard } from './common/guard/index';
 import { FriendshipModule } from './friendship/friendship.module';
 import { ChatroomModule } from './chatroom/chatroom.module';
+import { ChatModule } from './chat/chat.module';
+import { ChatHistoryModule } from './chat-history/chat-history.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { ChatroomModule } from './chatroom/chatroom.module';
     UserModule,
     FriendshipModule,
     ChatroomModule,
+    ChatModule,
+    ChatHistoryModule,
   ],
   controllers: [AppController],
   providers: [

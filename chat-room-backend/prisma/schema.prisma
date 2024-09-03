@@ -75,3 +75,19 @@ model userChatroom {
 
   @@id([userId, chatroomId])
 }
+
+enum ChatHistoryContentType {
+  text
+  image
+  file
+}
+
+model chatHistory {
+  id         Int                    @id @default(autoincrement())
+  chatroomId Int
+  sendUserId Int
+  content    String                 @db.VarChar(500)
+  type       ChatHistoryContentType @default(text)
+  createTime DateTime               @default(now())
+  updateTime DateTime               @updatedAt
+}
