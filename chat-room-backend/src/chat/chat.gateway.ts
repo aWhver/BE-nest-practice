@@ -8,6 +8,7 @@ import { ChatService } from './chat.service';
 import { Socket, Server } from 'socket.io';
 import { Inject } from '@nestjs/common';
 import { ChatHistoryService } from 'src/chat-history/chat-history.service';
+import { PrismaService } from 'src/global-modules/prisma/prisma.service';
 
 interface JoinRoomPayload {
   chatroomId: number;
@@ -32,14 +33,25 @@ export class ChatGateway {
   @Inject(ChatHistoryService)
   private chatHistoryService: ChatHistoryService;
 
+  @Inject(PrismaService)
+  private prismaService: PrismaService;
+
   @SubscribeMessage('joinRoom')
-  joinRoom(client: Socket, joinRoomPayload: JoinRoomPayload) {
+  async joinRoom(client: Socket, joinRoomPayload: JoinRoomPayload) {
     const chatroomId = joinRoomPayload.chatroomId.toString();
     client.join(chatroomId);
-    this.server.to(chatroomId).emit('message', {
-      type: 'joinRoom',
-      userId: joinRoomPayload.userId,
+    const isExist = await this.prismaService.userChatroom.findFirst({
+      where: {
+        chatroomId: +chatroomId,
+        userId: joinRoomPayload.userId,
+      },
     });
+    if (!isExist) {
+      this.server.to(chatroomId).emit('message', {
+        type: 'joinRoom',
+        userId: joinRoomPayload.userId,
+      });
+    }
   }
 
   @SubscribeMessage('sendMseeage')

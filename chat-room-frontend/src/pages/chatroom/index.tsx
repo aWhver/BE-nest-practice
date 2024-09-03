@@ -42,13 +42,13 @@ const Chatroom = function() {
               {message.sendUserId && (
                 <div className='chat-item-title'>
                   <Image
-                    src={store.sendUserObj[message.sendUserId].headPic}
+                    src={store.sendUserObj[message.sendUserId]?.headPic}
                     width={30}
                     height={30}
                     preview={false}
                   />
                   <span className='nick-name'>
-                    {store.sendUserObj[message.sendUserId].nickName}
+                    {store.sendUserObj[message.sendUserId]?.nickName}
                   </span>
                   <span className='send-time'>
                     {formatTime(new Date(message.createTime || ''))}

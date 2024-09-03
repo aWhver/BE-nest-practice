@@ -76,13 +76,23 @@ export class ChatroomService {
         },
       },
       include: {
-        users: true,
+        users: {
+          select: {
+            user: true,
+          },
+        },
       },
     });
+    // console.dir(res, { depth: null });
     return res.map((item) => {
       const { users, ...rest } = item;
+      let name = rest.name;
+      if (rest.type === ChatroomType.single) {
+        name = users.find((user) => user.user.id !== userId).user.nickName;
+      }
       return {
         ...rest,
+        name,
         userCount: users.length,
       };
     });
@@ -173,5 +183,23 @@ export class ChatroomService {
       },
     });
     return '解散群聊成功';
+  }
+
+  checkChatroom(friendId: number, userId: number) {
+    return this.prismaService.chatroom.findFirst({
+      where: {
+        type: ChatroomType.single,
+        users: {
+          every: {
+            userId: {
+              in: [friendId, userId],
+            },
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
   }
 }

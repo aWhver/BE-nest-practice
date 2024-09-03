@@ -14,6 +14,13 @@ export class ChatroomController {
     @Param('id') friendId: string,
     @UserInfo('userId') userId: number,
   ) {
+    const { id: chatroomId } = await this.chatroomService.checkChatroom(
+      +friendId,
+      userId,
+    );
+    if (chatroomId) {
+      return chatroomId;
+    }
     const res = await this.chatroomService.create(+friendId, userId);
     return res.id;
   }

@@ -4,35 +4,18 @@ import { useEffect, useState } from 'react';
 import './list.css';
 import { getChatroom } from '@/api/chatroom';
 import { Chatroom } from '@/api/chatroom/types';
-import { useNavigate } from 'react-router-dom';
-
-const dataSource = [
-  {
-    id: 1,
-    name: 'tong',
-    text: 'offer给到40k',
-  },
-  {
-    id: 2,
-    name: 'inigo',
-    text: 'offer给到42k',
-  },
-  {
-    id: 3,
-    name: 'juntong',
-    text: 'offer给到52k',
-  },
-];
+import { useNavigate, useParams } from 'react-router-dom';
 
 const ChatList = function() {
+  const { chatroomId = '0' } = useParams();
   const [chatroomList, setChatroomList] = useState<Chatroom[]>([]);
   const [activeId, setActiveId] = useState<number>();
   const navigate = useNavigate();
   useEffect(() => {
+    setActiveId(+chatroomId);
     getChatroom().then((res) => {
       if (res.code === 200) {
         setChatroomList(res.data);
-        // res.data.length && setActiveId(res.data[0].id);
       }
     });
   }, []);
