@@ -3,6 +3,13 @@
   flex-direction: column;
   height: 100%;
 }
+.chat-container .chatroom-name {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  line-height: 22px;
+  border-bottom: 1px solid #ddd;
+}
 .chat-content-container {
   padding: 12px;
   flex: 1;

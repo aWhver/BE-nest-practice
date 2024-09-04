@@ -16,6 +16,7 @@ export class ChatroomService {
     return this.prismaService.chatroom.create({
       data: {
         name: friend.nickName,
+        creatorId: userId,
         users: {
           create: [
             {
@@ -43,6 +44,7 @@ export class ChatroomService {
       data: {
         name,
         type: ChatroomType.group,
+        creatorId: userId,
         users: {
           create: [
             {
@@ -81,6 +83,9 @@ export class ChatroomService {
             user: true,
           },
         },
+      },
+      orderBy: {
+        createTime: 'desc',
       },
     });
     // console.dir(res, { depth: null });
@@ -133,6 +138,9 @@ export class ChatroomService {
       //   },
       // },
     });
+    if (!chatroom) {
+      throw new BadRequestException('该群聊不存在或已解散');
+    }
 
     return { ...chatroom, users: await this.findMembers(chatroomId) };
   }
@@ -177,12 +185,11 @@ export class ChatroomService {
         chatroomId,
       },
     });
-    await this.prismaService.chatroom.delete({
+    return this.prismaService.chatroom.delete({
       where: {
         id: chatroomId,
       },
     });
-    return '解散群聊成功';
   }
 
   checkChatroom(friendId: number, userId: number) {

@@ -4,6 +4,7 @@ import { Layout, Image, Flex } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
+import CreateGroupModal from './create-group-modal';
 
 const Index = function() {
   const navigate = useNavigate();
@@ -24,13 +25,16 @@ const Index = function() {
       >
         <Flex justify='space-between'>
           <h2>聊天室</h2>
-          <Image
-            onClick={() => navigate('/userInfo')}
-            src={userInfo.headPic}
-            width={50}
-            height={50}
-            preview={false}
-          />
+          <div>
+            <CreateGroupModal />
+            <Image
+              onClick={() => navigate('/userInfo')}
+              src={userInfo.headPic}
+              width={50}
+              height={50}
+              preview={false}
+            />
+          </div>
         </Flex>
       </Header>
       <Outlet />

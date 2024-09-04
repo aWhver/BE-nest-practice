@@ -19,6 +19,17 @@ const ChatList = function() {
       }
     });
   }, []);
+  useEffect(() => {
+    // 创建群聊时，打开新建的聊天界面，刷新下聊天室列表
+    if (+chatroomId !== activeId) {
+      setActiveId(+chatroomId);
+      getChatroom().then((res) => {
+        if (res.code === 200) {
+          setChatroomList(res.data);
+        }
+      });
+    }
+  }, [chatroomId])
   return (
     <Sider theme='light'>
       <List

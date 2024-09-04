@@ -1,3 +1,5 @@
+import { UserInfo } from '../user/userInfo/types';
+
 export enum ChatroomType {
   single = 'single',
   group = 'group',
@@ -6,6 +8,7 @@ export interface Chatroom {
   userCount: number;
   id: number;
   name: string;
+  creatorId: number;
   type: ChatroomType;
   createTime: string;
   updateTime: string;
@@ -31,4 +34,9 @@ export type SendUserObj = Record<
 export interface ChatHistory {
   chatHistories: ChatHistoryItem[];
   sendUserObj: SendUserObj;
+}
+
+export interface ChatroomInfo
+  extends Omit<Chatroom, 'userCount' | 'id' | 'createTime' | 'updateTime'> {
+  users: UserInfo[];
 }

@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -22,24 +16,19 @@ model user {
   headPic        String         @default("") @db.VarChar(100)
   createTime     DateTime       @default(now())
   updateTime     DateTime       @updatedAt
-  friends        friendship[]   @relation("userToFriend")
   inverseFriends friendship[]   @relation("friendToUser")
+  friends        friendship[]   @relation("userToFriend")
   chatrooms      userChatroom[]
 }
 
 model friendship {
-  user     user @relation("userToFriend", fields: [userId], references: [id])
   userId   Int
-  friend   user @relation("friendToUser", fields: [friendId], references: [id])
   friendId Int
+  friend   user @relation("friendToUser", fields: [friendId], references: [id])
+  user     user @relation("userToFriend", fields: [userId], references: [id])
 
   @@id([userId, friendId])
-}
-
-enum FriendRequestStatus {
-  appending
-  approved
-  rejected
+  @@index([friendId], map: "friendship_friendId_fkey")
 }
 
 model friendRequest {
@@ -52,34 +41,24 @@ model friendRequest {
   updateTime DateTime            @updatedAt
 }
 
-enum ChatroomType {
-  single @map("0")
-  group  @map("1")
-}
-
 model chatroom {
   id         Int            @id @default(autoincrement())
   name       String         @db.VarChar(50)
   type       ChatroomType   @default(single)
   createTime DateTime       @default(now())
   updateTime DateTime       @updatedAt
+  creatorId  Int
   users      userChatroom[]
 }
 
 model userChatroom {
-  userId Int
-  user   user @relation(fields: [userId], references: [id])
-
+  userId     Int
   chatroomId Int
   chatroom   chatroom @relation(fields: [chatroomId], references: [id])
+  user       user     @relation(fields: [userId], references: [id])
 
   @@id([userId, chatroomId])
-}
-
-enum ChatHistoryContentType {
-  text
-  image
-  file
+  @@index([chatroomId], map: "userChatroom_chatroomId_fkey")
 }
 
 model chatHistory {
@@ -90,4 +69,21 @@ model chatHistory {
   type       ChatHistoryContentType @default(text)
   createTime DateTime               @default(now())
   updateTime DateTime               @updatedAt
+}
+
+enum FriendRequestStatus {
+  appending
+  approved
+  rejected
+}
+
+enum ChatroomType {
+  single @map("0")
+  group  @map("1")
+}
+
+enum ChatHistoryContentType {
+  text
+  image
+  file
 }

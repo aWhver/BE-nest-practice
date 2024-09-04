@@ -40,6 +40,14 @@ export class ChatGateway {
   @SubscribeMessage('joinRoom')
   async joinRoom(client: Socket, joinRoomPayload: JoinRoomPayload) {
     const chatroomId = joinRoomPayload.chatroomId.toString();
+    const chatRoom = await this.prismaService.chatroom.findUnique({
+      where: {
+        id: joinRoomPayload.chatroomId,
+      },
+    });
+    if (!chatRoom) {
+      return;
+    }
     client.join(chatroomId);
     const isExist = await this.prismaService.userChatroom.findFirst({
       where: {

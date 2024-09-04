@@ -1,12 +1,24 @@
-import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Query,
+  Inject,
+} from '@nestjs/common';
 import { ChatroomService } from './chatroom.service';
 import { UserInfo } from 'src/common/decorator';
 import { ApiTags } from '@nestjs/swagger';
+import { RedisService } from 'src/global-modules/redis/redis.service';
 
 @ApiTags('聊天室')
 @Controller('chatroom')
 export class ChatroomController {
   constructor(private readonly chatroomService: ChatroomService) {}
+
+  @Inject(RedisService)
+  private redisService: RedisService;
 
   /** 创建一对一聊天 */
   @Post('oneToOne/:id')
@@ -22,13 +34,19 @@ export class ChatroomController {
       return chatroom.id;
     }
     const res = await this.chatroomService.create(+friendId, userId);
+    await this.redisService.set(`chatroom_${res.id}`, res.id.toString());
     return res.id;
   }
 
   /** 创建群聊 */
   @Post('group')
-  createGroup(@Body('name') name: string, @UserInfo('userId') userId: number) {
-    return this.chatroomService.createGroup(name, userId);
+  async createGroup(
+    @Body('name') name: string,
+    @UserInfo('userId') userId: number,
+  ) {
+    const res = await this.chatroomService.createGroup(name, userId);
+    await this.redisService.set(`chatroom_${res.id}`, res.id.toString());
+    return res;
   }
 
   /**
@@ -60,18 +78,20 @@ export class ChatroomController {
     return this.chatroomService.joinGroup(+chatroomId, +userId);
   }
 
-  /** 退出群聊 */
+  /** 退出/踢出群聊 */
   @Post('quit/:chatroomId')
   quitGroup(
     @Param('chatroomId') chatroomId: string,
-    @Query('userId') userId: string,
+    @Body('userId') userId: string,
   ) {
     return this.chatroomService.quitGroup(+chatroomId, +userId);
   }
 
   /** 解散群聊 */
   @Post('disband/:chatroomId')
-  disbandGroup(@Param('chatroomId') chatroomId: string) {
-    return this.chatroomService.disbandGroup(+chatroomId);
+  async disbandGroup(@Param('chatroomId') chatroomId: string) {
+    const res = await this.chatroomService.disbandGroup(+chatroomId);
+    await this.redisService.del(`chatroom_${res.id}`);
+    return '解散群聊成功';
   }
 }
