@@ -1,5 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { ChatroomType } from '@prisma/client';
+import { ChatroomType, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/global-modules/prisma/prisma.service';
 
 @Injectable()
@@ -61,7 +61,7 @@ export class ChatroomService {
   }
 
   // 这里的查询和下面的查看群聊成员是两种方式，分别使用下
-  async findAll(userId: number) {
+  async findAll(userId: number, type?: ChatroomType) {
     const user = await this.prismaService.user.findUnique({
       where: {
         id: userId,
@@ -70,12 +70,17 @@ export class ChatroomService {
         chatrooms: true,
       },
     });
+    const condition: Prisma.chatroomWhereInput = {};
+    if (type) {
+      condition.type = type;
+    }
     const chatroomIds = user.chatrooms.map((item) => item.chatroomId);
     const res = await this.prismaService.chatroom.findMany({
       where: {
         id: {
           in: chatroomIds,
         },
+        ...condition,
       },
       include: {
         users: {
@@ -146,6 +151,11 @@ export class ChatroomService {
   }
 
   async joinGroup(chatroomId: number, userId: number) {
+    const users = await this.findMembers(chatroomId);
+    const isJoined = users.find((user) => user.id === userId);
+    if (isJoined) {
+      throw new BadRequestException('该好友已在此群聊中');
+    }
     await this.prismaService.chatroom.update({
       where: {
         id: chatroomId,

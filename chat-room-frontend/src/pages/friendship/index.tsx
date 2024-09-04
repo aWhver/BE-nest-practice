@@ -5,12 +5,15 @@ import { useEffect, useMemo, useState } from 'react';
 import AddFriendshipModal from './addFriendshipModal';
 import { createSingleChatroom } from '@/api/chatroom';
 import { useNavigate } from 'react-router-dom';
+import InvitationModal from './invitationModal';
 
 const FriendShip = function() {
   const [nickName, setNickName] = useState<string>('');
   const [num, setNum] = useState<number>(0);
   const [friendship, setFriendship] = useState<Friendship[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const [invitationOpen, setInvitationOpen] = useState<boolean>(false);
+  const [invitationUserId, setInvitationUserId] = useState<number>(-1);
   const navigate = useNavigate();
   const columns = useMemo(() => {
     return [
@@ -39,7 +42,9 @@ const FriendShip = function() {
         render(id: number) {
           return (
             <>
-              <Button type='link' onClick={() => chat(id)}>聊天</Button>
+              <Button type='link' onClick={() => chat(id)}>
+                聊天
+              </Button>
               <Button
                 type='link'
                 onClick={() => {
@@ -58,6 +63,15 @@ const FriendShip = function() {
               >
                 删除
               </Button>
+              <Button
+                type='link'
+                onClick={() => {
+                  setInvitationOpen(true);
+                  setInvitationUserId(id);
+                }}
+              >
+                邀请入群
+              </Button>
             </>
           );
         },
@@ -65,14 +79,14 @@ const FriendShip = function() {
     ];
   }, []);
   const chat = function(friendId: number) {
-    createSingleChatroom(friendId).then(res => {
+    createSingleChatroom(friendId).then((res) => {
       if (res.code === 200) {
         navigate('/chat/' + res.data, {
           replace: true,
         });
       }
     });
-  }
+  };
   const onFinish = function(values: { nickName: string }) {
     setNickName(values.nickName);
   };
@@ -105,6 +119,11 @@ const FriendShip = function() {
       </Form>
       <Table dataSource={friendship} columns={columns}></Table>
       <AddFriendshipModal isOpen={open} onClose={onClose} />
+      <InvitationModal
+        isOpen={invitationOpen}
+        invitationUserId={invitationUserId}
+        onClose={() => setInvitationOpen(false)}
+      />
     </div>
   );
 };

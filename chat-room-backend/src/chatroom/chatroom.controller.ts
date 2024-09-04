@@ -11,6 +11,11 @@ import { ChatroomService } from './chatroom.service';
 import { UserInfo } from 'src/common/decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { RedisService } from 'src/global-modules/redis/redis.service';
+import { ChatroomType } from '@prisma/client';
+
+class ListDto {
+  type?: ChatroomType;
+}
 
 @ApiTags('聊天室')
 @Controller('chatroom')
@@ -53,8 +58,8 @@ export class ChatroomController {
    * 获取当前用户所有的聊天室
    */
   @Get('list')
-  getChatRooms(@UserInfo('userId') userId: number) {
-    return this.chatroomService.findAll(userId);
+  getChatRooms(@UserInfo('userId') userId: number, @Query() listDto: ListDto) {
+    return this.chatroomService.findAll(userId, listDto.type);
   }
 
   /** 查找聊天室成员 */
@@ -73,7 +78,7 @@ export class ChatroomController {
   @Post('join/:chatroomId')
   joinGroup(
     @Param('chatroomId') chatroomId: string,
-    @Query('userId') userId: string,
+    @Body('userId') userId: string,
   ) {
     return this.chatroomService.joinGroup(+chatroomId, +userId);
   }

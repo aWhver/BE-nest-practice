@@ -1,7 +1,8 @@
 import { GET, POST } from '@/common/http';
-import { ChatHistory, Chatroom, ChatroomInfo } from './types';
+import { ChatHistory, Chatroom, ChatroomInfo, ChatroomType } from './types';
 
-export const getChatroom = () => GET<Chatroom[]>('chatroom/list');
+export const getChatroom = (type?: ChatroomType) =>
+  GET<Chatroom[]>('chatroom/list', { type });
 
 export const createSingleChatroom = (friendId: number) =>
   POST<number>('chatroom/oneToOne/' + friendId);
@@ -20,3 +21,6 @@ export const disbandGroupChatroom = (chatroomId: number) =>
 
 export const quitGroupChatroom = (chatroomId: number, userId: number) =>
   POST<string>(`chatroom/quit/${chatroomId}`, { userId });
+
+export const joinGroupChatroom = (chatroomId: number, userId: number) =>
+  POST<string>(`chatroom/join/${chatroomId}`, { userId });
