@@ -29,7 +29,7 @@ const ChatList = function() {
         }
       });
     }
-  }, [chatroomId])
+  }, [chatroomId]);
   return (
     <Sider theme='light'>
       <List
@@ -46,7 +46,9 @@ const ChatList = function() {
                 });
               }}
               className={activeId === item.id ? 'active' : ''}
-              style={{ padding: '12px 16px' }}
+              style={{
+                padding: '12px 16px',
+              }}
             >
               <h4>{item.name}</h4>
             </List.Item>

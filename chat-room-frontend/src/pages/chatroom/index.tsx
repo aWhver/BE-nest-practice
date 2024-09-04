@@ -136,7 +136,8 @@ const Chatroom = function() {
           value={inputValue}
           style={{ height: '100%' }}
           onChange={(e) => setInputValue(e.target.value)}
-          onPressEnter={() => {
+          onPressEnter={(e) => {
+            e.preventDefault();
             if (!inputValue) {
               return;
             }

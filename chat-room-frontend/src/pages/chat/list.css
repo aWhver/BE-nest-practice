@@ -4,3 +4,8 @@
 .chat-list .ant-list-item.active {
   background-color: #f3ebeb;
 }
+.chat-list h4 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

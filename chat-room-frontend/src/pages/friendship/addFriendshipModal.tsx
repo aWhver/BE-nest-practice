@@ -19,7 +19,8 @@ const AddFriendshipModal: React.FC<ModalProps> = function(props) {
     form.resetFields();
     props.onClose();
   };
-  const onOk = function() {
+  const onOk = async function() {
+    await form.validateFields();
     const values = form.getFieldsValue();
     addFriendship({
       toUsername: values.username,
@@ -39,8 +40,8 @@ const AddFriendshipModal: React.FC<ModalProps> = function(props) {
       closable={false}
       onCancel={onCancel}
       onOk={onOk}
-      cancelText="取消"
-      okText="确定"
+      cancelText='取消'
+      okText='确定'
     >
       <Form
         form={form}
@@ -48,7 +49,16 @@ const AddFriendshipModal: React.FC<ModalProps> = function(props) {
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 18 }}
       >
-        <Form.Item label='用户名' name='username'>
+        <Form.Item
+          label='用户名'
+          name='username'
+          rules={[
+            {
+              required: true,
+              message: '请输入用户名',
+            },
+          ]}
+        >
           <Input />
         </Form.Item>
         <Form.Item label='添加理由' name='reason'>

@@ -7,6 +7,7 @@ import { useLoginUserStore } from '@/store';
 import { UserInfo } from '@/api/user/userInfo/types';
 import useChatroomMessageStore, { Reply } from '@/store/chatroomMessage';
 import { formatTime } from '@/common/utils';
+import { message } from 'antd';
 
 const Chat = function() {
   const { chatroomId = '0' } = useParams();
@@ -38,6 +39,9 @@ const Chat = function() {
             createTime: formatTime(new Date())
           });
         }
+      });
+      socket.on('error', (err: string) => {
+        message.error(err);
       });
       registerSendMessageFn((value: string, type: 'text') => {
         socketRef.current &&

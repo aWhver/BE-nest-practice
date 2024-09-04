@@ -6,9 +6,10 @@ import {
 } from '@nestjs/websockets';
 import { ChatService } from './chat.service';
 import { Socket, Server } from 'socket.io';
-import { Inject } from '@nestjs/common';
+import { BadRequestException, Inject } from '@nestjs/common';
 import { ChatHistoryService } from 'src/chat-history/chat-history.service';
 import { PrismaService } from 'src/global-modules/prisma/prisma.service';
+import { RedisService } from 'src/global-modules/redis/redis.service';
 
 interface JoinRoomPayload {
   chatroomId: number;
@@ -36,6 +37,9 @@ export class ChatGateway {
 
   @Inject(PrismaService)
   private prismaService: PrismaService;
+
+  @Inject(RedisService)
+  private redisServie: RedisService;
 
   @SubscribeMessage('joinRoom')
   async joinRoom(client: Socket, joinRoomPayload: JoinRoomPayload) {
@@ -65,18 +69,25 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('sendMseeage')
-  sendMessage(@MessageBody() sendMessagePayload: SendMessagePayload) {
+  async sendMessage(@MessageBody() sendMessagePayload: SendMessagePayload) {
     const chatroomId = sendMessagePayload.chatroomId.toString();
-    this.server.to(chatroomId).emit('message', {
-      type: 'sendMessage',
-      userId: sendMessagePayload.sendUserId,
-      message: sendMessagePayload.message,
-    });
-    this.chatHistoryService.add({
+    const isExist = await this.redisServie.get(
+      `chatroom_${sendMessagePayload.chatroomId}`,
+    );
+    if (!isExist) {
+      this.server.to(chatroomId).emit('error', '该群聊已解散');
+      return;
+    }
+    await this.chatHistoryService.add({
       chatroomId: sendMessagePayload.chatroomId,
       sendUserId: sendMessagePayload.sendUserId,
       content: sendMessagePayload.message.content,
       type: sendMessagePayload.message.type,
+    });
+    this.server.to(chatroomId).emit('message', {
+      type: 'sendMessage',
+      userId: sendMessagePayload.sendUserId,
+      message: sendMessagePayload.message,
     });
   }
 }
