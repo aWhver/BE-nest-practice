@@ -50,7 +50,6 @@ export class ChatroomController {
     @UserInfo('userId') userId: number,
   ) {
     const res = await this.chatroomService.createGroup(name, userId);
-    await this.redisService.set(`chatroom_${res.id}`, res.id.toString());
     return res;
   }
 

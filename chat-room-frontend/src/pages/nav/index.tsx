@@ -46,7 +46,7 @@ const Nav = function() {
         <Menu
           style={{ width: 70, textAlign: 'center', height: '100%' }}
           items={items}
-          defaultSelectedKeys={[getDefaultselectKey()]}
+          selectedKeys={[getDefaultselectKey()]}
           onClick={onMenuClick}
         ></Menu>
       </Sider>

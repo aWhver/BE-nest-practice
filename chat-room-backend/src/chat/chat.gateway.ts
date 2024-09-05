@@ -39,7 +39,7 @@ export class ChatGateway {
   private prismaService: PrismaService;
 
   @Inject(RedisService)
-  private redisServie: RedisService;
+  private redisService: RedisService;
 
   @SubscribeMessage('joinRoom')
   async joinRoom(client: Socket, joinRoomPayload: JoinRoomPayload) {
@@ -51,6 +51,15 @@ export class ChatGateway {
     });
     if (!chatRoom) {
       return;
+    }
+    const id = await this.redisService.get(
+      `chatroom_${joinRoomPayload.chatroomId}`,
+    );
+    if (!id) {
+      await this.redisService.set(
+        `chatroom_${joinRoomPayload.chatroomId}`,
+        joinRoomPayload.chatroomId.toString(),
+      );
     }
     client.join(chatroomId);
     const isExist = await this.prismaService.userChatroom.findFirst({
@@ -71,7 +80,7 @@ export class ChatGateway {
   @SubscribeMessage('sendMseeage')
   async sendMessage(@MessageBody() sendMessagePayload: SendMessagePayload) {
     const chatroomId = sendMessagePayload.chatroomId.toString();
-    const isExist = await this.redisServie.get(
+    const isExist = await this.redisService.get(
       `chatroom_${sendMessagePayload.chatroomId}`,
     );
     if (!isExist) {

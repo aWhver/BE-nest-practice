@@ -1,7 +1,9 @@
 import useChatroomMessageStore from '@/store/chatroomMessage';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Image, Input, Button } from 'antd';
+import { Image, Input, Button, Popover } from 'antd';
+import EmojiPicker from '@emoji-mart/react';
+import data from '@emoji-mart/data';
 import { formatTime } from '@/common/utils';
 import './index.css';
 import { useLoginUserStore } from '@/store';
@@ -12,6 +14,7 @@ import {
   quitGroupChatroom,
 } from '@/api/chatroom';
 import { ChatroomInfo, ChatroomType, SendUserObj } from '@/api/chatroom/types';
+import type { InputRef } from 'antd';
 
 const Chatroom = function() {
   const { chatroomId = '' } = useParams();
@@ -19,6 +22,7 @@ const Chatroom = function() {
     return '';
   }
   const navigate = useNavigate();
+  const inputRef = useRef<InputRef>(null);
   const userInfo = useLoginUserStore((state) => state.userInfo) as UserInfo;
   const [chatroomInfo, setChatroomInfo] = useState<ChatroomInfo>({
     users: [],
@@ -35,7 +39,26 @@ const Chatroom = function() {
   }));
   const bottomBarRef = useRef<HTMLDivElement>(null);
   const [inputValue, setInputValue] = useState<string>('');
-
+  const [cursorPos, setCursorPos] = useState<number>(0);
+  const onEmojiSelect = function(emoji: any) {
+    setInputValue(value => {
+      const values = value.split('');
+      console.log('emoji.native.length', cursorPos, emoji.native.length);
+      values.splice(cursorPos, 0, emoji.native);
+      setCursorPos(pos => pos + emoji.native.length);
+      return values.join('');
+    })
+    if (inputRef.current) {
+      const el = inputRef.current.resizableTextArea.textArea;
+      const len = el.value.length;
+      // console.log('len', len);
+      el.setSelectionRange(len, len);
+      // inputRef.current.focus({
+      //   cursor: 'end'
+      // })
+    }
+  }
+  useEffect
   useEffect(() => {
     if (chatroomId) {
       store.getMessages(+chatroomId);
@@ -104,6 +127,7 @@ const Chatroom = function() {
         {store.messages.map((message) => {
           return (
             <div
+              key={message.id}
               className={`chat-item ${
                 userInfo.id === message.sendUserId ? 'from-me' : ''
               }`}
@@ -132,10 +156,18 @@ const Chatroom = function() {
         <div className='bottom-bar' ref={bottomBarRef}></div>
       </div>
       <div className='chat-input'>
+        <div className='chat-bar'>
+          <Popover title="表情包" content={<EmojiPicker data={data} onEmojiSelect={onEmojiSelect} />}>
+            <span>表情</span>
+          </Popover>
+        </div>
         <Input.TextArea
+          ref={inputRef}
           value={inputValue}
-          style={{ height: '100%' }}
           onChange={(e) => setInputValue(e.target.value)}
+          onBlur={e => {
+            setCursorPos(e.target.selectionStart)
+          }}
           onPressEnter={(e) => {
             e.preventDefault();
             if (!inputValue) {

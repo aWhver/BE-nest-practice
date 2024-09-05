@@ -28,6 +28,7 @@ const Index = function() {
           <div>
             <CreateGroupModal />
             <Image
+              style={{ cursor: 'pointer' }}
               onClick={() => navigate('/userInfo')}
               src={userInfo.headPic}
               width={50}
