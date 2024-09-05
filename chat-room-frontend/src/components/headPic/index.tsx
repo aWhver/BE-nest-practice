@@ -52,7 +52,7 @@ const HeadPicUpload: React.FC<HeadPicUploadProps> = function(props) {
       },
     });
     options.onSuccess!(resp.data);
-    props.onChange!(`http://localhost:9000/nest-basic/${options.file.name}`);
+    props.onChange!(`http://localhost:9000/chat-room/${options.file.name}`);
   };
   return (
     <Upload

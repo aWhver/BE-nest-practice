@@ -1,7 +1,7 @@
 import useChatroomMessageStore from '@/store/chatroomMessage';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Image, Input, Button, Popover } from 'antd';
+import { Input, Button, Popover, Space, Avatar } from 'antd';
 import EmojiPicker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import { formatTime } from '@/common/utils';
@@ -13,8 +13,14 @@ import {
   getChatroomInfo,
   quitGroupChatroom,
 } from '@/api/chatroom';
-import { ChatroomInfo, ChatroomType, SendUserObj } from '@/api/chatroom/types';
-import type { InputRef } from 'antd';
+import {
+  ChatroomInfo,
+  ChatroomType,
+  MessageType,
+  SendUserObj,
+} from '@/api/chatroom/types';
+import { InputRef } from 'antd';
+import SendFile from './sendFile';
 
 const Chatroom = function() {
   const { chatroomId = '' } = useParams();
@@ -41,13 +47,13 @@ const Chatroom = function() {
   const [inputValue, setInputValue] = useState<string>('');
   const [cursorPos, setCursorPos] = useState<number>(0);
   const onEmojiSelect = function(emoji: any) {
-    setInputValue(value => {
+    setInputValue((value) => {
       const values = value.split('');
       console.log('emoji.native.length', cursorPos, emoji.native.length);
       values.splice(cursorPos, 0, emoji.native);
-      setCursorPos(pos => pos + emoji.native.length);
+      setCursorPos((pos) => pos + emoji.native.length);
       return values.join('');
-    })
+    });
     if (inputRef.current) {
       const el = inputRef.current.resizableTextArea.textArea;
       const len = el.value.length;
@@ -57,8 +63,8 @@ const Chatroom = function() {
       //   cursor: 'end'
       // })
     }
-  }
-  useEffect
+  };
+  useEffect;
   useEffect(() => {
     if (chatroomId) {
       store.getMessages(+chatroomId);
@@ -134,11 +140,9 @@ const Chatroom = function() {
             >
               {message.sendUserId && (
                 <div className='chat-item-title'>
-                  <Image
+                  <Avatar
                     src={sendUserObj[message.sendUserId]?.headPic}
-                    width={30}
-                    height={30}
-                    preview={false}
+                    size={30}
                   />
                   <span className='nick-name'>
                     {sendUserObj[message.sendUserId]?.nickName}
@@ -149,7 +153,17 @@ const Chatroom = function() {
                 </div>
               )}
 
-              <div className='chat-item-body'>{message.content}</div>
+              <div className='chat-item-body'>
+                {message.type === MessageType.text && message.content}
+                {message.type === MessageType.image && (
+                  <img src={message.content} style={{ maxWidth: '200px' }} />
+                )}
+                {message.type === MessageType.file && (
+                  <a href={message.content} download>
+                    {message.content}
+                  </a>
+                )}
+              </div>
             </div>
           );
         })}
@@ -157,23 +171,36 @@ const Chatroom = function() {
       </div>
       <div className='chat-input'>
         <div className='chat-bar'>
-          <Popover title="表情包" content={<EmojiPicker data={data} onEmojiSelect={onEmojiSelect} />}>
-            <span>表情</span>
-          </Popover>
+          <Space size={24}>
+            <Popover
+              title='表情包'
+              content={
+                <EmojiPicker data={data} onEmojiSelect={onEmojiSelect} />
+              }
+            >
+              <span>表情</span>
+            </Popover>
+            <SendFile sendType={MessageType.image}>
+              <span>图片</span>
+            </SendFile>
+            <SendFile sendType={MessageType.file}>
+              <span>文件</span>
+            </SendFile>
+          </Space>
         </div>
         <Input.TextArea
           ref={inputRef}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onBlur={e => {
-            setCursorPos(e.target.selectionStart)
+          onBlur={(e) => {
+            setCursorPos(e.target.selectionStart);
           }}
           onPressEnter={(e) => {
             e.preventDefault();
             if (!inputValue) {
               return;
             }
-            store.sendMessage(inputValue, 'text');
+            store.sendMessage(inputValue, MessageType.text);
             setInputValue('');
           }}
         />

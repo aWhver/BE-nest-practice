@@ -162,7 +162,7 @@ export class UserController {
   /** 获取上传的预签名 url */
   @Get('presignedUrl')
   uploadHeadPic(@Query('name') name: string) {
-    return this.minioService.presignedObject('nest-basic', name);
+    return this.minioService.presignedObject('chat-room', name);
   }
 
   async verifyCaptcha(redisKey: string, captcha: string) {

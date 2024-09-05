@@ -6,10 +6,11 @@ import {
 } from '@nestjs/websockets';
 import { ChatService } from './chat.service';
 import { Socket, Server } from 'socket.io';
-import { BadRequestException, Inject } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { ChatHistoryService } from 'src/chat-history/chat-history.service';
 import { PrismaService } from 'src/global-modules/prisma/prisma.service';
 import { RedisService } from 'src/global-modules/redis/redis.service';
+import { ChatHistoryContentType } from '@prisma/client';
 
 interface JoinRoomPayload {
   chatroomId: number;
@@ -19,7 +20,7 @@ interface JoinRoomPayload {
 
 interface SendMessagePayload {
   message: {
-    type: 'text' | 'image' | 'file';
+    type: ChatHistoryContentType;
     content: string;
   };
   sendUserId: number;

@@ -14,11 +14,16 @@ export interface Chatroom {
   updateTime: string;
 }
 
+export enum MessageType {
+  file = 'file',
+  text = 'text',
+  image = 'image'
+}
 export interface ChatHistoryItem {
   id?: number;
   sendUserId?: number;
   content: string;
-  type: 'file' | 'text' | 'image';
+  type: MessageType;
   createTime?: string;
 }
 

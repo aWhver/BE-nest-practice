@@ -1,5 +1,5 @@
 import { getChatHistory } from '@/api/chatroom';
-import { ChatHistoryItem, SendUserObj } from '@/api/chatroom/types';
+import { ChatHistoryItem, MessageType, SendUserObj } from '@/api/chatroom/types';
 import { create } from 'zustand';
 
 export type Reply =
@@ -20,8 +20,8 @@ interface ChatroomMessageState {
   setMessages: (messages: ChatHistoryItem[]) => void;
   addMessage: (message: ChatHistoryItem) => void;
   getMessages: (chatroomId: number) => void;
-  sendMessage: (value: string, type: 'text') => void;
-  registerSendMessageFn: (fn: (value: string, type: 'text') => void) => void;
+  sendMessage: (value: string, type: MessageType) => void;
+  registerSendMessageFn: (fn: (value: string, type: MessageType) => void) => void;
 }
 
 const useChatroomMessageStore = create<ChatroomMessageState>((set) => ({
@@ -39,7 +39,7 @@ const useChatroomMessageStore = create<ChatroomMessageState>((set) => ({
       sendUserObj: res.data.sendUserObj,
     });
   },
-  registerSendMessageFn: (fn: (value: string, type: 'text') => void) => {
+  registerSendMessageFn: (fn: (value: string, type: MessageType) => void) => {
     set({ sendMessage: fn });
   },
 }));
