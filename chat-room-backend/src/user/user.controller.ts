@@ -104,6 +104,7 @@ export class UserController {
   }
 
   /** 更新密码 */
+  @SkipAuth()
   @Post('update/password')
   async updatePassword(@Body() updatePasswordDto: UpdateUserPasswordDto) {
     const { captcha, ...rest } = updatePasswordDto;
@@ -129,6 +130,7 @@ export class UserController {
   }
 
   /** 更新用户密码验证码 */
+  @SkipAuth()
   @Get('update/password/captcha')
   updatePasswordCaptcha(@Query('email') email: string) {
     return this.userService.sendCaptcha(`${email}-update-password-captcha`, {
