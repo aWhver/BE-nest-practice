@@ -48,10 +48,6 @@ const routes: RouteObject[] = [
         ],
       },
       {
-        path: 'updatePassword',
-        element: <UpdatePassword />,
-      },
-      {
         path: 'userInfo',
         element: <UserInfoEdit />,
       },
@@ -64,6 +60,10 @@ const routes: RouteObject[] = [
   {
     path: 'login',
     element: <Login />,
+  },
+  {
+    path: 'updatePassword',
+    element: <UpdatePassword />,
   },
 ];
 
