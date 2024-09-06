@@ -11,17 +11,32 @@
   border-bottom: 1px solid #ddd;
 }
 .chat-content-container {
+  display: flex;
+  flex-direction: column;
   padding: 12px;
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+.chat-content-container .chat-message-list {
   flex: 1;
   overflow: auto;
 }
 .chat-content-container .chat-item {
+  display: flex;
   margin-bottom: 12px;
+}
+.chat-content-container .chat-item .chat-checkbox {
+  margin-right: 18px;
+}
+.chat-content-container .chat-item-box {
+  flex: 1;
 }
 .chat-content-container .chat-item .nick-name {
   margin: 0 12px;
 }
 .chat-content-container .chat-item-body {
+  flex: 1;
   margin-left: 36px;
   margin-top: 6px;
   padding: 6px 12px;
@@ -49,6 +64,7 @@
   display: flex;
   flex-direction: column;
   height: 120px;
+  position: relative;
   border-top: 1px solid #ddd;
 }
 .chat-input .chat-bar {
@@ -60,4 +76,43 @@
 }
 .chat-input .ant-upload-list {
   display: none;
+}
+.chat-input .chat-history-operation {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  gap: 18px;
+}
+.chat-input .chat-history-operation .operation-circle {
+  --size: 50px;
+  width: var(--size);
+  height: var(--size);
+  line-height: var(--size);
+  border-radius: var(--size);
+  margin-bottom: 12px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+.chat-input .chat-history-operation .operation-circle:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+.chat-container .chat-context-menu {
+  position: absolute;
+  width: 80px;
+  border-radius: 8px;
+}
+.chat-container .chat-context-menu .ant-menu-item {
+  line-height: 24px;
+  height: 24px;
+}
+.chat-container .chat-context-menu .divider {
+  height: 1px;
+  background-color: #ddd;
 }

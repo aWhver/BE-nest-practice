@@ -3,6 +3,9 @@ import { FavoriteService } from './favorite.service';
 import { UserInfo } from 'src/common/decorator';
 import { AddFavoriteDto } from './dto/favorite.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { FavoriteItemVo } from './vo/favorite.vo';
+
+type a = number[];
 
 @ApiTags('收藏')
 @Controller('favorite')
@@ -11,8 +14,13 @@ export class FavoriteController {
 
   /** 收藏列表 */
   @Get('list')
-  getList(@UserInfo('userId') userId: number) {
-    return this.favoriteService.findPersonalList(userId);
+  async getList(@UserInfo('userId') userId: number) {
+    const res = await this.favoriteService.findPersonalList(userId);
+    const list: FavoriteItemVo[] = res.map((item) => ({
+      ...item,
+      chatHistories: item.chatHistories.map((o) => o.chatHistory),
+    }));
+    return list;
   }
 
   /** 添加收藏 */

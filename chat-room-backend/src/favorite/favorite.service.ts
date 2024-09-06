@@ -30,7 +30,7 @@ export class FavoriteService {
     });
   }
 
-  addFavorite(addFavoriteDto: AddFavoriteDto, userId: number) {
+  async addFavorite(addFavoriteDto: AddFavoriteDto, userId: number) {
     const data: Prisma.XOR<
       Prisma.favoriteCreateInput,
       Prisma.favoriteUncheckedCreateInput
@@ -49,9 +49,10 @@ export class FavoriteService {
         })),
       };
     }
-    return this.prismaService.favorite.create({
+    await this.prismaService.favorite.create({
       data,
     });
+    return '收藏成功';
   }
   async delFavorite(id: number) {
     const favorite = await this.prismaService.favorite.findUnique({

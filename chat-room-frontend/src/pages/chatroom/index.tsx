@@ -1,7 +1,24 @@
 import useChatroomMessageStore from '@/store/chatroomMessage';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Input, Button, Popover, Space, Avatar } from 'antd';
+import {
+  Input,
+  Button,
+  Popover,
+  Space,
+  Avatar,
+  Menu,
+  message,
+  Checkbox,
+  Flex,
+} from 'antd';
+import { HeartTwoTone, CloseOutlined } from '@ant-design/icons';
 import EmojiPicker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import { formatTime } from '@/common/utils';
@@ -14,6 +31,7 @@ import {
   quitGroupChatroom,
 } from '@/api/chatroom';
 import {
+  ChatHistoryItem,
   ChatroomInfo,
   ChatroomType,
   MessageType,
@@ -21,6 +39,8 @@ import {
 } from '@/api/chatroom/types';
 import { InputRef } from 'antd';
 import SendFile from './sendFile';
+import { addFavorite } from '@/api/favorite';
+import { FavoriteType } from '@/api/favorite/types';
 
 const Chatroom = function() {
   const { chatroomId = '' } = useParams();
@@ -29,6 +49,7 @@ const Chatroom = function() {
   }
   const navigate = useNavigate();
   const inputRef = useRef<InputRef>(null);
+  const contentContainerRef = useRef<HTMLDivElement>(null);
   const userInfo = useLoginUserStore((state) => state.userInfo) as UserInfo;
   const [chatroomInfo, setChatroomInfo] = useState<ChatroomInfo>({
     users: [],
@@ -46,6 +67,16 @@ const Chatroom = function() {
   const bottomBarRef = useRef<HTMLDivElement>(null);
   const [inputValue, setInputValue] = useState<string>('');
   const [cursorPos, setCursorPos] = useState<number>(0);
+  const [menuPos, setMenuPos] = useState({ left: '0px', top: '0px' });
+  const [visible, setVisible] = useState(false);
+  const [showCheckbox, setShowCheckbox] = useState(false);
+  const [selectedInfo, setSelectedInfo] = useState({
+    type: MessageType.text,
+    content: '',
+  });
+  const [selectedChatIds, setSelectedChatIds] = useState<
+    Record<string, boolean>
+  >({});
   const onEmojiSelect = function(emoji: any) {
     setInputValue((value) => {
       const values = value.split('');
@@ -64,7 +95,68 @@ const Chatroom = function() {
       // })
     }
   };
-  useEffect;
+  const onContextMenu = useCallback(
+    (
+      e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+      chatHistoryItem: ChatHistoryItem
+    ) => {
+      e.preventDefault();
+      if (showCheckbox) {
+        return;
+      }
+      setMenuPos({
+        left: `${e.nativeEvent.layerX}px`,
+        top: `${Math.min(
+          e.nativeEvent.layerY,
+          (contentContainerRef.current?.clientHeight as number) - 93
+        )}px`,
+      });
+      setVisible(true);
+      setSelectedInfo({
+        type: chatHistoryItem.type,
+        content: chatHistoryItem.content,
+      });
+    },
+    [showCheckbox]
+  );
+  const onMenuClick = useCallback(
+    (e: any) => {
+      if (e.key === 'cancel') {
+        setVisible(false);
+      }
+      if (e.key === 'favorite') {
+        addFavorite(selectedInfo).then((res) => {
+          if (res.code === 200) {
+            message.success('收藏成功');
+            setVisible(false);
+          }
+        });
+      }
+      if (e.key === 'multiSelect') {
+        setShowCheckbox(true);
+        setVisible(false);
+      }
+    },
+    [selectedInfo]
+  );
+  const onCheckBox = useCallback((checked: boolean, id: number) => {
+    setSelectedChatIds((value) => ({ ...value, [id]: checked }));
+  }, []);
+  const onBatchCancel = useCallback(() => {
+    setShowCheckbox(false);
+    setSelectedChatIds({});
+  }, []);
+  const onBatchFavorite = useCallback(() => {
+    addFavorite({
+      type: FavoriteType.chatHistory,
+      chatHistoryIds: Object.keys(selectedChatIds).map(Number),
+    }).then((res) => {
+      if (res.code === 200) {
+        message.success('收藏成功');
+        onBatchCancel();
+      }
+    });
+  }, [selectedChatIds]);
   useEffect(() => {
     if (chatroomId) {
       store.getMessages(+chatroomId);
@@ -129,45 +221,75 @@ const Chatroom = function() {
           </Button>
         )}
       </div>
-      <div className='chat-content-container'>
-        {store.messages.map((message) => {
-          return (
-            <div
-              key={message.id}
-              className={`chat-item ${
-                userInfo.id === message.sendUserId ? 'from-me' : ''
-              }`}
-            >
-              {message.sendUserId && (
-                <div className='chat-item-title'>
-                  <Avatar
-                    src={sendUserObj[message.sendUserId]?.headPic}
-                    size={30}
-                  />
-                  <span className='nick-name'>
-                    {sendUserObj[message.sendUserId]?.nickName}
-                  </span>
-                  <span className='send-time'>
-                    {formatTime(new Date(message.createTime || ''))}
-                  </span>
-                </div>
-              )}
+      <div className='chat-content-container' ref={contentContainerRef}>
+        <div className='chat-message-list'>
+          {store.messages.map((message) => {
+            return (
+              <div
+                key={message.id}
+                className={`chat-item ${
+                  userInfo.id === message.sendUserId ? 'from-me' : ''
+                }`}
+              >
+                {showCheckbox && (
+                  <div className='chat-checkbox'>
+                    <Checkbox
+                      checked={selectedChatIds[message.id]}
+                      onChange={(e) => onCheckBox(e.target.checked, message.id)}
+                    />
+                  </div>
+                )}
+                <div className='chat-item-box'>
+                  {message.sendUserId && (
+                    <div className='chat-item-title'>
+                      <Avatar
+                        src={sendUserObj[message.sendUserId]?.headPic}
+                        size={30}
+                      />
+                      <span className='nick-name'>
+                        {sendUserObj[message.sendUserId]?.nickName}
+                      </span>
+                      <span className='send-time'>
+                        {formatTime(new Date(message.createTime || ''))}
+                      </span>
+                    </div>
+                  )}
 
-              <div className='chat-item-body'>
-                {message.type === MessageType.text && message.content}
-                {message.type === MessageType.image && (
-                  <img src={message.content} style={{ maxWidth: '200px' }} />
-                )}
-                {message.type === MessageType.file && (
-                  <a href={message.content} download>
-                    {message.content.split('/').pop()}
-                  </a>
-                )}
+                  <div
+                    className='chat-item-body'
+                    onContextMenu={(e) => onContextMenu(e, message)}
+                  >
+                    {message.type === MessageType.text && message.content}
+                    {message.type === MessageType.image && (
+                      <img
+                        src={message.content}
+                        style={{ maxWidth: '200px' }}
+                      />
+                    )}
+                    {message.type === MessageType.file && (
+                      <a href={message.content} download>
+                        {message.content.split('/').pop()}
+                      </a>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          );
-        })}
-        <div className='bottom-bar' ref={bottomBarRef}></div>
+            );
+          })}
+          <div className='bottom-bar' ref={bottomBarRef}></div>
+        </div>
+        {visible && (
+          <Menu
+            style={menuPos}
+            className='chat-context-menu'
+            onClick={onMenuClick}
+          >
+            <Menu.Item key='favorite'>收藏</Menu.Item>
+            <Menu.Item key='multiSelect'>多选</Menu.Item>
+            <div className='divider' />
+            <Menu.Item key='cancel'>取消</Menu.Item>
+          </Menu>
+        )}
       </div>
       <div className='chat-input'>
         <div className='chat-bar'>
@@ -204,6 +326,25 @@ const Chatroom = function() {
             setInputValue('');
           }}
         />
+        {showCheckbox && (
+          <div className='chat-history-operation'>
+            <Flex align='center' vertical className='operation-item'>
+              <div className='operation-circle' onClick={onBatchFavorite}>
+                <HeartTwoTone style={{ fontSize: '20px' }} />
+              </div>
+              <span>收藏</span>
+            </Flex>
+            <Flex align='center' vertical className='operation-item'>
+              <div
+                className='operation-circle'
+                onClick={onBatchCancel}
+              >
+                <CloseOutlined style={{ fontSize: '20px' }} />
+              </div>
+              <span>取消</span>
+            </Flex>
+          </div>
+        )}
       </div>
     </div>
   );

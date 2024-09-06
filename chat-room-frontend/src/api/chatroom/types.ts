@@ -20,7 +20,7 @@ export enum MessageType {
   image = 'image'
 }
 export interface ChatHistoryItem {
-  id?: number;
+  id: number;
   sendUserId?: number;
   content: string;
   type: MessageType;
