@@ -26,3 +26,18 @@ model User {
   name  String
   Post  Post[]
 }
+
+model ChatHistory {
+  id         Int       @id @default(autoincrement())
+  content String @db.VarChar(1000)
+  // 其他字段
+  favorite   Favorite? @relation(fields: [favoriteId], references: [id])
+  favoriteId Int?
+}
+
+model Favorite {
+  id          Int           @id @default(autoincrement())
+  content String @db.VarChar(1000) @default("")
+  // 其他字段
+  ChatHistory ChatHistory[]
+}

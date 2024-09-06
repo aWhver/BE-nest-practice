@@ -17,6 +17,7 @@ import { FriendshipModule } from './friendship/friendship.module';
 import { ChatroomModule } from './chatroom/chatroom.module';
 import { ChatModule } from './chat/chat.module';
 import { ChatHistoryModule } from './chat-history/chat-history.module';
+import { FavoriteModule } from './favorite/favorite.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ChatHistoryModule } from './chat-history/chat-history.module';
     ChatroomModule,
     ChatModule,
     ChatHistoryModule,
+    FavoriteModule,
   ],
   controllers: [AppController],
   providers: [

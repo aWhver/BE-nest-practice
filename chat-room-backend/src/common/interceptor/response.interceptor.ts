@@ -42,7 +42,7 @@ export class ResponseInterceptor implements NestInterceptor {
         };
       }),
       tap((data) => {
-        this.logger.log(`Response: ${JSON.stringify(data.data)}`);
+        this.logger.log(`Response: ${JSON.stringify(data.data, null, 2)}`);
       }),
       catchError((err) => {
         console.log('err', err);

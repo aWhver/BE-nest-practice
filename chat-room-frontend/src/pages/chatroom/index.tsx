@@ -160,7 +160,7 @@ const Chatroom = function() {
                 )}
                 {message.type === MessageType.file && (
                   <a href={message.content} download>
-                    {message.content}
+                    {message.content.split('/').pop()}
                   </a>
                 )}
               </div>

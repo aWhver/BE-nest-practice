@@ -69,6 +69,34 @@ model chatHistory {
   type       ChatHistoryContentType @default(text)
   createTime DateTime               @default(now())
   updateTime DateTime               @updatedAt
+  favorite   favoriteChatHistory[]
+}
+
+model favorite {
+  id          Int                   @id @default(autoincrement())
+  userId      Int
+  createTime  DateTime              @default(now())
+  updateTime  DateTime              @updatedAt
+  type        FavoriteType          @default(text)
+  chatHistories favoriteChatHistory[]
+  content     String?               @default("") @db.VarChar(500)
+}
+
+model favoriteChatHistory {
+  id            Int          @id @default(autoincrement())
+  favoriteId    Int?
+  favorite      favorite?    @relation(fields: [favoriteId], references: [id])
+  chatHistoryId Int?
+  chatHistory   chatHistory? @relation(fields: [chatHistoryId], references: [id])
+
+  // @@id([favoriteId, chatHistoryId])
+}
+
+enum FavoriteType {
+  image
+  file
+  text
+  chatHistory
 }
 
 enum FriendRequestStatus {
