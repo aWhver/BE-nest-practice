@@ -8,6 +8,7 @@ import { UserInfo } from '@/api/user/userInfo/types';
 import useChatroomMessageStore, { Reply } from '@/store/chatroomMessage';
 import { formatTime } from '@/common/utils';
 import { message } from 'antd';
+import { MessageType } from '@/api/chatroom/types';
 
 const Chat = function() {
   const { chatroomId = '0' } = useParams();
@@ -29,21 +30,22 @@ const Chat = function() {
       socket.on('message', (reply: Reply) => {
         if (reply.type === 'joinRoom') {
           addMessage({
-            type: 'text',
+            id: Math.random(),
+            type: MessageType.text,
             content: `用户${reply.nickName}加入群聊`,
           });
         } else {
           addMessage({
             ...reply.message,
             sendUserId: reply.userId,
-            createTime: formatTime(new Date())
+            createTime: formatTime(new Date()),
           });
         }
       });
       socket.on('error', (err: string) => {
         message.error(err);
       });
-      registerSendMessageFn((value: string, type: 'text') => {
+      registerSendMessageFn((value: string, type: MessageType) => {
         socketRef.current &&
           socketRef.current.emit('sendMseeage', {
             chatroomId: +chatroomId,

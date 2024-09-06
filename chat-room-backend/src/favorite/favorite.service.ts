@@ -22,10 +22,10 @@ export class FavoriteService {
           select: {
             chatHistory: true,
           },
-          orderBy: {
-            chatHistoryId: 'asc',
-          },
         },
+      },
+      orderBy: {
+        createTime: 'desc',
       },
     });
   }
@@ -76,5 +76,55 @@ export class FavoriteService {
       },
     });
     return '删除成功';
+  }
+
+  async findFavoriteById(id: number) {
+    const favorite = await this.prismaService.favorite.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        chatHistories: {
+          select: {
+            chatHistory: {
+              select: {
+                sendUserId: true,
+                id: true,
+                type: true,
+                content: true,
+                createTime: true,
+              },
+            },
+          },
+          orderBy: {
+            chatHistoryId: 'asc',
+          },
+        },
+      },
+    });
+    const userIds = favorite.chatHistories.map(
+      (chatHistory) => chatHistory.chatHistory.sendUserId,
+    );
+    const users = await this.prismaService.user.findMany({
+      where: {
+        id: { in: userIds },
+      },
+      select: {
+        id: true,
+        headPic: true,
+        nickName: true,
+      },
+    });
+    const userMap = users.reduce((accr, cur) => {
+      accr[cur.id] = cur;
+      return accr;
+    }, {});
+    return favorite.chatHistories.map((chatHistory) => {
+      const user = userMap[chatHistory.chatHistory.sendUserId];
+      return {
+        ...chatHistory.chatHistory,
+        headPic: user.headPic,
+        nickName: user.nickName,
+      };
+    });
   }
 }

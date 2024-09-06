@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { FavoriteService } from './favorite.service';
 import { UserInfo } from 'src/common/decorator';
 import { AddFavoriteDto } from './dto/favorite.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { FavoriteItemVo } from './vo/favorite.vo';
+import { ChatRecordItemVo, FavoriteItemVo } from './vo/favorite.vo';
 
 type a = number[];
 
@@ -36,5 +36,13 @@ export class FavoriteController {
   @Post('delete/:id')
   delFavorite(@Param('id') id: string) {
     return this.favoriteService.delFavorite(+id);
+  }
+
+  /** 获取单个收藏的聊天记录 */
+  @Get('detail')
+  async getFavoriteDetail(@Query('id') id: string) {
+    const res: ChatRecordItemVo[] =
+      await this.favoriteService.findFavoriteById(+id);
+    return res;
   }
 }

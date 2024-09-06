@@ -11,6 +11,7 @@ import Chat from '@/pages/chat';
 import FriendShip from '@/pages/friendship';
 import Notification from '@/pages/notification';
 import Chatroom from '@/pages/chatroom';
+import Favorite from '@/pages/favorite';
 
 const routes: RouteObject[] = [
   {
@@ -35,6 +36,10 @@ const routes: RouteObject[] = [
           {
             path: 'friendship',
             element: <FriendShip />,
+          },
+          {
+            path: 'favorite',
+            element: <Favorite />,
           },
           {
             path: 'notification',

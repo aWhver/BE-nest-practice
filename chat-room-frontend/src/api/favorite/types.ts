@@ -20,3 +20,9 @@ export interface FavoriteItem {
   content?: string;
   chatHistories?: ChatHistoryItem[]
 }
+
+export interface FavoriteDetailItem extends ChatHistoryItem {
+  headPic: string;
+  nickName: string;
+  createTime: string;
+}

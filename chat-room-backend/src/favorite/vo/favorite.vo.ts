@@ -2,7 +2,6 @@ import { $Enums, FavoriteType } from '@prisma/client';
 
 export class ChatHistoryItemVo {
   id: number;
-  chatroomId: number;
   sendUserId: number;
   content: string;
   /** "text" | "image" | "file" */
@@ -17,4 +16,9 @@ export class FavoriteItemVo {
   createTime: Date;
   content?: string;
   chatHistories?: ChatHistoryItemVo[];
+}
+
+export class ChatRecordItemVo extends ChatHistoryItemVo {
+  headPic: string;
+  nickName: string;
 }

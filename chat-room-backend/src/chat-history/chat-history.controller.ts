@@ -9,7 +9,7 @@ export class ChatHistoryController {
 
   /** 获取聊天室信息 */
   @Get('list')
-  addRecord(@Query('chatroomId') chatroomId: string) {
+  getList(@Query('chatroomId') chatroomId: string) {
     return this.chatHistoryService.getList(+chatroomId);
   }
 }

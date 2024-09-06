@@ -22,7 +22,7 @@ const SendFile: React.FC<SendFileProps> = function(props) {
     },
     customRequest: async function(options) {
       const resp = await axios.put(options.action, options.file, {
-        headers: {
+        headers: props.sendType === MessageType.file ? {} : {
           'Content-Type': options.file.type,
         },
       });
@@ -30,7 +30,7 @@ const SendFile: React.FC<SendFileProps> = function(props) {
       // props.onChange!(`http://localhost:9000/chat-room/${options.file.name}`);
     },
     beforeUpload: function(file, fileList) {
-      console.log('file', file);
+      // console.log('file', file);
       if (props.sendType === MessageType.image) {
         if (
           !['png', 'jpeg', 'gif', 'jpg', 'webp'].includes(

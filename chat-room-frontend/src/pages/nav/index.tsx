@@ -23,7 +23,7 @@ const items = [
     label: '朋友',
   },
   {
-    key: 'collection',
+    key: 'favorite',
     label: '收藏',
   },
   {

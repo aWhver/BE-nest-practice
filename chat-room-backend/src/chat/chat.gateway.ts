@@ -88,7 +88,7 @@ export class ChatGateway {
       this.server.to(chatroomId).emit('error', '该群聊已解散');
       return;
     }
-    await this.chatHistoryService.add({
+    const res = await this.chatHistoryService.add({
       chatroomId: sendMessagePayload.chatroomId,
       sendUserId: sendMessagePayload.sendUserId,
       content: sendMessagePayload.message.content,
@@ -97,7 +97,10 @@ export class ChatGateway {
     this.server.to(chatroomId).emit('message', {
       type: 'sendMessage',
       userId: sendMessagePayload.sendUserId,
-      message: sendMessagePayload.message,
+      message: {
+        ...sendMessagePayload.message,
+        id: res.id,
+      },
     });
   }
 }

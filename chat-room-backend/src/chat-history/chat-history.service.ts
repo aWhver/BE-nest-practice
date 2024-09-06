@@ -43,9 +43,8 @@ export class ChatHistoryService {
   }
 
   async add(addHistoryDto: AddHistoryDto) {
-    await this.prismaServie.chatHistory.create({
+    return this.prismaServie.chatHistory.create({
       data: addHistoryDto,
     });
-    return 'success';
   }
 }

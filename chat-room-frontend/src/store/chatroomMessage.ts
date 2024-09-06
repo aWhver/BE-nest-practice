@@ -29,6 +29,7 @@ const useChatroomMessageStore = create<ChatroomMessageState>((set) => ({
   sendUserObj: {},
   sendMessage: () => {},
   addMessage: (message: ChatHistoryItem) => {
+    console.log('message', message);
     set((state) => ({ messages: [...state.messages, message] }));
   },
   setMessages: (messages: ChatHistoryItem[]) => set(() => ({ messages })),
