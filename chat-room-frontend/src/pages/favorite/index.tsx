@@ -1,14 +1,31 @@
-import { Alert, Button, Card, Image, Tabs } from 'antd';
+import { Alert, Button, Card, Image, message, Modal, Tabs } from 'antd';
 import './index.css';
 import { useEffect, useMemo, useState } from 'react';
-import { getFavorites } from '@/api/favorite';
+import { delFavorite, getFavorites } from '@/api/favorite';
 import { FavoriteItem, FavoriteType } from '@/api/favorite/types';
 import { formatTime } from '@/common/utils';
 import ChatRecordModal from './chatRecordModal';
+import { CloseOutlined } from '@ant-design/icons';
 const Favorite = function() {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   const [open, setOpen] = useState(false);
   const [favoriteId, setFavoriteId] = useState(0);
+  const onConfirmDelFavorite = function(id: number) {
+    Modal.confirm({
+      title: '删除收藏',
+      content: '确认要删除该收藏吗?',
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        return delFavorite(id).then((res) => {
+          if (res.code === 200) {
+            message.success('删除成功');
+            setFavorites(favorites.filter((favorite) => favorite.id !== id));
+          }
+        });
+      },
+    });
+  };
   const renderPane = function(list: FavoriteItem[]) {
     return (
       <div>
@@ -42,6 +59,10 @@ const Favorite = function() {
               <p className='favorite-time'>
                 {formatTime(new Date(favorite.createTime), 'y年m月d日 h:i:s')}
               </p>
+              <CloseOutlined
+                onClick={() => onConfirmDelFavorite(favorite.id)}
+                style={{ position: 'absolute', top: '20px', right: '20px' }}
+              />
             </Card>
           );
         })}
