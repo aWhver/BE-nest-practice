@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>颜色选择器</title>
+	<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+	<div class="container">
+		<div class="draggable"></div>
+	</div>
+	<div class="container__hue">
+		<div class="draggable__hue"></div>
+	</div>
+	<div class="container__alpha">
+		<div class="draggable__alpha"></div>
+	</div>
+	<div class="color-info">
+		<div id="rgb"></div>
+		<div id="rgba"></div>
+		<div id="hex"></div>
+		<div id="hsl"></div>
+		<div id="hsv"></div>
+	</div>
+	<script src="./utils.js" ></script>
+	<script src="./draggable.js" ></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const containerDOM = document.querySelector('.container');
+			const draggableDOM = document.querySelector('.draggable');
+			const rgbDOM = document.getElementById('rgb');
+			const rgbaDOM = document.getElementById('rgba');
+			const hexDOM = document.getElementById('hex');
+			const hslDOM = document.getElementById('hsl');
+			const hsvDOM = document.getElementById('hsv');
+
+			const draggableInstance = new Draggable(draggableDOM);
+			draggableInstance.on('mousemove', ({ dx, dy }) => {
+				handleChangeSaturationValue(dx, dy);
+				draggableDOM.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+				updatePageView();
+			});
+
+			const draggableHueDOM = document.querySelector('.draggable__hue');
+			const draggableHueInstance = new Draggable(draggableHueDOM);
+			draggableHueInstance.on('mousemove', ({ dx }) => {
+				handleChangeHue(dx);
+				draggableHueDOM.style.transform = `translate(${dx}px, 0)`;
+				updatePageView();
+			});
+
+			const draggableAlphaDOM = document.querySelector('.draggable__alpha');
+			const draggableAlphaInstance = new Draggable(draggableAlphaDOM);
+			draggableAlphaInstance.on('mousemove', ({ dx }) => {
+				handleChangeAlpha(dx);
+				draggableAlphaDOM.style.transform = `translate(${dx}px, 0)`;
+				updatePageView(dx);
+			});
+
+			draggableInstance.on('click', ({ dx, dy }) => {
+				handleChangeSaturationValue(dx, dy);
+				draggableDOM.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+				updatePageView();
+			});
+			draggableHueInstance.on('click', ({ dx }) => {
+				handleChangeHue(dx);
+				draggableHueDOM.style.transform = `translate(${dx}px, 0)`;
+				updatePageView();
+			});
+			draggableAlphaInstance.on('click', ({ dx }) => {
+				handleChangeAlpha(dx);
+				draggableAlphaDOM.style.transform = `translate(${dx}px, 0)`;
+				updatePageView(dx);
+			});
+
+			const { width: containerWidth, height: containerHeight } = containerDOM.getBoundingClientRect();
+
+			const initColor = {
+				r: 0,
+        g: 0,
+        b: 0,
+        a: 1,
+			};
+			let color = {
+				...initColor,
+				...rgbToHsv(initColor),
+			}
+			let colorFormat = {
+				...transformColorFormat(color),
+			};
+
+			function transformColorFormat(color) {
+				const r = Math.round(color.r);
+				const g = Math.round(color.g);
+				const b = Math.round(color.b);
+				const h = Math.round(color.h);
+				const s = Math.round(color.s);
+				const v = Math.round(color.v);
+				const a = Math.round(color.a * 1000) / 1000;
+				const rgbColor = `rgb(${r} ${g} ${b})`;
+				const rgbaColor = `rgba(${r} ${g} ${b} / ${a})`;
+				const hexColor = rgbToHex({ r, g, b, a });
+				const hslColor = `hsl(${h} 100% 50%)`;
+				const hsvColor = `${h} ${s}% ${v}% ${a}`;
+				rgbDOM.innerText = rgbColor;
+				rgbaDOM.innerText = rgbaColor;
+				hexDOM.innerText = hexColor;
+				hslDOM.innerText = hslColor;
+				hsvDOM.innerText = hsvColor;
+				return {
+					rgbColor,
+					rgbaColor,
+					hexColor,
+					hslColor,
+					hsvColor,
+				}
+			}
+			function handleChangeSaturationValue(dx, dy) {
+        const s = 100 * dx / containerWidth;
+        const v = 100 * (1 - (dy / containerHeight));
+        const rgb = hsvToRgb({
+            h: color.h,
+            s,
+            v,
+        });
+				const colorResult = {
+					...color,
+					...rgb,
+					s,
+					v,
+        };
+				color = colorResult;
+				colorFormat = transformColorFormat(colorResult);
+    	};
+			function handleChangeHue(dx) {
+				const h = (dx / containerWidth) * 360;
+        const rgb = hsvToRgb({
+            h,
+            s: color.s,
+            v: color.v,
+        });
+				const colorResult = {
+					...color,
+					...rgb,
+					h,
+        };
+        color = colorResult;
+				colorFormat = transformColorFormat(colorResult);
+			}
+			function handleChangeAlpha(dx) {
+				const a = dx / containerWidth;
+				const colorResult = {
+					...color,
+					a,
+        };
+        color = colorResult;
+				colorFormat = transformColorFormat(colorResult);
+			}
+
+      const containerAlphaDOM = document.querySelector('.container__alpha');
+			function updatePageView(dx) {
+				containerDOM.style.backgroundColor = colorFormat.hslColor;
+				containerAlphaDOM.style.background = `linear-gradient(to right, rgb(${color.r} ${color.g} ${color.b} / 0), rgb(${color.r} ${color.g} ${color.b} / 1)) top left / auto auto,conic-gradient(
+						#666 0.25turn,
+						#999 0.25turn 0.5turn,
+						#666 0.5turn 0.75turn,
+						#999 0.75turn
+						) top left / 16px 16px repeat`
+				draggableDOM.style.backgroundColor = colorFormat.rgbColor;
+				draggableHueDOM.style.backgroundColor = colorFormat.hslColor;
+				draggableAlphaDOM.style.background = `linear-gradient(to right, ${colorFormat.rgbaColor}, ${colorFormat.rgbaColor}) top left / auto auto,conic-gradient(
+						#666 0.25turn,
+						#999 0.25turn 0.5turn,
+						#666 0.5turn 0.75turn,
+						#999 0.75turn
+				) ${-draggableAlphaInstance.dx - 4}px -2px / 16px 16px repeat`;
+			}
+
+			function init() {
+				const dx = color.s * containerWidth;
+        const dy = (1 - color.v) * containerHeight;
+				draggableInstance.setDraggablePostion(dx, dy);
+				draggableDOM.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+				const dxHue = color.h * containerWidth;
+				draggableHueInstance.setDraggablePostion(dxHue);
+				draggableHueDOM.style.transform = `translate(${dxHue}px, 0)`;
+				const dxAlpha = color.a * containerWidth;
+				draggableAlphaInstance.setDraggablePostion(dxAlpha);
+				draggableAlphaDOM.style.transform = `translate(${dxAlpha}px, 0)`;
+				updatePageView();
+			}
+			init();
+		});
+	</script>
+</body>
+</html>
