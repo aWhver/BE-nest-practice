@@ -3,5 +3,5 @@ node_modules
 *-lock.json
 yarn.lock
 dist
-!ClawX-main/node_modules/**
+!ClawX-main/node_modules1/**
 !ClawX-main/dist-electron/**
