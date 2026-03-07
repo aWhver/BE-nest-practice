@@ -1,64 +1,64 @@
-# Dependencies
-node_modules/
-.pnp
-.pnp.js
+# # Dependencies
+# node_modules/
+# .pnp
+# .pnp.js
 
-# Build outputs
-dist/
-dist-electron/
-release/
-*.local
+# # Build outputs
+# dist/
+# dist-electron/
+# release/
+# *.local
 
-# IDE
-.vscode/*
-!.vscode/extensions.json
-.idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# # IDE
+# .vscode/*
+# !.vscode/extensions.json
+# .idea/
+# *.suo
+# *.ntvs*
+# *.njsproj
+# *.sln
+# *.sw?
 
-# Environment
-.env
-.env.local
-.env.*.local
+# # Environment
+# .env
+# .env.local
+# .env.*.local
 
-# Logs
-logs
-*.log
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# # Logs
+# logs
+# *.log
+# npm-debug.log*
+# pnpm-debug.log*
+# yarn-debug.log*
+# yarn-error.log*
 
-# OS files
-.DS_Store
-Thumbs.db
+# # OS files
+# .DS_Store
+# Thumbs.db
 
-# Test coverage
-coverage/
+# # Test coverage
+# coverage/
 
-# Cache
-.cache/
-.turbo/
-*.tsbuildinfo
+# # Cache
+# .cache/
+# .turbo/
+# *.tsbuildinfo
 
-# Electron
-*.dmg
-*.exe
-*.AppImage
-*.deb
-*.rpm
+# # Electron
+# *.dmg
+# *.exe
+# *.AppImage
+# *.deb
+# *.rpm
 
-resources/bin
+# resources/bin
 
-# Secrets
-*.p12
-*.pem
-*.key
+# # Secrets
+# *.p12
+# *.pem
+# *.key
 
-build/
+# build/
 
-.cursor/
-.pnpm-store/
+# .cursor/
+# .pnpm-store/
